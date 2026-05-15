@@ -8,7 +8,7 @@ A horizontal slide portfolio built for speed, type, and texture.
 [Live →](https://jrla-portfolio.web.app/) &nbsp;·&nbsp; [Design system](./DESIGN.md) &nbsp;·&nbsp; [Contact](mailto:Angulo.johnrussel.l.7814@gmail.com)
 
 ![Vue](https://img.shields.io/badge/Vue-3-42b883?style=flat-square&labelColor=18181b)
-![Vite](https://img.shields.io/badge/Vite-5-646cff?style=flat-square&labelColor=18181b)
+![Vite](https://img.shields.io/badge/Vite-8-646cff?style=flat-square&labelColor=18181b)
 ![Tailwind](https://img.shields.io/badge/Tailwind-v4-38bdf8?style=flat-square&labelColor=18181b)
 ![Pinia](https://img.shields.io/badge/Pinia-3-ffd859?style=flat-square&labelColor=18181b)
 ![Firebase](https://img.shields.io/badge/Hosted-Firebase-ffca28?style=flat-square&labelColor=18181b)
@@ -34,7 +34,7 @@ Full visual language lives in **[DESIGN.md](./DESIGN.md)** — colors, type scal
 | Layer | Tool |
 |---|---|
 | Framework | Vue 3 + Vue Router 4 |
-| Build | Vite 5 |
+| Build | Vite 8 |
 | Styles | Tailwind CSS v4 (`@theme` tokens) |
 | State | Pinia 3 (theme store) |
 | Carousel | Swiper 12 (web component) |
@@ -54,7 +54,7 @@ npm run build    # → /dist
 npm run preview  # serve /dist
 ```
 
-Node 18+ recommended.
+Node 20.19+ or 22.12+ required (Vite 7+ requirement).
 
 ---
 
