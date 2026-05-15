@@ -5,18 +5,18 @@
         <div class="grid h-full grid-cols-12 gap-4 grid-rows-10">
           <div class="col-span-5 rounded-full bg-white/10"></div>
           <div class="col-span-12 row-span-3 rounded-2xl bg-white/10"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-8 row-start-5"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-4 col-start-9 row-start-5"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-4 row-start-6"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-8 col-start-5 row-start-6"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-4 col-start-9 row-start-7"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-8 col-start-1 row-start-7"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-4 row-start-8"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-8 col-start-5 row-start-8"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-8 row-start-9"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-4 col-start-9 row-start-9"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-4 row-start-10"></div>
-          <div class="h-[20px] rounded-full bg-white/10 col-span-8 col-start-5 row-start-10"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-8 row-start-5"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-4 col-start-9 row-start-5"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-4 row-start-6"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-8 col-start-5 row-start-6"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-4 col-start-9 row-start-7"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-8 col-start-1 row-start-7"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-4 row-start-8"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-8 col-start-5 row-start-8"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-8 row-start-9"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-4 col-start-9 row-start-9"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-4 row-start-10"></div>
+          <div class="h-5 rounded-full bg-white/10 col-span-8 col-start-5 row-start-10"></div>
         </div>
       </div>
       <div class="animate-pulse w-full dark:bg-white/10 bg-gray-300 md:rounded-tr-3xl p-4 overflow-hidden h-[400px] grid relative">
@@ -36,7 +36,7 @@
 
     <div class="p-4 bg-gray-300 animate-pulse dark:bg-white/10">
       <div class="grid grid-cols-12 gap-4 grid-rows-12">
-        <div class="h-[20px] rounded-2xl bg-white/10 col-span-5"></div>
+        <div class="h-5 rounded-2xl bg-white/10 col-span-5"></div>
         <div class="col-span-12 row-start-2 rounded-2xl bg-white/10"></div>
         <div class="col-span-9 row-start-3 rounded-2xl bg-white/10"></div>
         <div class="col-span-3 col-start-10 row-start-3 rounded-2xl bg-white/10"></div>
@@ -50,7 +50,7 @@
     </div>
     <div class="p-4 bg-gray-300 animate-pulse dark:bg-white/10">
       <div class="grid grid-cols-12 gap-4 grid-rows-12">
-        <div class="h-[20px] rounded-2xl bg-white/10 col-span-5"></div>
+        <div class="h-5 rounded-2xl bg-white/10 col-span-5"></div>
         <div class="col-span-12 row-start-2 rounded-2xl bg-white/10"></div>
         <div class="col-span-9 row-start-3 rounded-2xl bg-white/10"></div>
         <div class="col-span-3 col-start-10 row-start-3 rounded-2xl bg-white/10"></div>
@@ -64,7 +64,7 @@
     </div>
     <div class="p-4 bg-gray-300 animate-pulse dark:bg-white/10 rounded-b-3xl">
       <div class="grid grid-cols-12 gap-4 grid-rows-12">
-        <div class="h-[20px] rounded-2xl bg-white/10 col-span-5"></div>
+        <div class="h-5 rounded-2xl bg-white/10 col-span-5"></div>
         <div class="col-span-12 row-start-2 rounded-2xl bg-white/10"></div>
         <div class="col-span-9 row-start-3 rounded-2xl bg-white/10"></div>
         <div class="col-span-3 col-start-10 row-start-3 rounded-2xl bg-white/10"></div>
