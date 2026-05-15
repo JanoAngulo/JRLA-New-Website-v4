@@ -1,0 +1,191 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-dark: #18181b;
+  --color-dark-card: #212124;
+  --color-dark-primary: #ffca26;
+  --color-light: #e8ebf0;
+  --color-light-card: #f5f7fa;
+  --color-light-primary: #ff3656;
+
+  /* Z-index scale */
+  --z-nav: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+  --z-grain: 9999;
+
+  /* Semantic surface tokens for badges (light/dark pairs) */
+  --color-uiux-bg: #e6edfe;
+  --color-uiux-fg: #403d99;
+  --color-uiux-bg-dark: #353275;
+  --color-uiux-fg-dark: #b7c7f9;
+
+  --color-web-bg: #e2f6ec;
+  --color-web-fg: #2d6c6c;
+  --color-web-bg-dark: #1a4638;
+  --color-web-fg-dark: #78debe;
+
+  --color-vector-bg: #fed7aa;
+  --color-vector-fg: #7c2d12;
+  --color-vector-bg-dark: #431407;
+  --color-vector-fg-dark: #f29d2a;
+
+  --font-Gilroy: Gilroy;
+  --font-Gilroy-extra-bold: GilroyExtraBold;
+  --font-Mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@layer base {
+  html {
+    @apply w-full scroll-smooth;
+    font-family: Gilroy, system-ui, sans-serif;
+    overscroll-behavior: contain;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hide-scrollbar *::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .hide-scrollbar * {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  :root {
+    --swiper-pagination-color: #ff3656; /* Default color */
+  }
+
+  .dark {
+    --swiper-pagination-color: #ffca26; /* Color when dark mode is active */
+    --swiper-pagination-bullet-inactive-color: #fff;
+    --swiper-pagination-bullet-opacity: 1;
+    --swiper-pagination-bullet-inactive-opacity: 0.5;
+  }
+
+  body {
+    @apply dark:bg-dark bg-light;
+    position: relative;
+  }
+
+  .squares {
+    @apply dark:hover:bg-dark-primary hover:bg-light-primary dark:text-dark-primary dark:hover:text-dark hover:text-light;
+  }
+
+  .card,
+  .card-left,
+  .card-right {
+    @apply dark:bg-dark-card bg-light-card;
+  }
+
+  .card {
+    @apply rounded-xl;
+  }
+
+  .card-left {
+    @apply rounded-l-xl;
+  }
+
+  .card-right {
+    @apply rounded-r-xl;
+  }
+
+  .input {
+    @apply border rounded-md shadow-xs border-transparent p-3 duration-150 transition-colors dark:bg-zinc-800 resize-none dark:text-white placeholder-zinc-400 bg-zinc-50 focus:outline-hidden
+    focus:dark:border-dark-primary focus:ring-1 focus:dark:ring-dark-primary
+    focus:border-light-primary focus:ring-light-primary;
+  }
+
+  /* Consistent focus-visible ring across the app */
+  :where(button, a, input, textarea, select, [role='button'], [tabindex]):focus-visible {
+    outline: 2px solid var(--color-light-primary);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .dark :where(button, a, input, textarea, select, [role='button'], [tabindex]):focus-visible {
+    outline-color: var(--color-dark-primary);
+  }
+
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .neumorph {
+    box-shadow: inset -1px 1px 2px rgba(255, 255, 255, 0.3), inset 1px -1px 2px rgba(164, 165, 168, 0.5), 5px 5px 10px rgba(164, 165, 168, 0.2), -5px -5px 10px rgba(164, 165, 168, 0.2), 5px -5px 10px rgba(255, 255, 255, 0.9), -5px 5px 13px rgba(164, 165, 168, 0.9);
+  }
+
+  .dark {
+    .dark\:neumorph-dark {
+      box-shadow: inset -1px -1px 2px rgba(31, 31, 35, 0.3), 1px 1px 2px rgba(15, 15, 17, 0.5), inset 5px -5px 10px rgba(15, 15, 17, 0.2), inset -5px 5px 10px rgba(15, 15, 17, 0.2), inset 5px 5px 10px rgb(38 38 51 / 90%), inset -5px -5px 13px rgb(61 61 61 / 90%);
+    }
+
+    .hover\:dark\:neumorph-yellow {
+      &:hover {
+        box-shadow: -1px -1px 2px rgba(255, 255, 88, 0.3), 1px 1px 2px rgba(163, 135, 44, 0.5), inset 5px -5px 10px rgba(163, 135, 44, 0.2), inset -5px 5px 10px rgba(163, 135, 44, 0.2), inset 5px 5px 10px rgba(255, 255, 88, 0.9), inset -5px -5px 13px rgba(163, 135, 44, 0.9);
+      }
+    }
+  }
+
+  /* Hero radial wash — adds depth without overwhelming */
+  .bg-radial-hero {
+    background-image: radial-gradient(ellipse at 50% 30%, color-mix(in oklab, var(--color-light-primary) 10%, transparent), transparent 60%);
+  }
+
+  .dark .bg-radial-hero {
+    background-image: radial-gradient(ellipse at 50% 30%, color-mix(in oklab, var(--color-dark-primary) 8%, transparent), transparent 60%);
+  }
+
+  /* Soft layered card shadow — replaces neumorph for cleaner depth */
+  .card-elevated {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  }
+
+  .dark .card-elevated {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  }
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('/fonts/Gilroy/Gilroy-Regular.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GilroyExtraBold';
+  src: url('/fonts/Gilroy/Gilroy-ExtraBold.woff') format('woff');
+  font-display: swap;
+}
