@@ -198,13 +198,71 @@
   import { useThemeStore } from '../store'
   import { defineAsyncComponent } from 'vue'
 
-  // Light-mode-friendly logos (used in dark mode for visibility)
+  // Tool logos — match the same imports used in PortfolioData so we can
+  // map references → display names (URLs may be hashed or inlined data URIs).
+  import html from '@/assets/img/features/frontend/html.svg'
   import htmlLight from '@/assets/img/features/frontend/html-light.svg'
+  import css from '@/assets/img/features/frontend/css.svg'
   import cssLight from '@/assets/img/features/frontend/css-light.svg'
+  import js from '@/assets/img/features/frontend/js.svg'
   import jsLight from '@/assets/img/features/frontend/js-light.svg'
+  import sass from '@/assets/img/features/frontend/sass.svg'
+  import tailwind from '@/assets/img/features/frontend/tailwind.svg'
+  import bootstrap from '@/assets/img/features/frontend/bootstrap.svg'
+  import laravel from '@/assets/img/features/frontend/laravel.svg'
+  import git from '@/assets/img/features/frontend/git.svg'
+  import docker from '@/assets/img/features/frontend/docker.svg'
+  import vue from '@/assets/img/features/frontend/vue.svg'
+  import nextjs from '@/assets/img/features/frontend/nextjs.svg'
   import lightNextJs from '@/assets/img/features/frontend/light-nextjs.svg'
+  import reactjs from '@/assets/img/features/frontend/react.svg'
   import claude from '@/assets/img/features/frontend/claude.svg'
+  import figma from '@/assets/img/features/uiux/figma.svg'
+  import xd from '@/assets/img/features/uiux/xd.svg'
+  import illustrator from '@/assets/img/features/uiux/illustrator.svg'
+  import premiere from '@/assets/img/features/video/premiere.svg'
+  import afterEffects from '@/assets/img/features/video/after-effects.svg'
+  import mediaEncoder from '@/assets/img/features/video/media-encoder.svg'
+  import photoshop from '@/assets/img/features/vector/photoshop.svg'
+  import wacom from '@/assets/img/features/vector/wacom.svg'
   import lightwacom from '@/assets/img/features/vector/light-wacom.svg'
+
+  const TOOL_NAMES = new Map([
+    [html, 'HTML5'],
+    [htmlLight, 'HTML5'],
+    [css, 'CSS3'],
+    [cssLight, 'CSS3'],
+    [js, 'JavaScript'],
+    [jsLight, 'JavaScript'],
+    [sass, 'Sass'],
+    [tailwind, 'Tailwind CSS'],
+    [bootstrap, 'Bootstrap'],
+    [laravel, 'Laravel'],
+    [git, 'Git'],
+    [docker, 'Docker'],
+    [vue, 'Vue.js'],
+    [nextjs, 'Next.js'],
+    [lightNextJs, 'Next.js'],
+    [reactjs, 'React'],
+    [claude, 'Claude'],
+    [figma, 'Figma'],
+    [xd, 'Adobe XD'],
+    [illustrator, 'Adobe Illustrator'],
+    [premiere, 'Adobe Premiere Pro'],
+    [afterEffects, 'Adobe After Effects'],
+    [mediaEncoder, 'Adobe Media Encoder'],
+    [photoshop, 'Adobe Photoshop'],
+    [wacom, 'Wacom'],
+    [lightwacom, 'Wacom']
+  ])
+
+  const DARK_OVERRIDES = new Map([
+    [html, htmlLight],
+    [css, cssLight],
+    [js, jsLight],
+    [nextjs, lightNextJs],
+    [wacom, lightwacom]
+  ])
 
   export default {
     name: 'Works',
@@ -281,64 +339,11 @@
       },
       toolUsed(tool) {
         if (!tool) return ''
-        const filename = String(tool).split('/').pop().split('?')[0]
-        const stripped = filename.replace(/\.[a-z0-9]+$/i, '').replace(/^light-/, '')
-        const map = {
-          xd: 'Adobe XD',
-          illustrator: 'Adobe Illustrator',
-          photoshop: 'Adobe Photoshop',
-          premiere: 'Adobe Premiere Pro',
-          'after-effects': 'Adobe After Effects',
-          'media-encoder': 'Adobe Media Encoder',
-          html: 'HTML5',
-          css: 'CSS3',
-          js: 'JavaScript',
-          nextjs: 'Next.js',
-          tailwind: 'Tailwind CSS',
-          vue: 'Vue.js',
-          react: 'React',
-          reactjs: 'React',
-          sass: 'Sass',
-          bootstrap: 'Bootstrap',
-          laravel: 'Laravel',
-          git: 'Git',
-          docker: 'Docker',
-          claude: 'Claude',
-          figma: 'Figma',
-          wacom: 'Wacom',
-          'swiper-logo': 'Swiper',
-          frontend: 'Front-end',
-          uiux: 'UI/UX'
-        }
-        // Longest-first prefix match — hash-agnostic
-        const keys = Object.keys(map).sort((a, b) => b.length - a.length)
-        for (const k of keys) {
-          if (stripped === k || stripped.startsWith(k + '-') || stripped.startsWith(k + '.')) {
-            return map[k]
-          }
-        }
-        return stripped.split('-')[0].replace(/\b\w/g, (c) => c.toUpperCase())
+        return TOOL_NAMES.get(tool) || ''
       },
       toolLogo(path) {
-        if (!this.isDark || !path) return path
-        const filename = String(path).split('/').pop().split('?')[0]
-        // Skip already-light variants
-        if (filename.startsWith('light-') || filename.includes('-light')) return path
-        // Match by filename prefix — works in both dev (name.svg) and build (name-HASH.svg)
-        const prefixMap = [
-          ['html', htmlLight],
-          ['css', cssLight],
-          ['js', jsLight],
-          ['nextjs', lightNextJs],
-          ['claude-dark', claude],
-          ['claude', claude],
-          ['wacom', lightwacom]
-        ]
-        for (const [name, light] of prefixMap) {
-          if (filename.startsWith(name + '.') || filename.startsWith(name + '-')) {
-            return light
-          }
-        }
+        if (!path) return path
+        if (this.isDark && DARK_OVERRIDES.has(path)) return DARK_OVERRIDES.get(path)
         return path
       },
       closeOffCanvas() {
