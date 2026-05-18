@@ -7,7 +7,7 @@
       :style="{ height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px` }">
       <!-- Sticky top header -->
       <div class="works-header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current-faint">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current-faint works-header-meta">
           <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">03 — Selected Works</p>
           <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ filteredWorks.length }} / {{ works2.length }} Projects</p>
         </div>
@@ -15,11 +15,12 @@
         <!-- Filter pills -->
         <div class="works-filter no-swipe">
           <button
-            v-for="f in filters"
+            v-for="(f, i) in filters"
             :key="f.id"
             @click="activeFilter = f.id"
             :aria-pressed="activeFilter === f.id"
-            :class="['filter-pill', { 'filter-pill--active': activeFilter === f.id }]">
+            :style="{ '--pd': (i * 0.07) + 's' }"
+            :class="['filter-pill', 'filter-pill-anim', { 'filter-pill--active': activeFilter === f.id }]">
             <span>{{ f.label }}</span>
             <span class="filter-pill-count font-Mono tabular-nums">{{ f.count }}</span>
           </button>
@@ -33,12 +34,14 @@
             type="button"
             v-for="(item, i) in filteredWorks"
             :key="i + item.id + item.title"
-            class="work-card"
+            v-reveal
+            class="work-card reveal"
+            :style="{ '--rd': (i % 9) * 0.07 + 's' }"
             :aria-label="`Open ${item.title} project details`"
             @click="openWork(item)">
             <!-- Image area -->
             <div class="work-card-img" :class="{ 'work-card-img--contain': item.work === 'uiux' }">
-              <img :src="item.thumbnail" :alt="item.title + ' thumbnail'" :loading="i < 3 ? 'eager' : 'lazy'" :fetchpriority="i < 3 ? 'high' : 'auto'" />
+              <LazyImage :src="item.thumbnail" :alt="item.title + ' thumbnail'" :eager="i < 3" />
               <div class="work-card-overlay">
                 <span class="work-card-cta">
                   <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -159,7 +162,7 @@
           </iframe>
 
           <div v-else-if="content.type === 'vector'" class="modal-vector">
-            <img :src="content.link" :alt="content.title" />
+            <LazyImage :src="content.link" :alt="content.title" eager />
             <button type="button" class="modal-vector-dl" @click="downloadImage(content.link)" aria-label="Download artwork">
               <i class="fa-solid fa-arrow-down"></i>
               <span>Download</span>
@@ -195,6 +198,7 @@
   import portfolioData from './PortfolioData'
   import AppDialog from './Dialog.vue'
   import SkeletonLoader from './SkeletonLoader.vue'
+  import LazyImage from './LazyImage.vue'
   import { useThemeStore } from '../store'
   import { defineAsyncComponent } from 'vue'
 
@@ -270,7 +274,30 @@
     components: {
       AppDialog,
       WorkDetails: defineAsyncComponent(() => import('./WorkDetails.vue')),
-      SkeletonLoader
+      SkeletonLoader,
+      LazyImage
+    },
+    directives: {
+      reveal: {
+        mounted(el) {
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  el.classList.add('is-revealed')
+                  io.unobserve(el)
+                }
+              })
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -6% 0px' }
+          )
+          io.observe(el)
+          el._revealIO = io
+        },
+        unmounted(el) {
+          if (el._revealIO) el._revealIO.disconnect()
+        }
+      }
     },
     props: {
       activeSlide: String,
@@ -573,6 +600,42 @@
     }
   }
 
+  /* Header + filter entrance */
+  .works-header-meta {
+    opacity: 0;
+    transform: translateY(-8px);
+    animation: hdr-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  }
+  .filter-pill-anim {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: pill-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: calc(0.25s + var(--pd, 0s));
+  }
+  @keyframes hdr-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pill-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--rd, 0s);
+  }
+  .reveal.is-revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition-duration: 0.2s; transform: none; }
+  }
+
   /* Work card */
   .work-card {
     position: relative;
@@ -648,7 +711,7 @@
     transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  .work-card-img--contain img {
+  .work-card-img--contain :deep(.lazy-img) {
     object-fit: contain;
     object-position: center bottom;
   }
@@ -661,6 +724,7 @@
   .work-card-overlay {
     position: absolute;
     inset: 0;
+    z-index: 3;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -829,6 +893,13 @@
     aspect-ratio: 16 / 10;
     background: white;
     border: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
+  }
+
+  @media (max-width: 767px) {
+    .sheet-preview-iframe {
+      aspect-ratio: 9 / 16;
+      min-height: 70vh;
+    }
   }
 
   .sheet-meta {

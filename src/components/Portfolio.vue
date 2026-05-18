@@ -12,7 +12,7 @@
           <swiper-slide :id="portfolioId(item.title)" class="p-5 transition-all duration-200 ease-out card group lg:hover:-translate-y-2" v-for="(item, index) in category" :key="index">
             <div class="grid gap-4">
               <div @click="passModalData(item)" class="cursor-pointer relative grid h-full w-fit ease-out lg:group-hover:scale-[1.02] transition-all duration-300">
-                <img class="object-cover rounded-lg aspect-video" :src="item.thumbnail" :alt="item.title + ' Image'" />
+                <LazyImage class="rounded-lg aspect-video" :src="item.thumbnail" :alt="item.title + ' Image'" />
                 <div class="absolute grid w-full h-full transition-all duration-300 bg-black rounded-lg lg:opacity-0 group-hover:opacity-100 place-self-center place-content-center bg-opacity-30">
                   <p class="text-light underline">View more</p>
                 </div>
@@ -37,7 +37,7 @@
               <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <img class="self-center h-auto rounded-lg aspect-video" :src="modalData.thumbnail" alt="" />
+            <LazyImage class="self-center rounded-lg aspect-video" :src="modalData.thumbnail" alt="" eager />
             <div class="grid content-center gap-2">
               <p class="text-lg capitalize dark:text-light">featured - {{ modalData.feature }}</p>
               <p class="text-3xl capitalize lg:text-4xl font-Gilroy dark:text-light">{{ modalData.title }}</p>
@@ -63,6 +63,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import data from './PortfolioData.js'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
+import LazyImage from './LazyImage.vue'
 
 const modules = [Autoplay]
 const toggleModal = ref(false)

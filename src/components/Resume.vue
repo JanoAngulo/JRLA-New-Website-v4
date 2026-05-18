@@ -93,7 +93,7 @@
                       <p class="text-xl font-bold capitalize">download CV</p>
                     </a>
                   </div>
-                  <img class="duration-300 transition-all w-full rounded-md lg:group-hover:blur-[2px]" src="@/assets/img/JRLA-Resume-updated.webp" alt="" />
+                  <img class="duration-300 transition-all w-full rounded-md lg:group-hover:blur-[2px]" src="@/assets/img/JRLA-Resume-updated.webp" alt="" loading="lazy" decoding="async" />
                 </div>
               </div>
             </div>

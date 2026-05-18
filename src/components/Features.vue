@@ -7,7 +7,7 @@
       :style="{ height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px` }">
       <!-- Scroll-feed -->
       <div
-        class="features-scroll relative w-full overflow-y-auto pb-20 dark:text-light text-dark"
+        class="features-scroll relative w-full overflow-y-auto pb-6 dark:text-light text-dark"
         :style="{ height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px` }">
         <header class="features-header">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current-faint">
@@ -19,21 +19,22 @@
         <article
           v-for="(item, i) in portfolioData.portfolio.features"
           :key="item.id"
-          class="expertise-block"
+          v-reveal
+          class="expertise-block reveal"
           :class="{ 'is-reverse': i % 2 === 1 }">
           <!-- Visual column: accent block -->
-          <div class="ex-visual">
+          <div class="ex-visual reveal-child" style="--rd:0.05s">
             <div class="ex-art dark:bg-dark-primary bg-light-primary">
-              <img :src="item.img[0]" :alt="item.title + ' illustration'" :loading="i === 0 ? 'eager' : 'lazy'" :fetchpriority="i === 0 ? 'high' : 'auto'" />
+              <LazyImage :src="item.img[0]" :alt="item.title + ' illustration'" :eager="i === 0" draggable="false" @dragstart.prevent />
             </div>
           </div>
 
           <!-- Content column -->
-          <div class="ex-body">
+          <div class="ex-body reveal-child" style="--rd:0.18s">
             <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-60">— {{ ids[item.id] }}</p>
             <h3 class="ex-title font-Gilroy-extra-bold uppercase leading-[0.9]">
-              <span class="block">{{ item.title.split(' ')[0] }}</span>
-              <span class="block dark:text-dark-primary text-light-primary">{{ item.title.split(' ').slice(1).join(' ') }}</span>
+              <span class="ex-title-line"><span class="etl-inner" style="--d:0.25s">{{ item.title.split(' ')[0] }}</span></span>
+              <span class="ex-title-line"><span class="etl-inner dark:text-dark-primary text-light-primary" style="--d:0.4s">{{ item.title.split(' ').slice(1).join(' ') }}</span></span>
             </h3>
             <div class="hairline"></div>
             <div class="ex-prose" v-html="item.description"></div>
@@ -60,6 +61,7 @@
 <script>
   import { useThemeStore } from '../store'
   import portfolioData from './PortfolioData'
+  import LazyImage from './LazyImage.vue'
 
   // FRONTEND
   import html from '@/assets/img/features/frontend/html.svg'
@@ -97,6 +99,29 @@
 
   export default {
     name: 'Features',
+    components: { LazyImage },
+    directives: {
+      reveal: {
+        mounted(el) {
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  el.classList.add('is-revealed')
+                  io.unobserve(el)
+                }
+              })
+            },
+            { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+          )
+          io.observe(el)
+          el._revealIO = io
+        },
+        unmounted(el) {
+          if (el._revealIO) el._revealIO.disconnect()
+        }
+      }
+    },
     props: {
       activeSlide: String,
       windowWidth: Number,
@@ -211,11 +236,70 @@
     gap: 2rem;
     padding: 3rem 1.5rem;
     border-bottom: 1px solid color-mix(in oklab, currentcolor 10%, transparent);
-    animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .ex-art img {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
+  }
+
+  /* Title line-reveal — mirrors Home hero name */
+  .ex-title-line {
+    display: block;
+    overflow: hidden;
+    line-height: 1;
+  }
+  .etl-inner {
+    display: inline-block;
+    transform: translateY(105%);
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--d, 0s);
+  }
+  .is-revealed .etl-inner {
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .etl-inner { transition-duration: 0.2s; }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+  }
+  .reveal.is-revealed {
+    opacity: 1;
+  }
+  .reveal-child {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--rd, 0s);
+  }
+  .is-revealed .reveal-child {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (min-width: 768px) {
+    .is-reverse .reveal-child:first-child {
+      transform: translateX(28px);
+    }
+    .is-reverse.is-revealed .reveal-child:first-child {
+      transform: translateX(0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-child {
+      transition-duration: 0.2s;
+      transform: none;
+    }
   }
 
   .expertise-block:last-child {
     border-bottom: none;
+    padding-bottom: 1.5rem;
   }
 
   @media (min-width: 768px) {

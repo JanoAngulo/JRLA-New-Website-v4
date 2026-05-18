@@ -19,9 +19,9 @@
             <div class="flex flex-col gap-5">
               <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-70">— Open Brief</p>
               <h2 class="contact-headline font-Gilroy-extra-bold uppercase leading-[0.9]">
-                <span class="block">Let's build</span>
-                <span class="block">something</span>
-                <span class="block contact-headline--outline">together.</span>
+                <span class="ch-line"><span class="ch-inner" style="--d:0.25s">Let's build</span></span>
+                <span class="ch-line"><span class="ch-inner" style="--d:0.4s">something</span></span>
+                <span class="ch-line"><span class="ch-inner contact-headline--outline" style="--d:0.55s">together.</span></span>
               </h2>
               <div class="hairline-on-accent"></div>
               <p class="font-Gilroy text-base sm:text-lg leading-relaxed max-w-md opacity-90">
@@ -75,26 +75,29 @@
             <div class="space-y-3">
               <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-60">— Send a Message</p>
               <h3 class="font-Gilroy-extra-bold uppercase leading-[0.95] contact-form-heading">
-                Tell me <em class="not-italic dark:text-dark-primary text-light-primary">what's</em> on your mind
+                <span class="cfh-line"><span class="cfh-inner" style="--d:0.4s">Tell me <em class="not-italic dark:text-dark-primary text-light-primary">what's</em> on your mind</span></span>
               </h3>
               <div class="hairline"></div>
             </div>
 
-            <form @submit.prevent="onSubmit" class="flex flex-col gap-5 flex-1" novalidate>
+            <form @submit.prevent="onSubmit" class="form-card flex flex-col gap-5 flex-1" novalidate>
               <div class="grid gap-5 md:grid-cols-2">
                 <div class="field">
-                  <label for="Name" class="field-label">Name</label>
+                  <label for="Name" class="field-label">01 — Name</label>
                   <input type="text" id="Name" name="Name" v-model="name" class="field-input" placeholder="Your name" autocomplete="name" aria-required="true" required />
                 </div>
                 <div class="field">
-                  <label for="Email" class="field-label">Email</label>
+                  <label for="Email" class="field-label">02 — Email</label>
                   <input type="email" id="Email" name="Email" v-model="email" class="field-input" placeholder="hello@yourname.com" autocomplete="email" aria-required="true" required />
                 </div>
               </div>
 
               <div class="field">
-                <label for="Message" class="field-label">Message</label>
-                <textarea id="Message" name="Message" v-model="message" class="field-input" rows="5" placeholder="What's on your mind?" aria-required="true" required></textarea>
+                <div class="flex items-center justify-between">
+                  <label for="Message" class="field-label">03 — Message</label>
+                  <span class="char-count" :class="{ 'is-warn': message.length > 800 }">{{ message.length }} / 1000</span>
+                </div>
+                <textarea id="Message" name="Message" v-model="message" class="field-input field-textarea" rows="7" maxlength="1000" placeholder="Project brief, idea, or just say hi…" aria-required="true" required></textarea>
               </div>
 
               <!-- Status messages -->
@@ -113,12 +116,31 @@
                 </div>
               </Transition>
 
-              <div class="flex justify-end pt-2">
+              <div class="form-footer">
+                <div class="form-footer-hint">
+                  <span class="form-dot"></span>
+                  <span>Avg. response · 24 hours</span>
+                </div>
                 <button type="submit" :disabled="loading" class="contact-submit">
                   <span>{{ loading ? 'Sending' : 'Send Message' }}</span>
                   <i v-if="loading" class="fa-solid fa-spinner-third fa-spin"></i>
                   <i v-else class="fa-solid fa-arrow-right"></i>
                 </button>
+              </div>
+
+              <div class="form-aux">
+                <div class="aux-row">
+                  <span class="aux-row-label">Best for</span>
+                  <span class="aux-row-value">Web · Mobile · UI/UX · Brand</span>
+                </div>
+                <div class="aux-row">
+                  <span class="aux-row-label">Timezone</span>
+                  <span class="aux-row-value">GMT+8 · Manila</span>
+                </div>
+                <div class="aux-row">
+                  <span class="aux-row-label">Form by</span>
+                  <span class="aux-row-value">Formspark · spam-shielded</span>
+                </div>
               </div>
             </form>
           </div>
@@ -241,9 +263,31 @@
   }
 
   .contact-headline--outline {
-    color: transparent;
-    -webkit-text-stroke: 1.5px currentColor;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-dark);
     opacity: 0.85;
+  }
+
+  /* Line-reveal mask — matches Home/Features */
+  .ch-line,
+  .cfh-line {
+    display: block;
+    overflow: hidden;
+    line-height: 1;
+  }
+  .ch-inner,
+  .cfh-inner {
+    display: inline-block;
+    transform: translateY(105%);
+    animation: ch-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes ch-rise {
+    to { transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ch-inner,
+    .cfh-inner { animation-duration: 0.2s; }
   }
 
   .contact-form-heading {
@@ -345,6 +389,92 @@
     }
   }
 
+  /* Form card */
+  .form-card {
+    padding: 1.25rem 0 0;
+  }
+
+  /* Char counter */
+  .char-count {
+    font-family: var(--font-Mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    opacity: 0.5;
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+  .char-count.is-warn {
+    opacity: 1;
+    color: var(--color-light-primary);
+  }
+  :is(.dark) .char-count.is-warn {
+    color: var(--color-dark-primary);
+  }
+
+  /* Footer row — hint + submit */
+  .form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .form-footer-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-Mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .form-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-light-primary);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  :is(.dark) .form-dot {
+    background: var(--color-dark-primary);
+  }
+
+  /* Aux info rows */
+  .form-aux {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+    display: flex;
+    flex-direction: column;
+  }
+  .aux-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.55rem 0;
+    gap: 1rem;
+    border-bottom: 1px dashed color-mix(in srgb, currentColor 10%, transparent);
+  }
+  .aux-row:last-child {
+    border-bottom: none;
+  }
+  .aux-row-label {
+    font-family: var(--font-Mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    flex-shrink: 0;
+  }
+  .aux-row-value {
+    font-family: var(--font-Gilroy);
+    font-size: 0.85rem;
+    letter-spacing: -0.005em;
+    text-align: right;
+    opacity: 0.9;
+  }
+
   /* Form fields */
   .field {
     display: flex;
@@ -396,6 +526,10 @@
 
   textarea.field-input {
     line-height: 1.55;
+  }
+
+  .field-textarea {
+    min-height: 9rem;
   }
 
   /* Alerts */
