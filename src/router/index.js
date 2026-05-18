@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Works from '../components/Works.vue'
-import WorkDetails from '../components/WorkDetails.vue'
+
+const WorkDetails = () => import('../components/WorkDetails.vue')
 
 const SITE = 'JRLA Portfolio'
 
