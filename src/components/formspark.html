@@ -7,33 +7,134 @@
   "viewLink": "https://dashboard.formspark.io/forms/"
 }
 
-<div style="width: 100%;">
-  <div style="max-width: 700px; margin-left: auto; margin-right: auto;">
-    <div style="width: auto; border-radius: 0.5rem; background-color: #eceff4; padding: 1rem; text-align: center; font-size: 2.25rem; line-height: 1.11; font-weight: 700; color: #db575d">NEW SUBMISSION!</div>
-    <div style="margin-top: 20px; margin-bottom: 20px">
-      <p style="text-align: center">
-        Hey <span style="font-weight: 700">John Russel!</span><br />
-        Looks like someone wants to reach out to you, this is what they have in mind.
-      </p>
-    </div>
-    <div style="width: auto; border: 3px solid #eceff4; margin-bottom: 30px"></div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f4f4f5;padding:32px 16px;font-family:Helvetica,Arial,sans-serif;">
+  <tr>
+    <td align="center">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background-color:#ffffff;border:1px solid #e4e4e7;">
 
-    <div style="display: grid">
-      <div>
-        <div style="margin-right: auto"><strong>From: </strong>{{ data.name }}</div>
-        <div style="margin-left: auto"><strong>Email: </strong>{{ data.email }}</div>
-      </div>
-      <div>
-        <p>
-          <strong>Message: <br /> </strong>{{data.message}}
-        </p>
-      </div>
+        <!-- Header strip -->
+        <tr>
+          <td style="background-color:#ff3656;padding:16px 28px;" align="left">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td align="left" style="font-family:'Courier New',Courier,monospace;font-size:11px;letter-spacing:0.28em;color:#ffffff;font-weight:700;text-transform:uppercase;">
+                  JRLA &middot; INBOX
+                </td>
+                <td align="right" style="font-family:'Courier New',Courier,monospace;font-size:11px;letter-spacing:0.28em;color:#ffffff;font-weight:700;text-transform:uppercase;">
+                  FORM / 01
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
 
-      <button style="border: none; background: none; padding: 0; margin-top: 40px; margin-bottom: 40px">
-        <a href="{{viewLink}}" style="display: inline-block; border-radius: 0.5rem; background-color: #db575d; padding: 0.75rem 1.25rem; font-size: 16px; font-weight: 700; color: #fff; text-decoration: none"> Go to Dashboard </a>
-      </button>
+        <!-- Title block -->
+        <tr>
+          <td style="padding:40px 28px 24px 28px;" align="left">
+            <p style="margin:0 0 12px 0;font-family:'Courier New',Courier,monospace;font-size:11px;letter-spacing:0.3em;color:#ff3656;font-weight:700;text-transform:uppercase;">
+              &mdash; New Submission
+            </p>
+            <h1 style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:34px;line-height:1.05;font-weight:900;letter-spacing:-0.02em;color:#18181b;text-transform:uppercase;">
+              Someone wants<br/>
+              to <span style="color:#ff3656;">reach out.</span>
+            </h1>
+          </td>
+        </tr>
 
-      <div style="width: auto; border-radius: 0.5rem; background-color: #eceff4; padding: 1rem; text-align: center; font-size: 16px; font-weight: 700; color: #db575d">© 2025 JRLA</div>
-    </div>
-  </div>
-</div>
+        <!-- Hairline -->
+        <tr>
+          <td style="padding:0 28px;">
+            <div style="height:2px;width:48px;background-color:#ff3656;font-size:0;line-height:0;">&nbsp;</div>
+          </td>
+        </tr>
+
+        <!-- Greeting -->
+        <tr>
+          <td style="padding:20px 28px 8px 28px;">
+            <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#3f3f46;">
+              Hey <strong style="color:#ff3656;">John Russel</strong> &mdash; here&rsquo;s what they had to say.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Meta rows -->
+        <tr>
+          <td style="padding:24px 28px 8px 28px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-top:1px solid #e4e4e7;">
+              <tr>
+                <td style="padding:14px 0;border-bottom:1px solid #e4e4e7;font-family:'Courier New',Courier,monospace;font-size:11px;letter-spacing:0.28em;color:#71717a;text-transform:uppercase;width:90px;">
+                  From
+                </td>
+                <td align="right" style="padding:14px 0;border-bottom:1px solid #e4e4e7;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#18181b;font-weight:700;">
+                  {{ data.name }}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:14px 0;border-bottom:1px solid #e4e4e7;font-family:'Courier New',Courier,monospace;font-size:11px;letter-spacing:0.28em;color:#71717a;text-transform:uppercase;">
+                  Email
+                </td>
+                <td align="right" style="padding:14px 0;border-bottom:1px solid #e4e4e7;font-family:Helvetica,Arial,sans-serif;font-size:14px;">
+                  <a href="mailto:{{ data.email }}" style="color:#ff3656;text-decoration:underline;font-weight:500;">{{ data.email }}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Message label -->
+        <tr>
+          <td style="padding:24px 28px 10px 28px;">
+            <p style="margin:0;font-family:'Courier New',Courier,monospace;font-size:11px;letter-spacing:0.3em;color:#71717a;text-transform:uppercase;">
+              &mdash; Message
+            </p>
+          </td>
+        </tr>
+
+        <!-- Message body card -->
+        <tr>
+          <td style="padding:0 28px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#fafafa;border-left:3px solid #ff3656;">
+              <tr>
+                <td style="padding:20px 22px;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.65;color:#27272a;">
+                  {{ data.message }}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- CTA -->
+        <tr>
+          <td align="left" style="padding:32px 28px 28px 28px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="background-color:#ff3656;">
+                  <a href="{{viewLink}}" style="display:inline-block;padding:14px 26px;font-family:'Courier New',Courier,monospace;font-size:12px;font-weight:700;letter-spacing:0.25em;color:#ffffff;text-decoration:none;text-transform:uppercase;">
+                    Open Dashboard &rarr;
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer strip -->
+        <tr>
+          <td style="background-color:#fafafa;border-top:1px solid #e4e4e7;padding:18px 28px;" align="left">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td align="left" style="font-family:'Courier New',Courier,monospace;font-size:10px;letter-spacing:0.28em;color:#71717a;text-transform:uppercase;">
+                  &copy; 2026 JRLA
+                </td>
+                <td align="right" style="font-family:'Courier New',Courier,monospace;font-size:10px;letter-spacing:0.28em;color:#71717a;text-transform:uppercase;">
+                  Bulacan &middot; PH
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>

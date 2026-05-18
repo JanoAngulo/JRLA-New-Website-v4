@@ -63,7 +63,7 @@
     data() {
       return {
         items: [
-          { idx: 0, label: 'Index' },
+          { idx: 0, label: 'Home' },
           { idx: 1, label: 'Features' },
           { idx: 2, label: 'Works' },
           { idx: 3, label: 'About' },

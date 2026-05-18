@@ -1,6 +1,5 @@
 import coreProc from '@/assets/img/portfolio/CoreProc-Clone.webp'
-import booCyberSec from '@/assets/img/portfolio/booCyberSecurity.webp'
-import booCyberSec2 from '@/assets/img/portfolio/BooCyberSecurity2.webp'
+import booCyberSec from '@/assets/img/portfolio/BooCyberSecurity.webp'
 import netflix from '@/assets/img/portfolio/netflix.webp'
 import plants from '@/assets/img/portfolio/plants.webp'
 import sodaCans from '@/assets/img/portfolio/sodaCans.webp'
@@ -157,7 +156,7 @@ export default {
         description: `<p>I’m passionate about video editing and specialize in Adobe Premiere Pro, After Effects, and Media Encoder. I craft compelling narratives with smooth transitions, striking visual effects, and meticulous attention to detail. My focus on advanced color grading ensures consistent tone and mood across every project, whether it’s a short clip or a full-length production.</p>
         <hr class="dark:border-dark-primary border-light-primary">
         <ul class="space-y-3">
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Narrative-driven editing/li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Narrative-driven editing</li>
         <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Visual effects & transitions</li>
         <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Advanced color grading</li>
         </ul>
@@ -352,7 +351,7 @@ export default {
 
       {
         work: 'website',
-        thumbnail: booCyberSec2,
+        thumbnail: booCyberSec,
         feature: 'website',
         role: 'Front-end',
         title: 'Boo Cyber Security',
