@@ -1,6 +1,6 @@
 # DESIGN.md — JRLA Portfolio Design System
 
-> Single source of truth for the visual + interaction language of **jrla-portfolio.web.app**.
+> Single source of truth for the visual + interaction language of **jrla1219.web.app**.
 > Stack: Vue 3 · Vite · Tailwind CSS v4 · Swiper · Pinia.
 > Owner: John Russel L. Angulo (JRLA).
 
@@ -157,8 +157,11 @@ Never use raw `z-index` values. Always reference these tokens.
 | `About` | Portrait split, bio, meta facts, resume DL |
 | `Contact` | Form + status alerts, Botpoison-protected |
 | `Dialog` | Reusable `variant="modal" \| "sheet"`, drag-to-dismiss on sheet |
-| `WorkDetails` | Async case-study page; preloads images before Suspense resolves |
+| `WorkDetails` | Async case-study page; lazy-loaded chunk, preloads images before Suspense resolves |
 | `Portfolio` / `Resume` | Legacy Swiper carousels (Autoplay) |
+| `CustomCursor` | Pointer-aware custom cursor with hover targets |
+| `LazyImage` | IntersectionObserver-based image loader |
+| `Loader` | Boot + route transition loader |
 | `SkeletonLoader` | Pulse placeholder during Suspense |
 
 ---
@@ -268,9 +271,9 @@ Source: [src/components/PortfolioData.js](src/components/PortfolioData.js)
 
 ## 14. Hosting
 
-- **Firebase Hosting** — production at `https://jrla-portfolio.web.app/`.
+- **Firebase Hosting** — production at `https://jrla1219.web.app/`.
 - Build: `npm run build` → `/dist`.
-- SEO: meta + OpenGraph + Twitter + JSON-LD Person schema in [index.html](index.html).
+- SEO: meta + OpenGraph + Twitter + JSON-LD Person schema in [index.html](index.html). Share thumbnail = `/JRLA-Website.png` (1200×630, declared with `og:image:type` for Discord embed).
 
 ---
 

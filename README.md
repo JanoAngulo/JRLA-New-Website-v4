@@ -5,7 +5,7 @@
 **Front-end developer & UI/UX designer.**
 A horizontal slide portfolio built for speed, type, and texture.
 
-[Live →](https://jrla-portfolio.web.app/) &nbsp;·&nbsp; [Design system](./DESIGN.md) &nbsp;·&nbsp; [Contact](mailto:Angulo.johnrussel.l.7814@gmail.com)
+[Live →](https://jrla1219.web.app/) &nbsp;·&nbsp; [Design system](./DESIGN.md) &nbsp;·&nbsp; [Contact](mailto:Angulo.johnrussel.l.7814@gmail.com)
 
 ![Vue](https://img.shields.io/badge/Vue-3-42b883?style=flat-square&labelColor=18181b)
 ![Vite](https://img.shields.io/badge/Vite-8-646cff?style=flat-square&labelColor=18181b)
@@ -73,10 +73,15 @@ src/
 │   ├── Home.vue         ─ hero + typed tagline
 │   ├── Features.vue     ─ expertise feed (theme-aware SVG)
 │   ├── Works.vue        ─ filterable grid + sheet/modal
+│   ├── Portfolio.vue    ─ work grid item
 │   ├── About.vue        ─ bio + meta + resume DL
+│   ├── Resume.vue       ─ resume layout
 │   ├── Contact.vue      ─ Botpoison-protected form
 │   ├── Dialog.vue       ─ reusable modal | sheet
-│   ├── WorkDetails.vue  ─ async UI/UX case study (/content/:id)
+│   ├── WorkDetails.vue  ─ async UI/UX case study (/content/:id), lazy-loaded
+│   ├── CustomCursor.vue ─ pointer-aware custom cursor
+│   ├── LazyImage.vue    ─ intersection-observer image loader
+│   ├── Loader.vue       ─ boot/route loader
 │   ├── SkeletonLoader.vue
 │   └── PortfolioData.js ─ all work entries (uiux · web · video · vector)
 ├── store/index.js       ─ useThemeStore (system | light | dark)
@@ -134,7 +139,7 @@ Config: [`firebase.json`](firebase.json). Production URL: `https://jrla-portfoli
 2. Swap fonts and tokens in `main.css` (`@theme` block).
 3. Rewrite copy in `Home.vue`, `About.vue`, `Contact.vue`.
 4. Replace favicons in `/public/` (use [realfavicongenerator.net](https://realfavicongenerator.net)).
-5. Update meta + JSON-LD in `index.html`.
+5. Update meta + JSON-LD in `index.html` (incl. `og:image` / `twitter:image` → `/JRLA-Website.png`).
 
 ---
 
