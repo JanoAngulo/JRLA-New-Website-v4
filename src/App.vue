@@ -4,11 +4,11 @@
     <CustomCursor v-if="!showLoader" />
 
     <template v-if="!showLoader">
-      <div v-if="$route.name !== 'WorkDetails'">
+      <div v-if="$route.name === 'Works'">
         <web-view></web-view>
       </div>
 
-      <router-view v-if="$route.name === 'WorkDetails'"></router-view>
+      <router-view v-else></router-view>
     </template>
   </div>
 </template>

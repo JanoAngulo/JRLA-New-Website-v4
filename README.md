@@ -78,14 +78,17 @@ src/
 │   ├── Resume.vue       ─ resume layout
 │   ├── Contact.vue      ─ Botpoison-protected form
 │   ├── Dialog.vue       ─ reusable modal | sheet
-│   ├── WorkDetails.vue  ─ async UI/UX case study (/content/:id), lazy-loaded
+│   ├── WorkDetails.vue  ─ async UI/UX case study, modal-mounted inside Works
+│   ├── NotFound.vue     ─ 404 route, noindex, theme-aware editorial layout
 │   ├── CustomCursor.vue ─ pointer-aware custom cursor
 │   ├── LazyImage.vue    ─ intersection-observer image loader
 │   ├── Loader.vue       ─ boot/route loader
 │   ├── SkeletonLoader.vue
 │   └── PortfolioData.js ─ all work entries (uiux · web · video · vector)
 ├── store/index.js       ─ useThemeStore (system | light | dark)
-└── router/index.js      ─ /  ·  /content/:id
+└── router/index.js      ─ /  ·  /content/:id → redirect /  ·  catch-all → NotFound
+                          ·  hash deep-links: /#home · /#features · /#works · /#about · /#contact
+                          ·  unknown hash on / → guard redirects to /404
 ```
 
 ---

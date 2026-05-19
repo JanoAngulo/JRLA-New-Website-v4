@@ -101,9 +101,12 @@
         const swiper = document.querySelector('.app-slider').swiper
         swiper.slideTo(2)
       },
-      initialSlide() {
-        const swiper = document.querySelector('.app-slider').swiper
-        swiper.slideTo(0)
+      hashToIndex(hash) {
+        const map = { '#home': 0, '#features': 1, '#works': 2, '#about': 3, '#contact': 4 }
+        return map[hash] ?? 0
+      },
+      indexToHash(idx) {
+        return ['#home', '#features', '#works', '#about', '#contact'][idx] || '#home'
       },
       slidePrev() {
         const swiperEl = document.querySelector('.app-slider').swiper
@@ -115,6 +118,7 @@
       },
       initializeSwiper() {
         const swiperEl = document.querySelector('.app-slider')
+        const initialIdx = this.hashToIndex(this.$route?.hash)
         const swiperParams = {
           modules: [Keyboard],
           breakpoints: {
@@ -127,6 +131,7 @@
           },
           slidesPerView: 1,
           speed: 1000,
+          initialSlide: initialIdx,
           simulateTouch: false,
           preventClicks: false,
           preventClicksPropagation: false,
@@ -139,7 +144,8 @@
         }
         Object.assign(swiperEl, swiperParams)
         swiperEl.initialize()
-        this.initialSlide()
+        this.activeIndex = initialIdx
+        this.slideInView = this.indexToHash(initialIdx).slice(1)
       },
       slideAnimation() {
         const swiperEl = document.querySelector('.app-slider').swiper
@@ -154,6 +160,10 @@
           this.activeIndex = swiper.activeIndex
           this.swiperEnd = swiper.isEnd
           this.swiperBeginning = swiper.isBeginning
+          const nextHash = this.indexToHash(swiper.activeIndex)
+          if (this.$route?.hash !== nextHash) {
+            this.$router.replace({ path: '/', hash: nextHash }).catch(() => {})
+          }
         })
       },
       logMessage() {

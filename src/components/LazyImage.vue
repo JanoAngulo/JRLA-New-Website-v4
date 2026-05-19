@@ -5,6 +5,8 @@
       v-bind="$attrs"
       :src="src"
       :alt="alt"
+      :width="width || undefined"
+      :height="height || undefined"
       :loading="eager ? 'eager' : 'lazy'"
       :fetchpriority="eager ? 'high' : 'auto'"
       decoding="async"
@@ -23,7 +25,9 @@
       src: { type: String, required: true },
       alt: { type: String, default: '' },
       eager: { type: Boolean, default: false },
-      aspect: { type: String, default: '' }
+      aspect: { type: String, default: '' },
+      width: { type: [Number, String], default: 0 },
+      height: { type: [Number, String], default: 0 }
     },
     data() {
       return { loaded: false }
