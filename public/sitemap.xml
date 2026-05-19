@@ -3,11 +3,13 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://jrla1219.web.app/</loc>
+    <lastmod>2026-05-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://jrla1219.web.app/JRLA-Website.png</image:loc>
       <image:title>JRLA Portfolio — John Russel Angulo</image:title>
+      <image:caption>Portfolio of John Russel Angulo, front-end developer and UI/UX designer.</image:caption>
     </image:image>
   </url>
 </urlset>

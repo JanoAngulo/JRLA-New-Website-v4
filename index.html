@@ -41,10 +41,16 @@
     <link rel="preconnect" href="https://www.google.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.google.com" />
 
-    <link href="/fonts/fontawesome/css/fontawesome.min.css" rel="stylesheet" />
-    <link href="/fonts/fontawesome/css/brands.min.css" rel="stylesheet" />
-    <link href="/fonts/fontawesome/css/solid.min.css" rel="stylesheet" />
-    <link href="/fonts/fontawesome/css/regular.min.css" rel="stylesheet" />
+    <link rel="preload" as="style" href="/fonts/fontawesome/css/fontawesome.min.css" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="preload" as="style" href="/fonts/fontawesome/css/brands.min.css" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="preload" as="style" href="/fonts/fontawesome/css/solid.min.css" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="preload" as="style" href="/fonts/fontawesome/css/regular.min.css" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+      <link href="/fonts/fontawesome/css/fontawesome.min.css" rel="stylesheet" />
+      <link href="/fonts/fontawesome/css/brands.min.css" rel="stylesheet" />
+      <link href="/fonts/fontawesome/css/solid.min.css" rel="stylesheet" />
+      <link href="/fonts/fontawesome/css/regular.min.css" rel="stylesheet" />
+    </noscript>
 
     <link href="./src/assets/main.css" rel="stylesheet" />
 
@@ -70,6 +76,19 @@
         "url": "https://jrla1219.web.app/",
         "image": "https://jrla1219.web.app/JRLA-Website.png",
         "jobTitle": "Front-End Developer & UI/UX Designer",
+        "description": "Front-end developer and UI/UX designer based in Bulacan, Philippines, building fast, polished websites, mobile interfaces, and motion-driven brand experiences.",
+        "knowsAbout": [
+          "Front-End Development",
+          "UI/UX Design",
+          "Vue.js",
+          "React",
+          "Next.js",
+          "TailwindCSS",
+          "Figma",
+          "Adobe XD",
+          "Motion Design",
+          "Brand Design"
+        ],
         "address": {
           "@type": "PostalAddress",
           "addressRegion": "Bulacan",
@@ -88,7 +107,84 @@
         "@type": "WebSite",
         "name": "JRLA Portfolio",
         "url": "https://jrla1219.web.app/",
-        "inLanguage": "en"
+        "inLanguage": "en",
+        "author": { "@type": "Person", "name": "John Russel L. Angulo" }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Selected Works — JRLA Portfolio",
+        "itemListOrder": "https://schema.org/ItemListOrderDescending",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "CreativeWork",
+              "name": "Marlboro",
+              "url": "https://marlboro.ph",
+              "creator": { "@type": "Person", "name": "John Russel L. Angulo" },
+              "about": "Website design and development"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "CreativeWork",
+              "name": "Vibeteams AI",
+              "url": "https://vibeteams.ai/",
+              "creator": { "@type": "Person", "name": "John Russel L. Angulo" },
+              "about": "Website design and brand guidelines"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "CreativeWork",
+              "name": "CoreProc, Inc. Brand",
+              "url": "https://coreproc.com",
+              "creator": { "@type": "Person", "name": "John Russel L. Angulo" },
+              "about": "Brand guidelines and identity system"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "CreativeWork",
+              "name": "Discord Theme Maker",
+              "url": "https://p4i0bit7.echoui.app/discord-theme-maker.html",
+              "creator": { "@type": "Person", "name": "John Russel L. Angulo" },
+              "about": "Design and development of a Discord theme builder"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "CreativeWork",
+              "name": "Boo Cyber Security",
+              "url": "https://boo-cybersecurity.vercel.app/",
+              "creator": { "@type": "Person", "name": "John Russel L. Angulo" },
+              "about": "Website design and front-end build with React and TailwindCSS"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "item": {
+              "@type": "CreativeWork",
+              "name": "Lydia's Lechon",
+              "url": "https://jrla1219.web.app/",
+              "creator": { "@type": "Person", "name": "John Russel L. Angulo" },
+              "about": "Proposed website design and Figma style guide"
+            }
+          }
+        ]
       }
     </script>
   </head>

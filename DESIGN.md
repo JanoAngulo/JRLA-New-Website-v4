@@ -149,7 +149,7 @@ Never use raw `z-index` values. Always reference these tokens.
 
 | Component | Role |
 |---|---|
-| `WebView` | Swiper container, slide orchestration, keyboard nav, console banner |
+| `WebView` | Swiper container, slide orchestration, keyboard nav, console banner. Reads `$route.hash` on mount to pick the initial slide; writes hash back via `$router.replace` on every slide change so the URL stays sharable. |
 | `Navbar` | Fixed nav, theme cycler (system → light → dark) |
 | `Home` | Hero — animated typed tagline, social pills |
 | `Features` | Expertise feed — theme-aware SVG tool logos |
@@ -157,10 +157,11 @@ Never use raw `z-index` values. Always reference these tokens.
 | `About` | Portrait split, bio, meta facts, resume DL |
 | `Contact` | Form + status alerts, Botpoison-protected |
 | `Dialog` | Reusable `variant="modal" \| "sheet"`, drag-to-dismiss on sheet |
-| `WorkDetails` | Async case-study page; lazy-loaded chunk, preloads images before Suspense resolves |
+| `WorkDetails` | Async case-study view; modal-mounted inside `Works`, preloads images before Suspense resolves |
+| `NotFound` | 404 view for catch-all route. Editorial layout — giant numeric in primary accent, mono meta strips, primary + ghost CTAs. Marked `noindex, follow` via `meta.robots`. |
 | `Portfolio` / `Resume` | Legacy Swiper carousels (Autoplay) |
 | `CustomCursor` | Pointer-aware custom cursor with hover targets |
-| `LazyImage` | IntersectionObserver-based image loader |
+| `LazyImage` | IntersectionObserver-based image loader. Skeleton shimmer until decoded; accepts `width`/`height` for intrinsic sizing (CLS). |
 | `Loader` | Boot + route transition loader |
 | `SkeletonLoader` | Pulse placeholder during Suspense |
 
@@ -258,6 +259,24 @@ Source: [src/components/PortfolioData.js](src/components/PortfolioData.js)
 
 ---
 
+## 12.5 Routing & deep links
+
+Routes live in [src/router/index.js](src/router/index.js):
+
+| Path | Behavior |
+|---|---|
+| `/` | Main slider experience (`WebView`). Honors `$route.hash` on entry to pick the initial Swiper slide. |
+| `/content/:id` | Legacy detail URL — redirected to `/`. Project detail is a modal inside `Works`, not a standalone page. |
+| `/404` or anything else | Catch-all → `NotFound`. `robots: noindex, follow`. |
+
+**Valid slide hashes** — `#home` · `#features` · `#works` · `#about` · `#contact`. These are sharable/bookmarkable. Source-of-truth list is exported as `VALID_SLIDE_HASHES` from the router.
+
+**Invalid hash on `/`** — a `beforeEnter` guard on the `/` route checks the hash. Anything outside `VALID_SLIDE_HASHES` is redirected to `/404` before `WebView` mounts (mounting WebView and *then* redirecting would briefly flash the navbar — guarded at the router instead).
+
+**Hash sync** — `WebView` listens to Swiper's `slideChange` event and calls `$router.replace({ hash })` so the URL always reflects the visible slide. Uses `replace` (not `push`) to keep the browser history clean during swipes.
+
+---
+
 ## 13. Conventions
 
 - Tailwind utility-first; custom utilities go in `@layer utilities` in main.css.
@@ -273,7 +292,9 @@ Source: [src/components/PortfolioData.js](src/components/PortfolioData.js)
 
 - **Firebase Hosting** — production at `https://jrla1219.web.app/`.
 - Build: `npm run build` → `/dist`.
-- SEO: meta + OpenGraph + Twitter + JSON-LD Person schema in [index.html](index.html). Share thumbnail = `/JRLA-Website.png` (1200×630, declared with `og:image:type` for Discord embed).
+- SEO: meta + OpenGraph + Twitter + JSON-LD (`Person` · `WebSite` · `ItemList`) in [index.html](index.html). Share thumbnail = `/JRLA-Website.png` (1200×630, declared with `og:image:type` for Discord embed). Per-route `title` / `description` / `robots` set in [router/index.js](src/router/index.js) `afterEach`. Sitemap: [public/sitemap.xml](public/sitemap.xml). Robots: [public/robots.txt](public/robots.txt).
+- Security headers in [firebase.json](firebase.json): HSTS preload, `X-Content-Type-Options`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (camera/mic/geo denied), `X-Frame-Options: SAMEORIGIN`, and a CSP that allows Formspark + Botpoison endpoints and `https:` iframes for project previews.
+- Font Awesome stylesheets are loaded via `rel=preload` + `onload` swap (with `<noscript>` fallback) to avoid render-blocking.
 
 ---
 
