@@ -9,7 +9,7 @@
               <i class="fa-solid fa-arrow-left"></i>
               <span>Back to Works</span>
             </button>
-            <p class="text-3xl font-bold uppercase">{{ work.title }}</p>
+            <h1 class="text-3xl font-bold uppercase">{{ work.title }}</h1>
             <div class="font-Mono text-sm tracking-wide">
               <div class="flex justify-between border-b border-white/15 py-1.5">
                 <p class="uppercase opacity-70">Role</p>
