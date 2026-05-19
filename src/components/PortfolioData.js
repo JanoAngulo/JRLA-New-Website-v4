@@ -21,12 +21,12 @@ import landscape from '@/assets/img/portfolio/LandscapePink.webp'
 import dahyun from '@/assets/img/portfolio/Dahyun.webp'
 import desertNightTime from '@/assets/img/portfolio/Desert-Night-Time.webp'
 
-// For Downloads
-import dlUnderwater from '@/assets/img/portfolio/downloads/underwater.png'
-import dlLucifer from '@/assets/img/portfolio/downloads/Lucifer.png'
-import dlLandscape from '@/assets/img/portfolio/downloads/Landscape.png'
-import dlDahyun from '@/assets/img/portfolio/downloads/Dahyun.png'
-import dlDesertNightTime from '@/assets/img/portfolio/downloads/Desert-Night-Time.png'
+// For Downloads (served from /public/downloads/ to skip Vite asset processing)
+const dlUnderwater = '/downloads/Underwater.png'
+const dlLucifer = '/downloads/Lucifer.png'
+const dlLandscape = '/downloads/Landscape.png'
+const dlDahyun = '/downloads/Dahyun.png'
+const dlDesertNightTime = '/downloads/Desert-Night-Time.png'
 
 // WORKS CONTENT
 

@@ -23,7 +23,7 @@
         style="z-index: var(--z-modal);"
         @keydown="onKeydown">
         <div class="flex items-center mx-auto">
-          <div class="relative p-7 dark:bg-dark-card bg-white shadow max-w-4xl rounded-xl">
+          <div class="relative p-7 dark:bg-dark-card bg-white shadow max-w-4xl">
             <button
               type="button"
               aria-label="Close dialog"

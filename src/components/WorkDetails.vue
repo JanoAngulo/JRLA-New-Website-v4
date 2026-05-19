@@ -5,7 +5,10 @@
         <div :class="work.color" class="xl:w-[30vw] lg:w-[50vw] w-full h-full text-light sm:p-10 p-4 relative">
           <img v-if="work.imgBackground" class="absolute top-0 left-0 object-cover w-full h-full opacity-50 pointer-events-none mix-blend-soft-light" :src="work.imgBackground" loading="lazy" alt="" aria-hidden="true" role="presentation" />
           <div class="relative space-y-8">
-            <button type="button" @click="$emit('close')" class="underline cursor-pointer w-fit bg-transparent border-0 p-0" style="color: inherit; font: inherit;">Go back</button>
+            <button type="button" @click="$emit('close')" class="back-link" aria-label="Back to works">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>Back to Works</span>
+            </button>
             <p class="text-3xl font-bold uppercase">{{ work.title }}</p>
             <div class="font-Mono text-sm tracking-wide">
               <div class="flex justify-between border-b border-white/15 py-1.5">
@@ -36,9 +39,10 @@
             <button
               v-if="work.link"
               type="button"
-              class="w-full py-2 text-center text-dark capitalize rounded-md shadow-xs dark:bg-dark-primary hover:dark:bg-light-primary bg-light-primary hover:bg-dark-primary font-Gilroy opacity-100 hover:-translate-y-0.5 duration-300 hover:saturate-150 transition-all cursor-pointer"
+              class="sheet-btn-primary w-full"
               @click="openLink(work.link)">
-              {{ work.btnText }}
+              <span>{{ work.btnText }}</span>
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
             </button>
           </div>
         </div>
@@ -91,3 +95,99 @@
     }
   }
 </script>
+
+<style scoped>
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font-family: var(--font-Mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    cursor: pointer;
+    transition: opacity 0.25s ease, gap 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .back-link::before {
+    content: '';
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.5;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  }
+
+  .back-link:hover {
+    opacity: 1;
+    gap: 0.85rem;
+  }
+
+  .back-link:hover::before {
+    width: 2.25rem;
+    opacity: 1;
+  }
+
+  .back-link i {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .back-link:hover i {
+    transform: translateX(-3px);
+  }
+
+  .back-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  .sheet-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.5rem;
+    font-family: var(--font-Mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: var(--color-light-primary);
+    color: var(--color-dark);
+    border: 1px solid var(--color-light-primary);
+    border-radius: 0.375rem;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+
+  :is(.dark) .sheet-btn-primary {
+    background: var(--color-dark-primary);
+    border-color: var(--color-dark-primary);
+  }
+
+  .sheet-btn-primary:hover {
+    background: var(--color-dark);
+    color: var(--color-light-primary);
+    border-color: var(--color-dark);
+  }
+
+  :is(.dark) .sheet-btn-primary:hover {
+    background: var(--color-dark-card);
+    color: var(--color-dark-primary);
+    border-color: var(--color-dark-card);
+  }
+
+  .sheet-btn-primary :deep(i) {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sheet-btn-primary:hover :deep(i.fa-arrow-up-right-from-square) {
+    transform: translate(2px, -2px);
+  }
+</style>

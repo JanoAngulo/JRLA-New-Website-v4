@@ -162,7 +162,7 @@
           </iframe>
 
           <div v-else-if="content.type === 'vector'" class="modal-vector">
-            <LazyImage :src="content.link" :alt="content.title" eager />
+            <img :src="content.link" :alt="content.title" loading="eager" fetchpriority="high" decoding="async" />
             <button type="button" class="modal-vector-dl" @click="downloadImage(content.link)" aria-label="Download artwork">
               <i class="fa-solid fa-arrow-down"></i>
               <span>Download</span>
