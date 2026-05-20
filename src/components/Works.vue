@@ -3,8 +3,7 @@
     <div
       v-if="activeSlide === 'works'"
       ref="worksSection"
-      class="relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark"
-      :style="{ height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px` }">
+      class="relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide">
       <!-- Sticky top header -->
       <div class="works-header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current-faint works-header-meta">

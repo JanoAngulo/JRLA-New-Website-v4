@@ -1,10 +1,7 @@
 <template>
   <div
-    class="fixed items-center hidden w-full pointer-events-none lg:grid top-14 start-0"
-    :style="{
-      height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px`,
-      zIndex: 'var(--z-nav)'
-    }">
+    class="fixed items-center hidden w-full pointer-events-none lg:grid top-14 start-0 app-slide"
+    :style="{ zIndex: 'var(--z-nav)' }">
     <div class="flex justify-between w-full px-2 xl:px-3">
       <button
         type="button"

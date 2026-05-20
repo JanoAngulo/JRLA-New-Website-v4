@@ -178,6 +178,16 @@
   }
 }
 
+/* App slide height — navbar is h-14 (3.5rem). dvh adapts to mobile browser chrome. */
+.app-slide {
+  height: calc(100dvh - 3.5rem);
+}
+@supports not (height: 100dvh) {
+  .app-slide {
+    height: calc(100vh - 3.5rem);
+  }
+}
+
 /* Text selection — theme aware */
 ::selection {
   background: #000;

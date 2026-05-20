@@ -3,8 +3,7 @@
     <div
       v-if="activeSlide === 'about'"
       ref="aboutSection"
-      class="relative w-full overflow-x-hidden md:overflow-hidden overflow-y-auto"
-      :style="{ height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px` }">
+      class="relative w-full overflow-x-hidden md:overflow-hidden overflow-y-auto app-slide">
       <div class="about-grid h-full w-full">
         <!-- LEFT: portrait on accent block -->
         <section class="about-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden">

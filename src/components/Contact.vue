@@ -3,8 +3,7 @@
     <div
       v-if="activeSlide === 'contact'"
       ref="contactSection"
-      class="relative w-full md:overflow-hidden overflow-y-auto"
-      :style="{ height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px` }">
+      class="relative w-full md:overflow-hidden overflow-y-auto app-slide">
       <div class="contact-grid h-full w-full">
         <!-- LEFT: accent block w/ pull-quote + contact card -->
         <section class="contact-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden">
@@ -66,6 +65,9 @@
 
         <!-- RIGHT: form -->
         <section class="contact-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto">
+          <!-- Subtle dot-grid backdrop -->
+          <div class="dot-grid" aria-hidden="true"></div>
+
           <div class="relative flex flex-col p-6 md:p-10 lg:p-14 gap-6 md:h-full">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">
               <span>Drop a Line</span>
@@ -84,11 +86,13 @@
               <div class="grid gap-5 md:grid-cols-2">
                 <div class="field">
                   <label for="Name" class="field-label">01 — Name</label>
-                  <input type="text" id="Name" name="Name" v-model="name" class="field-input" placeholder="Your name" autocomplete="name" aria-required="true" required />
+                  <input type="text" id="Name" name="Name" v-model="name" @input="errors.name = ''" class="field-input" :class="{ 'is-invalid': errors.name }" placeholder="Your name" autocomplete="name" aria-required="true" :aria-invalid="!!errors.name" :aria-describedby="errors.name ? 'Name-error' : undefined" required />
+                  <span v-if="errors.name" id="Name-error" class="field-error">{{ errors.name }}</span>
                 </div>
                 <div class="field">
                   <label for="Email" class="field-label">02 — Email</label>
-                  <input type="email" id="Email" name="Email" v-model="email" class="field-input" placeholder="hello@yourname.com" autocomplete="email" aria-required="true" required />
+                  <input type="email" id="Email" name="Email" v-model="email" @input="errors.email = ''" class="field-input" :class="{ 'is-invalid': errors.email }" placeholder="hello@yourname.com" autocomplete="email" aria-required="true" :aria-invalid="!!errors.email" :aria-describedby="errors.email ? 'Email-error' : undefined" required />
+                  <span v-if="errors.email" id="Email-error" class="field-error">{{ errors.email }}</span>
                 </div>
               </div>
 
@@ -97,7 +101,8 @@
                   <label for="Message" class="field-label">03 — Message</label>
                   <span class="char-count" :class="{ 'is-warn': message.length > 800 }">{{ message.length }} / 1000</span>
                 </div>
-                <textarea id="Message" name="Message" v-model="message" class="field-input field-textarea" rows="7" maxlength="1000" placeholder="Project brief, idea, or just say hi…" aria-required="true" required></textarea>
+                <textarea id="Message" name="Message" v-model="message" @input="errors.message = ''" class="field-input field-textarea" :class="{ 'is-invalid': errors.message }" rows="7" maxlength="1000" placeholder="Project brief, idea, or just say hi…" aria-required="true" :aria-invalid="!!errors.message" :aria-describedby="errors.message ? 'Message-error' : undefined" required></textarea>
+                <span v-if="errors.message" id="Message-error" class="field-error">{{ errors.message }}</span>
               </div>
 
               <!-- Status messages -->
@@ -172,17 +177,37 @@
         email: '',
         message: '',
         isSuccess: false,
-        isError: false
+        isError: false,
+        errors: { name: '', email: '', message: '' }
       }
     },
     created() {
       this.botpoison = new Botpoison({ publicKey: BOTPOISON_KEY })
     },
     methods: {
+      validate() {
+        const errors = { name: '', email: '', message: '' }
+        const name = this.name.trim()
+        const email = this.email.trim()
+        const message = this.message.trim()
+
+        if (!name) errors.name = 'Name is required.'
+        else if (name.length < 2) errors.name = 'Name is too short.'
+
+        if (!email) errors.email = 'Email is required.'
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = 'Enter a valid email.'
+
+        if (!message) errors.message = 'Message is required.'
+        else if (message.length < 10) errors.message = 'Message is too short (min 10 chars).'
+
+        this.errors = errors
+        return !errors.name && !errors.email && !errors.message
+      },
       async onSubmit() {
-        this.loading = true
         this.isSuccess = false
         this.isError = false
+        if (!this.validate()) return
+        this.loading = true
         try {
           const { solution } = await this.botpoison.challenge()
           const response = await fetch(FORMSPARK_ACTION_URL, {
@@ -195,6 +220,7 @@
             this.name = ''
             this.email = ''
             this.message = ''
+            this.errors = { name: '', email: '', message: '' }
           } else {
             this.isError = true
           }
@@ -224,9 +250,21 @@
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
   }
+  @media (max-width: 767px) {
+    .contact-grid {
+      height: auto !important;
+      min-height: 100%;
+    }
+  }
 
   .contact-left {
-    min-height: 100dvh;
+    min-height: 0;
+    height: auto;
+  }
+  @media (max-width: 767px) {
+    .contact-left {
+      overflow: visible !important;
+    }
   }
 
   @media (min-width: 768px) {
@@ -245,6 +283,18 @@
   }
   .contact-right {
     animation: slide-in-r 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+  }
+
+  /* Dot-grid backdrop on right panel — mirrors About */
+  .dot-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(currentColor 1px, transparent 1px);
+    background-size: 22px 22px;
+    opacity: 0.05;
+    mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
   }
 
   @keyframes slide-in-l {
@@ -520,8 +570,19 @@
     border-bottom-color: var(--color-dark-primary);
   }
 
-  .field-input:invalid:not(:placeholder-shown) {
+  .field-input:invalid:not(:placeholder-shown),
+  .field-input.is-invalid {
     border-bottom-color: rgb(225, 80, 80);
+  }
+
+  .field-error {
+    display: block;
+    margin-top: 0.4rem;
+    font-family: var(--font-Mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgb(225, 80, 80);
   }
 
   textarea.field-input {

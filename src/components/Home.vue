@@ -2,10 +2,7 @@
   <Transition name="fade">
     <div
       v-if="activeSlide === 'home'"
-      class="relative w-full overflow-hidden"
-      :style="{
-        height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px`
-      }">
+      class="relative w-full app-slide home-slide">
       <div class="w-full h-full hero-grid">
         <!-- LEFT: accent block -->
         <section class="relative overflow-hidden text-dark hero-left dark:bg-dark-primary bg-light-primary">
@@ -52,11 +49,6 @@
             </div>
 
             <div class="max-w-md about-block">
-              <div class="about-eyebrow fade-up" style="--d:0.4s">
-                <span class="about-dash"></span>
-                <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65">About</p>
-              </div>
-
               <h2 class="about-statement font-Gilroy-extra-bold uppercase leading-[0.92]">
                 <span class="as-line"><span class="as-inner" style="--d:0.5s">Half designer.</span></span>
                 <span class="as-line"><span class="as-inner" style="--d:0.65s">Half developer.</span></span>
@@ -90,9 +82,11 @@
                   </a>
                 </div>
               </div>
-              <div class="flex-col items-end hidden text-right md:flex">
+              <div class="flex flex-col items-end text-right">
                 <p class="text-xs tracking-[0.3em] uppercase opacity-60 font-Gilroy">Navigate →</p>
-                <p class="mt-1 text-xs opacity-50 font-Gilroy">use arrows to explore</p>
+                <p class="hidden mt-1 text-xs opacity-50 font-Gilroy lg:block">arrows or ← → keys</p>
+                <p class="hidden mt-1 text-xs opacity-50 font-Gilroy md:block lg:hidden">← → keys to navigate</p>
+                <p class="mt-1 text-xs opacity-50 font-Gilroy md:hidden">swipe ← or →</p>
               </div>
             </div>
           </div>
@@ -170,6 +164,19 @@
     opacity: 0;
   }
 
+  /* Mobile: hero scrolls internally if content overflows. Desktop: locked. */
+  @media (max-width: 767px) {
+    .home-slide {
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  }
+  @media (min-width: 768px) {
+    .home-slide {
+      overflow: hidden;
+    }
+  }
+
   /* Split layout: 45/55 on desktop, stacked on mobile */
   .hero-grid {
     display: grid;
@@ -185,20 +192,30 @@
   }
 
   @media (max-width: 767px) {
-    .hero-name {
-      font-size: clamp(2.75rem, 12vw, 4.5rem);
+    .home-slide .hero-name {
+      font-size: clamp(3.25rem, 18vw, 5.5rem);
     }
     .hero-grid {
       grid-template-rows: auto 1fr;
+      min-height: 100%;
+    }
+    .home-slide .hero-left,
+    .home-slide .hero-right {
+      overflow: visible;
     }
     .hero-left > div,
     .hero-right > div {
       padding: 1.5rem !important;
       gap: 1rem;
+      min-height: 100%;
+    }
+    .hero-left > div {
+      padding-block: 3rem !important;
+      gap: 2rem;
     }
     .hero-right > div {
-      justify-content: flex-start !important;
-      gap: 1.25rem;
+      justify-content: space-between !important;
+      gap: 2.5rem;
     }
     .about-statement {
       font-size: clamp(1.35rem, 6vw, 1.85rem);

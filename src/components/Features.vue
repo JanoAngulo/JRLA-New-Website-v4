@@ -3,12 +3,10 @@
     <div
       v-if="activeSlide === 'features'"
       ref="featuresSection"
-      class="relative w-full overflow-hidden"
-      :style="{ height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px` }">
+      class="relative w-full overflow-hidden app-slide">
       <!-- Scroll-feed -->
       <div
-        class="features-scroll relative w-full overflow-y-auto pb-6 dark:text-light text-dark"
-        :style="{ height: windowWidth >= 768 ? `${desktopHeight}px` : `${mobileHeight}px` }">
+        class="features-scroll relative w-full overflow-y-auto pb-6 dark:text-light text-dark h-full">
         <header class="features-header">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current-faint">
             <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">02 — Practice</p>
@@ -352,6 +350,9 @@
     position: relative;
     display: flex;
     flex-direction: column;
+  }
+  @media (max-width: 767px) {
+    .ex-visual { display: none; }
   }
 
   .ex-art {
