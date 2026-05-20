@@ -73,9 +73,7 @@ src/
 │   ├── Home.vue         ─ hero + typed tagline
 │   ├── Features.vue     ─ expertise feed (theme-aware SVG)
 │   ├── Works.vue        ─ filterable grid + sheet/modal
-│   ├── Portfolio.vue    ─ work grid item
 │   ├── About.vue        ─ bio + meta + resume DL
-│   ├── Resume.vue       ─ resume layout
 │   ├── Contact.vue      ─ Botpoison-protected form
 │   ├── Dialog.vue       ─ reusable modal | sheet
 │   ├── WorkDetails.vue  ─ async UI/UX case study, modal-mounted inside Works

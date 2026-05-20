@@ -161,7 +161,7 @@
 </template>
 
 <script>
-  import Resume from '@/assets/img/John_Russel_Angulo_CV_updated.pdf'
+  const Resume = '/downloads/Angulo-John-Russel-CV.pdf'
   import portraitDark from '@/assets/img/pictures/converted/dark-paper-effect.webp'
   import portraitLight from '@/assets/img/pictures/converted/light-paper-effect.webp'
   import { useThemeStore } from '../store'
@@ -222,7 +222,7 @@
       downloadResume() {
         const link = document.createElement('a')
         link.href = this.Resume
-        link.download = 'John_Russel_Angulo_CV.pdf'
+        link.download = 'Angulo-John-Russel-CV.pdf'
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
