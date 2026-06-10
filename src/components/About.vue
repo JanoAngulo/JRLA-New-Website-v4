@@ -4,7 +4,7 @@
       v-if="activeSlide === 'about'"
       ref="aboutSection"
       class="relative w-full overflow-x-hidden md:overflow-hidden overflow-y-auto app-slide">
-      <div class="about-grid h-full w-full">
+      <div class="grid grid-cols-1 grid-rows-[420px_auto] min-h-full w-full md:grid-cols-[40fr_60fr] md:grid-rows-1 md:h-full">
         <!-- LEFT: portrait on accent block -->
         <section class="about-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden">
           <!-- Corner meta labels -->
@@ -17,15 +17,15 @@
           </div>
 
           <!-- Portrait — framed by accent block -->
-          <div class="portrait-frame group">
-            <span class="frame-corner frame-tl"></span>
-            <span class="frame-corner frame-tr"></span>
-            <span class="frame-corner frame-bl"></span>
-            <span class="frame-corner frame-br"></span>
+          <div class="group absolute inset-x-4 inset-y-12 md:inset-x-8 md:inset-y-18 lg:inset-x-10 lg:inset-y-20 overflow-hidden z-2">
+            <span class="absolute z-3 pointer-events-none w-5 h-5 md:w-7 md:h-7 top-1.5 left-1.5 md:top-2.5 md:left-2.5 border-t-2 border-l-2 border-current"></span>
+            <span class="absolute z-3 pointer-events-none w-5 h-5 md:w-7 md:h-7 top-1.5 right-1.5 md:top-2.5 md:right-2.5 border-t-2 border-r-2 border-current"></span>
+            <span class="absolute z-3 pointer-events-none w-5 h-5 md:w-7 md:h-7 bottom-1.5 left-1.5 md:bottom-2.5 md:left-2.5 border-b-2 border-l-2 border-current"></span>
+            <span class="absolute z-3 pointer-events-none w-5 h-5 md:w-7 md:h-7 bottom-1.5 right-1.5 md:bottom-2.5 md:right-2.5 border-b-2 border-r-2 border-current"></span>
             <LazyImage
               :src="portraitSrc"
               alt="Portrait of John Russel Angulo, photographed in Bulacan"
-              class="portrait-img"
+              class="w-full h-full object-cover object-top transition-transform duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] select-none pointer-events-none [-webkit-user-drag:none] group-hover:scale-[1.04]"
               draggable="false"
               @dragstart.prevent />
           </div>
@@ -40,9 +40,9 @@
         <!-- RIGHT: biography -->
         <section class="about-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto">
           <!-- Subtle dot-grid backdrop -->
-          <div class="dot-grid" aria-hidden="true"></div>
+          <div class="dot-grid bg-size-[22px_22px]" aria-hidden="true"></div>
 
-          <div class="relative flex flex-col md:justify-between p-6 md:p-10 lg:p-14 gap-6 md:h-full">
+          <div class="relative flex flex-col md:justify-between p-6 md:p-10 lg:p-14 gap-6 md:h-full min-w-0">
             <!-- Top eyebrow -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">
               <span>04 — Biography</span>
@@ -51,53 +51,53 @@
 
             <!-- Headline + body -->
             <div class="space-y-5">
-              <h2 class="about-heading font-Gilroy-extra-bold uppercase leading-[0.92]">
+              <h2 class="text-[clamp(1.5rem,8vw,2.25rem)] md:text-[clamp(1.75rem,3.6vw,3.25rem)] tracking-[-0.025em] font-Gilroy-extra-bold uppercase leading-[0.92]">
                 <span class="heading-line"><span class="hl-inner">Designing Seamless</span></span>
                 <span class="heading-line"><span class="hl-inner">Journeys, <em class="not-italic dark:text-dark-primary text-light-primary">One</em></span></span>
                 <span class="heading-line"><span class="hl-inner"><em class="not-italic dark:text-dark-primary text-light-primary">Pixel</em> At A Time.</span></span>
               </h2>
               <div class="hairline"></div>
-              <p class="about-body font-Gilroy text-base sm:text-lg leading-relaxed opacity-90 max-w-2xl">
+              <p class="font-Gilroy text-[0.95rem] md:text-lg leading-relaxed opacity-90 max-w-2xl text-pretty">
                 I'm Jano — a UI/UX designer and front-end developer from Bulacan with <span class="dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">3+ years</span> building interfaces that feel <em class="not-italic dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">considered</em>.
               </p>
             </div>
 
             <!-- Stats counter -->
-            <div class="stats-row">
-              <div class="stat-cell">
-                <p class="stat-num">{{ stats.years }}<span class="stat-suffix">+</span></p>
-                <p class="stat-label">Years exp.</p>
+            <div class="grid grid-cols-2 items-start gap-x-5 gap-y-4 max-[380px]:gap-2 border-y border-current/12 py-4 md:flex md:flex-wrap md:items-center md:gap-4 md:border-0">
+              <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]">
+                <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.years }}<span class="text-[0.7em] opacity-70 ml-0.5">+</span></p>
+                <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-[0.55]">Years exp.</p>
               </div>
-              <div class="stat-divider"></div>
-              <div class="stat-cell">
-                <p class="stat-num">{{ stats.technologies }}<span class="stat-suffix">+</span></p>
-                <p class="stat-label">Technologies</p>
+              <div class="hidden md:block w-px h-7 bg-current opacity-[0.18]"></div>
+              <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]">
+                <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.technologies }}<span class="text-[0.7em] opacity-70 ml-0.5">+</span></p>
+                <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-[0.55]">Technologies</p>
               </div>
-              <div class="stat-divider"></div>
-              <div class="stat-cell">
-                <p class="stat-num">{{ stats.tools }}<span class="stat-suffix">+</span></p>
-                <p class="stat-label">Creative Tools</p>
+              <div class="hidden md:block w-px h-7 bg-current opacity-[0.18]"></div>
+              <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]">
+                <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.tools }}<span class="text-[0.7em] opacity-70 ml-0.5">+</span></p>
+                <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-[0.55]">Creative Tools</p>
               </div>
-              <div class="stat-divider"></div>
-              <div class="stat-cell">
-                <p class="stat-num">{{ stats.disciplines }}</p>
-                <p class="stat-label">Disciplines</p>
+              <div class="hidden md:block w-px h-7 bg-current opacity-[0.18]"></div>
+              <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]">
+                <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.disciplines }}</p>
+                <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-[0.55]">Disciplines</p>
               </div>
             </div>
 
             <!-- Meta facts grid -->
-            <div class="meta-grid">
-              <div class="meta-cell">
-                <p class="meta-label">Based in</p>
-                <p class="meta-value">Bulacan · PH</p>
+            <div class="grid grid-cols-2 max-[380px]:grid-cols-1 gap-x-5 gap-y-[0.9rem] md:gap-x-8 md:gap-y-5 lg:grid-cols-[repeat(3,max-content)] lg:justify-start lg:gap-x-12 border-y border-current/12 py-4 md:py-5">
+              <div class="flex flex-col gap-[0.35rem]">
+                <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-[0.55]">Based in</p>
+                <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em]">Bulacan · PH</p>
               </div>
-              <div class="meta-cell">
-                <p class="meta-label">Disciplines</p>
-                <p class="meta-value">Web · UI/UX · Motion</p>
+              <div class="flex flex-col gap-[0.35rem]">
+                <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-[0.55]">Disciplines</p>
+                <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em]">Web · UI/UX · Motion</p>
               </div>
-              <div class="meta-cell">
-                <p class="meta-label">Available</p>
-                <p class="meta-value flex items-center gap-2"><span class="status-dot"></span> 2026 Onwards</p>
+              <div class="flex flex-col gap-[0.35rem]">
+                <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-[0.55]">Available</p>
+                <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em] flex items-center gap-2"><span class="status-dot"></span> 2026 Onwards</p>
               </div>
             </div>
 
@@ -143,13 +143,17 @@
               </div>
 
               <div class="flex flex-col sm:flex-row gap-3">
-                <button @click="downloadResume" class="btn-primary">
+                <button
+                  @click="downloadResume"
+                  class="btn-primary group relative inline-flex items-center justify-center gap-[0.6rem] overflow-hidden cursor-pointer font-Mono uppercase px-[1.1rem] py-3 md:px-6 md:py-[0.85rem] text-[0.65rem] md:text-[0.7rem] tracking-[0.2em] md:tracking-[0.25em]">
                   <span>Download CV</span>
-                  <i class="fa-solid fa-arrow-down"></i>
+                  <i class="fa-solid fa-arrow-down transition-transform duration-250 ease-in-out group-hover:translate-y-0.5"></i>
                 </button>
-                <button @click="$emit('changeSlide')" class="btn-ghost">
+                <button
+                  @click="$emit('changeSlide')"
+                  class="btn-ghost group relative inline-flex items-center justify-center gap-[0.6rem] overflow-hidden cursor-pointer font-Mono uppercase px-[1.1rem] py-3 md:px-6 md:py-[0.85rem] text-[0.65rem] md:text-[0.7rem] tracking-[0.2em] md:tracking-[0.25em]">
                   <span>View Works</span>
-                  <i class="fa-solid fa-arrow-right"></i>
+                  <i class="fa-solid fa-arrow-right transition-transform duration-250 ease-in-out group-hover:translate-x-[3px]"></i>
                 </button>
               </div>
             </div>
@@ -241,20 +245,6 @@
     opacity: 0;
   }
 
-  /* Split: portrait left 40%, body 60% on desktop */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(360px, 50vh) auto;
-  }
-
-  @media (min-width: 768px) {
-    .about-grid {
-      grid-template-columns: 40fr 60fr;
-      grid-template-rows: 1fr;
-    }
-  }
-
   .about-left {
     animation: slide-in-l 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     min-width: 0;
@@ -266,8 +256,6 @@
     min-width: 0;
     overflow-x: hidden;
   }
-
-  .about-right > div { min-width: 0; }
 
   @keyframes slide-in-l {
     from { transform: translateX(-3%); opacity: 0; }
@@ -287,68 +275,8 @@
     animation: pulse-dot 1.6s ease-in-out infinite;
   }
 
-  /* Portrait framed by accent block */
-  .portrait-frame {
-    position: absolute;
-    inset: 3.5rem 1.25rem;
-    overflow: hidden;
-    z-index: 2;
-  }
 
-  @media (min-width: 768px) {
-    .portrait-frame { inset: 4.5rem 2rem; }
-  }
-  @media (min-width: 1024px) {
-    .portrait-frame { inset: 5rem 2.5rem; }
-  }
-
-  .portrait-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    -webkit-user-drag: none;
-    user-select: none;
-    -webkit-user-select: none;
-    pointer-events: none;
-  }
-
-  .portrait-frame:hover .portrait-img {
-    transform: scale(1.04);
-  }
-
-  /* Portrait corner brackets — matches loader brand */
-  .frame-corner {
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    z-index: 3;
-    pointer-events: none;
-    color: currentColor;
-  }
-  .frame-tl { top: 10px; left: 10px;     border-top: 2px solid currentColor; border-left: 2px solid currentColor; }
-  .frame-tr { top: 10px; right: 10px;    border-top: 2px solid currentColor; border-right: 2px solid currentColor; }
-  .frame-bl { bottom: 10px; left: 10px;  border-bottom: 2px solid currentColor; border-left: 2px solid currentColor; }
-  .frame-br { bottom: 10px; right: 10px; border-bottom: 2px solid currentColor; border-right: 2px solid currentColor; }
-
-  /* Dot-grid backdrop on right panel */
-  .dot-grid {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: radial-gradient(currentColor 1px, transparent 1px);
-    background-size: 22px 22px;
-    opacity: 0.05;
-    mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
-  }
-
-  /* Headline — fluid, tight + reveal */
-  .about-heading {
-    font-size: clamp(1.75rem, 3.6vw, 3.25rem);
-    letter-spacing: -0.025em;
-  }
+  /* Headline reveal animation */
   .heading-line {
     display: block;
     overflow: hidden;
@@ -365,91 +293,6 @@
     to { transform: translateY(0); }
   }
 
-  .about-body {
-    text-wrap: pretty;
-  }
-
-  .hairline {
-    height: 1px;
-    width: 4rem;
-    background: currentColor;
-    opacity: 0.3;
-  }
-
-  /* Stats row */
-  .stats-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding: 1rem 0;
-  }
-  .stat-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    min-width: 70px;
-  }
-  .stat-num {
-    font-family: var(--font-Gilroy-extra-bold);
-    font-size: clamp(1.6rem, 2.4vw, 2.25rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: var(--color-light-primary);
-  }
-  :is(.dark) .stat-num { color: var(--color-dark-primary); }
-  .stat-suffix {
-    font-size: 0.7em;
-    opacity: 0.7;
-    margin-left: 2px;
-  }
-  .stat-label {
-    font-family: var(--font-Mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    opacity: 0.55;
-  }
-  .stat-divider {
-    width: 1px;
-    height: 28px;
-    background: currentColor;
-    opacity: 0.18;
-  }
-
-  /* Meta facts */
-  .meta-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem 2rem;
-    border-top: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-    border-bottom: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-    padding: 1.25rem 0;
-  }
-  @media (min-width: 1024px) {
-    .meta-grid {
-      grid-template-columns: repeat(3, max-content);
-      justify-content: start;
-      gap: 1.25rem 3rem;
-    }
-  }
-  .meta-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-  .meta-label {
-    font-family: var(--font-Mono);
-    font-size: 0.625rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    opacity: 0.55;
-  }
-  .meta-value {
-    font-family: var(--font-Gilroy);
-    font-size: 0.95rem;
-    letter-spacing: -0.005em;
-  }
   .status-dot {
     width: 0.45rem;
     height: 0.45rem;
@@ -518,141 +361,13 @@
     to { transform: translateX(-50%); }
   }
 
-  /* Buttons */
-  .btn-primary,
-  .btn-ghost {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    padding: 0.85rem 1.5rem;
-    font-family: var(--font-Mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-    border-radius: 0;
-    overflow: hidden;
-  }
-
-  .btn-primary {
-    background: var(--color-light-primary);
-    color: var(--color-dark);
-    border: 1px solid var(--color-light-primary);
-  }
-  :is(.dark) .btn-primary {
-    background: var(--color-dark-primary);
-    color: var(--color-dark);
-    border-color: var(--color-dark-primary);
-  }
-  .btn-primary:hover {
-    background: var(--color-dark);
-    color: var(--color-light-primary);
-    border-color: var(--color-dark);
-  }
-  :is(.dark) .btn-primary:hover {
-    background: var(--color-dark-card);
-    color: var(--color-dark-primary);
-    border-color: var(--color-dark-card);
-  }
-
-  .btn-ghost {
-    background: transparent;
-    color: currentColor;
-    border: 1px solid currentColor;
-  }
-  .btn-ghost:hover {
-    background: var(--color-light-primary);
-    color: var(--color-dark);
-    border-color: var(--color-light-primary);
-  }
-  :is(.dark) .btn-ghost:hover {
-    background: var(--color-dark-primary);
-    color: var(--color-dark);
-    border-color: var(--color-dark-primary);
-  }
-
-  .btn-primary :deep(i),
-  .btn-ghost :deep(i) {
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .btn-primary:hover :deep(i.fa-arrow-down) {
-    transform: translateY(2px);
-  }
-  .btn-ghost:hover :deep(i.fa-arrow-right) {
-    transform: translateX(3px);
-  }
-
   /* ===== Mobile ===== */
   @media (max-width: 767px) {
-    .about-grid {
-      grid-template-rows: 420px auto;
-      height: auto !important;
-      min-height: 100%;
-    }
     .about-right {
       overflow: visible !important;
     }
     .about-left {
       overflow: hidden;
-    }
-
-    .portrait-frame {
-      inset: 3rem 1rem;
-    }
-    .frame-corner {
-      width: 20px;
-      height: 20px;
-    }
-    .frame-tl { top: 6px; left: 6px; }
-    .frame-tr { top: 6px; right: 6px; }
-    .frame-bl { bottom: 6px; left: 6px; }
-    .frame-br { bottom: 6px; right: 6px; }
-
-    .about-heading {
-      font-size: clamp(1.5rem, 8vw, 2.25rem);
-    }
-
-    .about-body {
-      font-size: 0.95rem;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem 1.25rem;
-      padding: 1rem 0;
-      border-top: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-      border-bottom: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-    }
-    .stat-cell {
-      min-width: 0;
-      flex: initial;
-      gap: 0.25rem;
-    }
-    .stat-num {
-      font-size: 1.6rem;
-    }
-    .stat-label {
-      font-size: 0.58rem;
-      letter-spacing: 0.22em;
-    }
-    .stat-divider {
-      display: none;
-    }
-
-    .meta-grid {
-      gap: 0.9rem 1.25rem;
-      padding: 1rem 0;
-    }
-    .meta-label {
-      font-size: 0.55rem;
-      letter-spacing: 0.24em;
-    }
-    .meta-value {
-      font-size: 0.85rem;
     }
 
     .marquee {
@@ -663,25 +378,6 @@
       gap: 1rem;
       padding-right: 1rem;
       letter-spacing: 0.22em;
-    }
-
-    .btn-primary,
-    .btn-ghost {
-      padding: 0.75rem 1.1rem;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-    }
-  }
-
-  @media (max-width: 380px) {
-    .stats-row {
-      gap: 0.5rem;
-    }
-    .stat-num {
-      font-size: 1.2rem;
-    }
-    .meta-grid {
-      grid-template-columns: 1fr;
     }
   }
 </style>

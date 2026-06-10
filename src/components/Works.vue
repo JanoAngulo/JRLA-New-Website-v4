@@ -5,44 +5,47 @@
       ref="worksSection"
       class="relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide">
       <!-- Sticky top header -->
-      <div class="works-header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current-faint works-header-meta">
+      <div class="relative z-5 px-5 pt-5 md:px-8 md:pt-6 lg:px-12 lg:pt-8 bg-light dark:bg-dark">
+        <div class="works-header-meta flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
           <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">03 — Selected Works</p>
           <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ filteredWorks.length }} / {{ works2.length }} Projects</p>
         </div>
 
         <!-- Filter pills -->
-        <div class="works-filter no-swipe">
+        <div class="no-swipe relative flex gap-[0.4rem] sm:gap-2 pt-4 pb-5 overflow-x-auto snap-x snap-proximity [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] [mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] sm:[mask-image:none] sm:[-webkit-mask-image:none]">
           <button
             v-for="(f, i) in filters"
             :key="f.id"
             @click="activeFilter = f.id"
             :aria-pressed="activeFilter === f.id"
             :style="{ '--pd': (i * 0.07) + 's' }"
-            :class="['filter-pill', 'filter-pill-anim', { 'filter-pill--active': activeFilter === f.id }]">
+            class="filter-pill-anim group inline-flex items-center gap-[0.4rem] sm:gap-2 px-3 sm:px-[0.9rem] py-[0.55rem] sm:py-[0.6rem] font-Mono text-[0.65rem] sm:text-[0.7rem] tracking-[0.18em] sm:tracking-[0.22em] uppercase bg-transparent border rounded-full cursor-pointer transition-[background,border-color,color] duration-200 whitespace-nowrap shrink-0 snap-start"
+            :class="activeFilter === f.id ? 'bg-light-primary text-dark border-light-primary dark:bg-dark-primary dark:border-dark-primary' : 'border-current/35 hover:border-current/65'">
             <span>{{ f.label }}</span>
-            <span class="filter-pill-count font-Mono tabular-nums">{{ f.count }}</span>
+            <span class="font-Mono tabular-nums text-[0.7rem] opacity-70 group-aria-pressed:opacity-80">{{ f.count }}</span>
           </button>
         </div>
       </div>
 
       <!-- Grid of works -->
-      <div class="works-scroll md:overflow-y-auto">
-        <div class="works-grid">
-          <button
-            type="button"
+      <div class="pt-6 px-5 pb-12 md:pt-8 md:px-8 md:pb-12 md:max-h-[calc(100%-130px)] lg:px-12 lg:pb-16 md:overflow-y-auto">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
+          <div
             v-for="(item, i) in filteredWorks"
             :key="i + item.id + item.title"
             v-reveal
-            class="work-card reveal"
-            :style="{ '--rd': (i % 9) * 0.07 + 's' }"
+            class="reveal"
+            :style="{ '--rd': (i % 9) * 0.07 + 's' }">
+          <button
+            type="button"
+            class="work-card group relative flex flex-col text-left overflow-hidden w-full h-full p-0 [font:inherit] text-inherit cursor-pointer bg-light-card dark:bg-dark-card border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.06)] transition-[border-color,translate,box-shadow] duration-300 ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_-8px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_8px_24px_-10px_rgba(0,0,0,0.5)] hover:border-light-primary hover:-translate-y-[3px] hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:hover:border-dark-primary dark:hover:shadow-[0_2px_4px_rgba(0,0,0,0.5),0_16px_36px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,202,38,0.08)] focus-visible:outline-none focus-visible:border-light-primary focus-visible:-translate-y-[3px] focus-visible:shadow-[0_0_0_2px_var(--color-light-primary),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:focus-visible:border-dark-primary dark:focus-visible:shadow-[0_0_0_2px_var(--color-dark-primary),0_16px_36px_-12px_rgba(0,0,0,0.7)]"
             :aria-label="`Open ${item.title} project details`"
             @click="openWork(item)">
             <!-- Image area -->
-            <div class="work-card-img" :class="{ 'work-card-img--contain': item.work === 'uiux' }">
+            <div class="work-card-img relative aspect-[4/3] overflow-hidden bg-current/5" :class="{ 'work-card-img--contain': item.work === 'uiux' }">
               <LazyImage :src="item.thumbnail" :alt="item.title + ' thumbnail'" :eager="i < 3" />
-              <div class="work-card-overlay">
-                <span class="work-card-cta">
+              <div class="absolute inset-0 z-3 flex items-center justify-center bg-dark/[0.78] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+                <span class="inline-flex items-center gap-2 px-[1.2rem] py-[0.7rem] font-Mono text-xs tracking-[0.25em] uppercase text-light border border-light">
                   <i class="fa-solid fa-arrow-up-right-from-square"></i>
                   View Project
                 </span>
@@ -50,26 +53,27 @@
             </div>
 
             <!-- Meta -->
-            <div class="work-card-meta">
-              <div class="flex items-center justify-between gap-3 work-card-toprow">
-                <span class="work-card-index">{{ String(i + 1).padStart(2, '0') }}</span>
-                <span :class="['work-card-tag', `work-card-tag--${item.work}`]">
+            <div class="px-[1.1rem] pt-4 pb-5 flex flex-col gap-2 border-t border-current/10">
+              <div class="flex items-center justify-between gap-3 mb-1">
+                <span class="font-Mono text-[0.7rem] tracking-[0.3em] opacity-75">{{ String(i + 1).padStart(2, '0') }}</span>
+                <span class="inline-flex items-center gap-[0.4rem] px-[0.6rem] py-[0.3rem] font-Mono text-[0.7rem] tracking-[0.22em] uppercase" :class="tagClasses(item.work)">
                   <i :class="typeIcon(item.work)"></i>
                   {{ workTypeLabel(item.work) }}
                 </span>
               </div>
-              <h3 class="work-card-title font-Gilroy-extra-bold uppercase">{{ item.title }}</h3>
-              <div class="work-card-bottom">
-                <span class="work-card-bottom-item">{{ item.role }}</span>
-                <span class="work-card-bottom-sep">·</span>
-                <span class="work-card-bottom-item tabular-nums">{{ item.year }}</span>
+              <h3 class="text-[clamp(1.15rem,2vw,1.4rem)] tracking-[-0.02em] leading-[1.05] font-Gilroy-extra-bold uppercase">{{ item.title }}</h3>
+              <div class="flex items-center gap-2 font-Mono text-xs tracking-[0.18em] uppercase opacity-80 pt-1">
+                <span>{{ item.role }}</span>
+                <span class="opacity-65">·</span>
+                <span class="tabular-nums">{{ item.year }}</span>
               </div>
             </div>
           </button>
+          </div>
         </div>
 
         <!-- Empty state -->
-        <div v-if="filteredWorks.length === 0" class="works-empty">
+        <div v-if="filteredWorks.length === 0" class="py-16 px-8 text-center">
           <p class="font-Mono text-xs tracking-[0.3em] uppercase opacity-60">No projects in this filter yet.</p>
         </div>
       </div>
@@ -83,62 +87,62 @@
             <skeleton-loader />
           </template>
         </Suspense>
-        <div v-else class="sheet-detail">
+        <div v-else class="flex flex-col gap-7 pb-12 text-dark dark:text-light">
           <!-- Header -->
-          <div class="sheet-header">
+          <div class="flex flex-col gap-2">
             <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">— Project · {{ workTypeLabel(content.type) }}</p>
-            <h2 class="sheet-title font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
-            <div class="hairline"></div>
+            <h2 class="text-[clamp(1.75rem,4vw,3rem)] tracking-[-0.025em] leading-[0.95] mt-1 font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
+            <div class="hairline mt-3"></div>
           </div>
 
           <!-- Preview area -->
-          <div v-if="content.link" class="sheet-preview">
-            <iframe :src="content.link" :title="content.title" frameborder="0" class="sheet-preview-iframe" loading="lazy"></iframe>
+          <div v-if="content.link" class="relative w-full">
+            <iframe :src="content.link" :title="content.title" frameborder="0" class="block w-full aspect-[9/16] min-h-[70vh] md:aspect-[16/10] md:min-h-0 bg-white border border-current/12" loading="lazy"></iframe>
           </div>
 
           <!-- Meta grid -->
-          <div class="sheet-meta">
-            <div v-if="content.role" class="sheet-meta-row">
-              <span class="sheet-meta-label">Role</span>
-              <span class="sheet-meta-value">{{ content.role }}</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-current/12">
+            <div v-if="content.role" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
+              <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Role</span>
+              <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em]">{{ content.role }}</span>
             </div>
-            <div v-if="content.year" class="sheet-meta-row">
-              <span class="sheet-meta-label">Year</span>
-              <span class="sheet-meta-value tabular-nums">{{ content.year }}</span>
+            <div v-if="content.year" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
+              <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Year</span>
+              <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em] tabular-nums">{{ content.year }}</span>
             </div>
-            <div v-if="content.projectType" class="sheet-meta-row">
-              <span class="sheet-meta-label">Type</span>
-              <span class="sheet-meta-value">{{ content.projectType }}</span>
+            <div v-if="content.projectType" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
+              <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Type</span>
+              <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em]">{{ content.projectType }}</span>
             </div>
-            <div v-if="content.status" class="sheet-meta-row">
-              <span class="sheet-meta-label">Status</span>
-              <span class="sheet-meta-value">{{ content.status }}</span>
+            <div v-if="content.status" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
+              <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Status</span>
+              <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em]">{{ content.status }}</span>
             </div>
           </div>
 
           <!-- Description -->
-          <div class="sheet-body">
+          <div class="flex flex-col gap-3">
             <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-60">— About</p>
             <p class="font-Gilroy text-base sm:text-lg leading-relaxed opacity-90 whitespace-pre-wrap">{{ content.description }}</p>
           </div>
 
           <!-- Toolkit -->
-          <div v-if="content.tools && content.tools.length" class="sheet-toolkit">
+          <div v-if="content.tools && content.tools.length" class="flex flex-col gap-[0.85rem]">
             <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-60">Toolkit · {{ content.tools.length }}</p>
-            <div class="sheet-tool-grid">
-              <div v-for="(t, idx) in content.tools" :key="idx" class="sheet-tool-pill" :title="toolUsed(t)">
-                <img :src="toolLogo(t)" :alt="toolUsed(t)" loading="lazy" />
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(64px,1fr))] gap-[0.65rem]">
+              <div v-for="(t, idx) in content.tools" :key="idx" class="tool-pill" :title="toolUsed(t)">
+                <img :src="toolLogo(t)" :alt="toolUsed(t)" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
               </div>
             </div>
           </div>
 
           <!-- CTA -->
-          <div v-if="content.link" class="sheet-cta-row">
-            <button type="button" class="sheet-btn-primary" @click="openLink(content.link)">
+          <div v-if="content.link" class="flex flex-col gap-3 pt-3 sm:flex-row">
+            <button type="button" class="btn btn-primary group" @click="openLink(content.link)">
               <span>{{ content.btnText || 'Visit Live' }}</span>
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square transition-transform duration-250 ease-in-out group-hover:translate-x-[2px] group-hover:-translate-y-[2px]"></i>
             </button>
-            <button type="button" class="sheet-btn-ghost" @click="closeOffCanvas">
+            <button type="button" class="btn btn-ghost" @click="closeOffCanvas">
               <span>Close</span>
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -147,43 +151,43 @@
       </app-dialog>
 
       <app-dialog variant="modal" :open="isModalOpen" :aria-label="content.title || 'Project'" @close="isModalOpen = false">
-        <div class="modal-detail">
+        <div class="flex flex-col gap-5 text-dark dark:text-light min-w-[min(80vw,720px)]">
           <!-- Media -->
           <iframe
             v-if="content.type === 'video'"
             :src="content.link"
             :title="content.title"
-            class="modal-media-iframe"
+            class="w-full aspect-video bg-black"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen>
           </iframe>
 
-          <div v-else-if="content.type === 'vector'" class="modal-vector">
-            <img :src="content.link" :alt="content.title" loading="eager" fetchpriority="high" decoding="async" />
-            <button type="button" class="modal-vector-dl" @click="downloadImage(content.link)" aria-label="Download artwork">
+          <div v-else-if="content.type === 'vector'" class="relative overflow-hidden bg-current/5">
+            <img :src="content.link" :alt="content.title" loading="eager" fetchpriority="high" decoding="async" class="block w-full h-auto object-contain" />
+            <button type="button" class="absolute bottom-4 right-4 inline-flex items-center gap-[0.45rem] px-[0.85rem] py-[0.55rem] font-Mono text-[0.7rem] tracking-[0.25em] uppercase cursor-pointer bg-light-primary text-dark border border-light-primary dark:bg-dark-primary dark:border-dark-primary transition-[background-color,color,translate] duration-250 hover:-translate-y-0.5" @click="downloadImage(content.link)" aria-label="Download artwork">
               <i class="fa-solid fa-arrow-down"></i>
               <span>Download</span>
             </button>
           </div>
 
           <!-- Header -->
-          <div class="modal-header">
+          <div class="flex flex-col gap-[0.4rem]">
             <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">— {{ workTypeLabel(content.type) }}</p>
-            <h2 class="modal-title font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
-            <div class="hairline"></div>
+            <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] tracking-[-0.025em] leading-none font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
+            <div class="hairline mt-3"></div>
           </div>
 
           <!-- Description -->
           <p class="font-Gilroy text-base leading-relaxed opacity-90 whitespace-pre-wrap">{{ content.description }}</p>
 
           <!-- Tools -->
-          <div v-if="content.tools && content.tools.length" class="modal-tools">
+          <div v-if="content.tools && content.tools.length" class="flex flex-col gap-[0.65rem]">
             <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-60">Toolkit</p>
-            <div class="modal-tool-grid">
-              <div v-for="(t, idx) in content.tools" :key="idx" class="sheet-tool-pill" :title="toolUsed(t)">
-                <img :src="toolLogo(t)" :alt="toolUsed(t)" loading="lazy" />
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(56px,1fr))] gap-[0.55rem] max-w-[360px]">
+              <div v-for="(t, idx) in content.tools" :key="idx" class="tool-pill" :title="toolUsed(t)">
+                <img :src="toolLogo(t)" :alt="toolUsed(t)" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
               </div>
             </div>
           </div>
@@ -363,6 +367,15 @@
       workTypeLabel(work) {
         return { uiux: 'UI/UX', website: 'Website', video: 'Video', vector: 'Vector' }[work] || work
       },
+      // WCAG-compliant type-tag colors. Literal strings so Tailwind's scanner keeps them.
+      tagClasses(work) {
+        return {
+          uiux: 'text-uiux-fg bg-uiux-bg dark:text-uiux-fg-dark dark:bg-uiux-bg-dark',
+          website: 'text-web-fg bg-web-bg dark:text-web-fg-dark dark:bg-web-bg-dark',
+          video: 'text-[rgb(127,29,29)] bg-[rgb(254,226,226)] dark:text-[rgb(254,202,202)] dark:bg-[rgb(76,5,25)]',
+          vector: 'text-vector-fg bg-vector-bg dark:text-vector-fg-dark dark:bg-vector-bg-dark'
+        }[work] || ''
+      },
       toolUsed(tool) {
         if (!tool) return ''
         return TOOL_NAMES.get(tool) || ''
@@ -444,6 +457,7 @@
 </script>
 
 <style lang="css" scoped>
+  /* Vue <Transition> classes */
   .fade-enter-active,
   .fade-leave-active {
     transition: opacity 0.4s ease;
@@ -453,153 +467,8 @@
     opacity: 0;
   }
 
-  .border-current-faint {
-    border-color: color-mix(in oklab, currentcolor 12%, transparent);
-  }
-
-  /* Sticky header */
-  .works-header {
-    position: relative;
-    z-index: 5;
-    padding: 1.25rem 1.25rem 0;
-    background: var(--color-light);
-  }
-
-  :is(.dark) .works-header {
-    background: var(--color-dark);
-  }
-
-  @media (min-width: 768px) {
-    .works-header {
-      padding: 1.5rem 2rem 0;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .works-header {
-      padding: 2rem 3rem 0;
-    }
-  }
-
-  /* Filter pills */
-  .works-filter {
-    position: relative;
-    display: flex;
-    gap: 0.4rem;
-    padding: 1rem 0 1.25rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-    /* Right-edge fade hint that more pills exist */
-    -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 24px), transparent 100%);
-    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 24px), transparent 100%);
-  }
-
-  .works-filter::-webkit-scrollbar {
-    display: none;
-  }
-
-  @media (min-width: 640px) {
-    .works-filter {
-      gap: 0.5rem;
-      -webkit-mask-image: none;
-      mask-image: none;
-    }
-  }
-
-  .filter-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.55rem 0.75rem;
-    font-family: var(--font-Mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: currentColor;
-    background: transparent;
-    border: 1px solid color-mix(in oklab, currentcolor 35%, transparent);
-    border-radius: 9999px;
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-    white-space: nowrap;
-    flex-shrink: 0;
-    scroll-snap-align: start;
-  }
-
-  @media (min-width: 640px) {
-    .filter-pill {
-      gap: 0.5rem;
-      padding: 0.6rem 0.9rem;
-      font-size: 0.7rem;
-      letter-spacing: 0.22em;
-    }
-  }
-
-  .filter-pill:hover {
-    border-color: color-mix(in oklab, currentcolor 65%, transparent);
-  }
-
-  .filter-pill--active {
-    background: var(--color-light-primary);
-    color: var(--color-dark);
-    border-color: var(--color-light-primary);
-  }
-
-  :is(.dark) .filter-pill--active {
-    background: var(--color-dark-primary);
-    border-color: var(--color-dark-primary);
-  }
-
-  .filter-pill-count {
-    font-size: 0.7rem;
-    opacity: 0.7;
-  }
-
-  .filter-pill--active .filter-pill-count {
-    opacity: 0.8;
-  }
-
-  /* Grid wrapper */
-  .works-scroll {
-    padding: 1.5rem 1.25rem 3rem;
-  }
-
-  @media (min-width: 768px) {
-    .works-scroll {
-      padding: 2rem 2rem 3rem;
-      max-height: calc(100% - 130px);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .works-scroll {
-      padding: 2rem 3rem 4rem;
-    }
-  }
-
-  .works-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
-  @media (min-width: 640px) {
-    .works-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .works-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.75rem;
-    }
-  }
-
-  /* Header + filter entrance */
+  /* Header + filter entrance — keyframes are renamed by Vue scoping, so
+     Tailwind's animate-[…] can't reference them; kept as plain CSS. */
   .works-header-meta {
     opacity: 0;
     transform: translateY(-8px);
@@ -618,7 +487,7 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Scroll reveal */
+  /* Scroll reveal — JS directive toggles .is-revealed, so kept as CSS. */
   .reveal {
     opacity: 0;
     transform: translateY(28px) scale(0.97);
@@ -635,549 +504,19 @@
     .reveal { transition-duration: 0.2s; transform: none; }
   }
 
-  /* Work card */
-  .work-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    background: var(--color-light-card);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    cursor: pointer;
-    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: left;
-    overflow: hidden;
-    /* Reset button defaults */
-    font: inherit;
-    color: inherit;
-    width: 100%;
-    padding: 0;
-    /* Layered elevation — light mode */
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 8px 20px -8px rgba(0, 0, 0, 0.08);
-  }
-
-  :is(.dark) .work-card {
-    background: var(--color-dark-card);
-    border-color: rgba(255, 255, 255, 0.06);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.4),
-      0 8px 24px -10px rgba(0, 0, 0, 0.5);
-  }
-
-  .work-card:hover,
-  .work-card:focus-visible {
-    border-color: var(--color-light-primary);
-    transform: translateY(-3px);
-    box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.06),
-      0 16px 32px -10px rgba(0, 0, 0, 0.14);
-  }
-
-  :is(.dark) .work-card:hover,
-  :is(.dark) .work-card:focus-visible {
-    border-color: var(--color-dark-primary);
-    box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.5),
-      0 16px 36px -12px rgba(0, 0, 0, 0.7),
-      0 0 0 1px rgba(255, 202, 38, 0.08);
-  }
-
-  .work-card:focus-visible {
-    outline: none;
-    box-shadow:
-      0 0 0 2px var(--color-light-primary),
-      0 16px 32px -10px rgba(0, 0, 0, 0.14);
-  }
-
-  :is(.dark) .work-card:focus-visible {
-    box-shadow:
-      0 0 0 2px var(--color-dark-primary),
-      0 16px 36px -12px rgba(0, 0, 0, 0.7);
-  }
-
-  .work-card-img {
-    position: relative;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    background: color-mix(in oklab, currentcolor 5%, transparent);
-  }
-
+  /* Card thumbnail lives inside the LazyImage child component, reachable
+     only via :deep / descendant selectors — can't be utilities on the parent. */
   .work-card-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-
   .work-card-img--contain :deep(.lazy-img) {
     object-fit: contain;
     object-position: center bottom;
   }
-
   .work-card:hover .work-card-img img {
     transform: scale(1.04);
-  }
-
-  /* Hover overlay */
-  .work-card-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: color-mix(in oklab, var(--color-dark) 78%, transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .work-card:hover .work-card-overlay,
-  .work-card:focus-visible .work-card-overlay {
-    opacity: 1;
-  }
-
-  .work-card-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.2rem;
-    font-family: var(--font-Mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--color-light);
-    border: 1px solid var(--color-light);
-  }
-
-  /* Meta block */
-  .work-card-meta {
-    padding: 1rem 1.1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    border-top: 1px solid color-mix(in oklab, currentcolor 10%, transparent);
-  }
-
-  .work-card-toprow {
-    margin-bottom: 0.25rem;
-  }
-
-  .work-card-index {
-    font-family: var(--font-Mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
-    opacity: 0.75;
-  }
-
-  /* Type tags — WCAG-compliant */
-  .work-card-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.3rem 0.6rem;
-    font-family: var(--font-Mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-  }
-
-  .work-card-tag--uiux {
-    color: var(--color-uiux-fg);
-    background: var(--color-uiux-bg);
-  }
-  :is(.dark) .work-card-tag--uiux {
-    color: var(--color-uiux-fg-dark);
-    background: var(--color-uiux-bg-dark);
-  }
-
-  .work-card-tag--website {
-    color: var(--color-web-fg);
-    background: var(--color-web-bg);
-  }
-  :is(.dark) .work-card-tag--website {
-    color: var(--color-web-fg-dark);
-    background: var(--color-web-bg-dark);
-  }
-
-  .work-card-tag--video {
-    color: rgb(127, 29, 29);
-    background: rgb(254, 226, 226);
-  }
-  :is(.dark) .work-card-tag--video {
-    color: rgb(254, 202, 202);
-    background: rgb(76, 5, 25);
-  }
-
-  .work-card-tag--vector {
-    color: var(--color-vector-fg);
-    background: var(--color-vector-bg);
-  }
-  :is(.dark) .work-card-tag--vector {
-    color: var(--color-vector-fg-dark);
-    background: var(--color-vector-bg-dark);
-  }
-
-  .work-card-title {
-    font-size: clamp(1.15rem, 2vw, 1.4rem);
-    letter-spacing: -0.02em;
-    line-height: 1.05;
-  }
-
-  .work-card-bottom {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-Mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    opacity: 0.8;
-    padding-top: 0.25rem;
-  }
-
-  .work-card-bottom-sep {
-    opacity: 0.65;
-  }
-
-  .works-empty {
-    padding: 4rem 2rem;
-    text-align: center;
-  }
-
-  /* ============================================ */
-  /* Sheet (offcanvas) — website project detail   */
-  /* ============================================ */
-  .sheet-detail {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
-    padding-bottom: 3rem;
-    color: var(--color-dark);
-  }
-
-  :is(.dark) .sheet-detail {
-    color: var(--color-light);
-  }
-
-  .sheet-header {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .sheet-title {
-    font-size: clamp(1.75rem, 4vw, 3rem);
-    letter-spacing: -0.025em;
-    line-height: 0.95;
-    margin-top: 0.25rem;
-  }
-
-  .hairline {
-    height: 1px;
-    width: 4rem;
-    background: currentColor;
-    opacity: 0.3;
-    margin-top: 0.75rem;
-  }
-
-  .sheet-preview {
-    position: relative;
-    width: 100%;
-  }
-
-  .sheet-preview-iframe {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    background: white;
-    border: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-  }
-
-  @media (max-width: 767px) {
-    .sheet-preview-iframe {
-      aspect-ratio: 9 / 16;
-      min-height: 70vh;
-    }
-  }
-
-  .sheet-meta {
-    display: grid;
-    grid-template-columns: 1fr;
-    border-top: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-  }
-
-  @media (min-width: 640px) {
-    .sheet-meta {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .sheet-meta {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .sheet-meta-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-  }
-
-  @media (min-width: 640px) {
-    .sheet-meta-row + .sheet-meta-row {
-      border-left: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-      padding-left: 1rem;
-    }
-
-    .sheet-meta-row:nth-child(odd) {
-      border-left: none;
-      padding-left: 0;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .sheet-meta-row + .sheet-meta-row {
-      border-left: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-      padding-left: 1rem;
-    }
-
-    .sheet-meta-row:nth-child(odd) {
-      border-left: 1px solid color-mix(in oklab, currentcolor 12%, transparent);
-      padding-left: 1rem;
-    }
-
-    .sheet-meta-row:first-child {
-      border-left: none;
-      padding-left: 0;
-    }
-  }
-
-  .sheet-meta-label {
-    font-family: var(--font-Mono);
-    font-size: 0.625rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    opacity: 0.65;
-  }
-
-  .sheet-meta-value {
-    font-family: var(--font-Gilroy);
-    font-size: 0.95rem;
-    letter-spacing: -0.005em;
-  }
-
-  .sheet-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .sheet-toolkit {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-  }
-
-  .sheet-tool-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-    gap: 0.65rem;
-  }
-
-  .sheet-tool-pill {
-    aspect-ratio: 1 / 1;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.65rem;
-    border: 1px solid color-mix(in oklab, currentcolor 14%, transparent);
-    border-radius: 0.5rem;
-    transition: border-color 0.25s ease, transform 0.25s ease;
-  }
-
-  .sheet-tool-pill:hover {
-    border-color: var(--color-light-primary);
-    transform: translateY(-2px);
-  }
-
-  :is(.dark) .sheet-tool-pill:hover {
-    border-color: var(--color-dark-primary);
-  }
-
-  .sheet-tool-pill img {
-    max-width: 65%;
-    max-height: 65%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-  }
-
-  .sheet-cta-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding-top: 0.75rem;
-  }
-
-  @media (min-width: 640px) {
-    .sheet-cta-row {
-      flex-direction: row;
-    }
-  }
-
-  .sheet-btn-primary,
-  .sheet-btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    padding: 0.85rem 1.5rem;
-    font-family: var(--font-Mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-  }
-
-  .sheet-btn-primary {
-    background: var(--color-light-primary);
-    color: var(--color-dark);
-    border: 1px solid var(--color-light-primary);
-  }
-
-  :is(.dark) .sheet-btn-primary {
-    background: var(--color-dark-primary);
-    border-color: var(--color-dark-primary);
-  }
-
-  .sheet-btn-primary:hover {
-    background: var(--color-dark);
-    color: var(--color-light-primary);
-    border-color: var(--color-dark);
-  }
-
-  :is(.dark) .sheet-btn-primary:hover {
-    background: var(--color-dark-card);
-    color: var(--color-dark-primary);
-    border-color: var(--color-dark-card);
-  }
-
-  .sheet-btn-ghost {
-    background: transparent;
-    color: currentColor;
-    border: 1px solid currentColor;
-  }
-
-  .sheet-btn-ghost:hover {
-    background: var(--color-light-primary);
-    color: var(--color-dark);
-    border-color: var(--color-light-primary);
-  }
-
-  :is(.dark) .sheet-btn-ghost:hover {
-    background: var(--color-dark-primary);
-    border-color: var(--color-dark-primary);
-  }
-
-  .sheet-btn-primary :deep(i),
-  .sheet-btn-ghost :deep(i) {
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .sheet-btn-primary:hover :deep(i.fa-arrow-up-right-from-square) {
-    transform: translate(2px, -2px);
-  }
-
-  /* ============================================ */
-  /* Modal — video / vector                       */
-  /* ============================================ */
-  .modal-detail {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    color: var(--color-dark);
-    min-width: min(80vw, 720px);
-  }
-
-  :is(.dark) .modal-detail {
-    color: var(--color-light);
-  }
-
-  .modal-media-iframe {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: black;
-  }
-
-  .modal-vector {
-    position: relative;
-    overflow: hidden;
-    background: color-mix(in oklab, currentcolor 5%, transparent);
-  }
-
-  .modal-vector img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-  }
-
-  .modal-vector-dl {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.55rem 0.85rem;
-    background: var(--color-light-primary);
-    color: var(--color-dark);
-    border: 1px solid var(--color-light-primary);
-    font-family: var(--font-Mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
-  }
-
-  :is(.dark) .modal-vector-dl {
-    background: var(--color-dark-primary);
-    border-color: var(--color-dark-primary);
-  }
-
-  .modal-vector-dl:hover {
-    transform: translateY(-2px);
-  }
-
-  .modal-header {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .modal-title {
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
-    letter-spacing: -0.025em;
-    line-height: 1;
-  }
-
-  .modal-tools {
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-  }
-
-  .modal-tool-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-    gap: 0.55rem;
-    max-width: 360px;
   }
 </style>

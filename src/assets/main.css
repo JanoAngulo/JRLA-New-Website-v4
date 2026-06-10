@@ -142,6 +142,45 @@
   }
 }
 
+@layer components {
+  /* Editorial CTA buttons — shared across hero, contact, works, 404.
+     Pair as `btn btn-primary` / `btn btn-ghost`; override padding/radius inline. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-[0.6rem] px-6 py-[0.85rem] font-Mono text-[0.7rem] tracking-[0.25em] uppercase cursor-pointer;
+  }
+  .btn-primary {
+    @apply border transition-colors duration-250 bg-light-primary text-dark border-light-primary dark:bg-dark-primary dark:border-dark-primary hover:bg-dark hover:text-light-primary hover:border-dark dark:hover:bg-dark-card dark:hover:text-dark-primary dark:hover:border-dark-card;
+  }
+  .btn-ghost {
+    @apply border transition-colors duration-250 bg-transparent text-current border-current hover:bg-light-primary hover:text-dark hover:border-light-primary dark:hover:bg-dark-primary dark:hover:border-dark-primary;
+  }
+
+  /* Thin accent rule — add margins inline where needed */
+  .hairline {
+    @apply h-px w-16 bg-current opacity-30;
+  }
+
+  /* Square tool/logo chip with hover lift */
+  .tool-pill {
+    @apply aspect-square w-full flex items-center justify-center p-3 border border-current/12 rounded-lg transition-[border-color,translate] duration-300 ease-in-out hover:border-light-primary hover:-translate-y-0.5 dark:hover:border-dark-primary;
+  }
+
+  /* Circular social icon button — set border/hover colors inline per surface */
+  .social-pill {
+    @apply grid place-content-center w-11 h-11 rounded-full border transition-all duration-300 ease-in-out;
+  }
+
+  /* Radial dot-grid backdrop — set bg-size per use */
+  .dot-grid {
+    @apply absolute inset-0 pointer-events-none opacity-5 bg-[radial-gradient(currentColor_1px,transparent_1px)] mask-[linear-gradient(to_bottom,transparent,black_30%,black_70%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_30%,black_70%,transparent)];
+  }
+
+  /* Overflow mask wrapper for staggered line-reveal text */
+  .reveal-line {
+    @apply block overflow-hidden;
+  }
+}
+
 @layer utilities {
   .neumorph {
     box-shadow: inset -1px 1px 2px rgba(255, 255, 255, 0.3), inset 1px -1px 2px rgba(164, 165, 168, 0.5), 5px 5px 10px rgba(164, 165, 168, 0.2), -5px -5px 10px rgba(164, 165, 168, 0.2), 5px -5px 10px rgba(255, 255, 255, 0.9), -5px 5px 13px rgba(164, 165, 168, 0.9);

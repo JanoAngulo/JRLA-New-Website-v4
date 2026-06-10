@@ -48,7 +48,7 @@
       :inert="!open"
       tabindex="-1"
       :style="sheetStyle"
-      :class="['fixed bottom-0 left-0 w-full overflow-auto md:h-[90vh] h-[80vh] dark:bg-dark bg-light', { 'sheet-transition': !dragging, 'pointer-events-none': !open && !dragging }]"
+      :class="['fixed bottom-0 left-0 w-full overflow-auto md:h-[90vh] h-[80vh] dark:bg-dark bg-light', !dragging ? 'transition-transform duration-400 ease-in-out' : '', { 'pointer-events-none': !open && !dragging }]"
       @keydown="onKeydown"
       @transitionend="onTransitionEnd">
       <div
@@ -211,10 +211,6 @@
 </script>
 
 <style scoped>
-  .sheet-transition {
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
   .slide-fade-enter-active,
   .slide-fade-leave-active {
     transition: all 0.3s ease-in-out;

@@ -5,8 +5,8 @@
         <div :class="work.color" class="xl:w-[30vw] lg:w-[50vw] w-full h-full text-light sm:p-10 p-4 relative">
           <img v-if="work.imgBackground" class="absolute top-0 left-0 object-cover w-full h-full opacity-50 pointer-events-none mix-blend-soft-light" :src="work.imgBackground" loading="lazy" alt="" aria-hidden="true" role="presentation" />
           <div class="relative space-y-8">
-            <button type="button" @click="$emit('close')" class="back-link" aria-label="Back to works">
-              <i class="fa-solid fa-arrow-left"></i>
+            <button type="button" @click="$emit('close')" class="group inline-flex items-center gap-[0.6rem] py-2 bg-transparent border-0 text-inherit font-Mono text-[0.7rem] tracking-[0.3em] uppercase opacity-80 cursor-pointer transition-[opacity,gap] duration-250 hover:opacity-100 hover:gap-[0.85rem] before:content-[''] before:inline-block before:w-6 before:h-px before:bg-current before:opacity-50 before:transition-[width,opacity] before:duration-300 hover:before:w-9 hover:before:opacity-100 focus-visible:[outline:2px_solid_currentColor] focus-visible:outline-offset-4 focus-visible:rounded-sm" aria-label="Back to works">
+              <i class="fa-solid fa-arrow-left transition-transform duration-300 ease-in-out group-hover:-translate-x-[3px]"></i>
               <span>Back to Works</span>
             </button>
             <h1 class="text-3xl font-bold uppercase">{{ work.title }}</h1>
@@ -39,10 +39,10 @@
             <button
               v-if="work.link"
               type="button"
-              class="sheet-btn-primary w-full"
+              class="btn btn-primary group w-full rounded-md"
               @click="openLink(work.link)">
               <span>{{ work.btnText }}</span>
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square transition-transform duration-250 ease-in-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
             </button>
           </div>
         </div>
@@ -95,99 +95,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.5rem 0;
-    background: transparent;
-    border: 0;
-    color: inherit;
-    font-family: var(--font-Mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    opacity: 0.8;
-    cursor: pointer;
-    transition: opacity 0.25s ease, gap 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .back-link::before {
-    content: '';
-    display: inline-block;
-    width: 1.5rem;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.5;
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
-  }
-
-  .back-link:hover {
-    opacity: 1;
-    gap: 0.85rem;
-  }
-
-  .back-link:hover::before {
-    width: 2.25rem;
-    opacity: 1;
-  }
-
-  .back-link i {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .back-link:hover i {
-    transform: translateX(-3px);
-  }
-
-  .back-link:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 4px;
-    border-radius: 4px;
-  }
-
-  .sheet-btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    padding: 0.85rem 1.5rem;
-    font-family: var(--font-Mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    cursor: pointer;
-    background: var(--color-light-primary);
-    color: var(--color-dark);
-    border: 1px solid var(--color-light-primary);
-    border-radius: 0.375rem;
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-  }
-
-  :is(.dark) .sheet-btn-primary {
-    background: var(--color-dark-primary);
-    border-color: var(--color-dark-primary);
-  }
-
-  .sheet-btn-primary:hover {
-    background: var(--color-dark);
-    color: var(--color-light-primary);
-    border-color: var(--color-dark);
-  }
-
-  :is(.dark) .sheet-btn-primary:hover {
-    background: var(--color-dark-card);
-    color: var(--color-dark-primary);
-    border-color: var(--color-dark-card);
-  }
-
-  .sheet-btn-primary :deep(i) {
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .sheet-btn-primary:hover :deep(i.fa-arrow-up-right-from-square) {
-    transform: translate(2px, -2px);
-  }
-</style>

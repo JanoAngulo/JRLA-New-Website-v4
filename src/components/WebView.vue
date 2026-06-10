@@ -7,14 +7,16 @@
         type="button"
         @click="slidePrev"
         aria-label="Previous slide"
-        :class="['nav-arrow', { 'nav-arrow--hidden': swiperBeginning }]">
+        class="nav-arrow pointer-events-auto grid place-content-center w-11 h-11 rounded-full bg-white/70 dark:bg-dark-card/70 backdrop-blur-[10px] border border-black/8 dark:border-white/10 text-dark dark:text-light text-[0.95rem] cursor-pointer shadow-[0_4px_16px_-4px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)] transition-all duration-300 hover:bg-light-primary hover:text-dark hover:border-light-primary hover:-translate-x-[3px] dark:hover:bg-dark-primary dark:hover:border-dark-primary focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
+        :class="{ 'opacity-0 pointer-events-none': swiperBeginning }">
         <i class="fa-solid fa-chevron-left"></i>
       </button>
       <button
         type="button"
         @click="slideNext"
         aria-label="Next slide"
-        :class="['nav-arrow nav-arrow--right', { 'nav-arrow--hidden': swiperEnd }]">
+        class="nav-arrow pointer-events-auto grid place-content-center w-11 h-11 rounded-full bg-white/70 dark:bg-dark-card/70 backdrop-blur-[10px] border border-black/8 dark:border-white/10 text-dark dark:text-light text-[0.95rem] cursor-pointer shadow-[0_4px_16px_-4px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)] transition-all duration-300 hover:bg-light-primary hover:text-dark hover:border-light-primary hover:translate-x-[3px] dark:hover:bg-dark-primary dark:hover:border-dark-primary focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
+        :class="{ 'opacity-0 pointer-events-none': swiperEnd }">
         <i class="fa-solid fa-chevron-right"></i>
       </button>
     </div>
@@ -225,64 +227,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .nav-arrow {
-    pointer-events: auto;
-    display: grid;
-    place-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    color: var(--color-dark);
-    font-size: 0.95rem;
-    cursor: pointer;
-    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.3s ease;
-  }
-
-  :is(.dark) .nav-arrow {
-    background: rgba(33, 33, 36, 0.7);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: var(--color-light);
-    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.5);
-  }
-
-  .nav-arrow:hover {
-    background: var(--color-light-primary);
-    color: var(--color-dark);
-    border-color: var(--color-light-primary);
-  }
-
-  :is(.dark) .nav-arrow:hover {
-    background: var(--color-dark-primary);
-    color: var(--color-dark);
-    border-color: var(--color-dark-primary);
-  }
-
-  .nav-arrow:not(.nav-arrow--right):hover {
-    transform: translateX(-3px);
-  }
-
-  .nav-arrow--right:hover {
-    transform: translateX(3px);
-  }
-
-  .nav-arrow--hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .nav-arrow:focus-visible {
-    outline: 2px solid var(--color-light-primary);
-    outline-offset: 3px;
-  }
-
-  :is(.dark) .nav-arrow:focus-visible {
-    outline-color: var(--color-dark-primary);
-  }
-</style>
