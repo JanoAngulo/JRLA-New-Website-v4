@@ -67,7 +67,7 @@
       },
       isInteractive(el) {
         if (!(el instanceof Element)) return false
-        return !!el.closest('a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"], .social-pill, .tag, .btn-primary, .btn-ghost, .coreproc-chip, .focus-item, swiper-slide, .nav-arrow')
+        return !!el.closest('a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"], .social-pill, .tag, .btn-primary, .btn-ghost, .coreproc-chip, .focus-item, .nav-arrow')
       },
       loop() {
         const ease = 0.18

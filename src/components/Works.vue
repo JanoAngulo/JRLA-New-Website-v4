@@ -1,9 +1,9 @@
 <template>
   <Transition name="fade">
     <div
-      v-if="activeSlide === 'works'"
+      v-if="true"
       ref="worksSection"
-      class="relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide">
+      :class="['relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide', { 'is-revealed': entered }]">
       <!-- Sticky top header -->
       <div class="relative z-5 px-5 pt-5 md:px-8 md:pt-6 lg:px-12 lg:pt-8 bg-light dark:bg-dark">
         <div class="works-header-meta flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
@@ -28,14 +28,16 @@
       </div>
 
       <!-- Grid of works -->
-      <div class="pt-6 px-5 pb-12 md:pt-8 md:px-8 md:pb-12 md:max-h-[calc(100%-130px)] lg:px-12 lg:pb-16 md:overflow-y-auto">
+      <div data-pan-scroll class="pt-6 px-5 pb-12 md:pt-8 md:px-8 md:pb-12 md:max-h-[calc(100%-130px)] lg:px-12 lg:pb-16 md:overflow-y-auto">
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
           <div
             v-for="(item, i) in filteredWorks"
             :key="i + item.id + item.title"
-            v-reveal
-            class="reveal"
-            :style="{ '--rd': (i % 9) * 0.07 + 's' }">
+            data-scrub
+            data-scrub-y="28"
+            data-scrub-start="0.85"
+            data-scrub-end="0.6"
+            class="reveal">
           <button
             type="button"
             class="work-card group relative flex flex-col text-left overflow-hidden w-full h-full p-0 [font:inherit] text-inherit cursor-pointer bg-light-card dark:bg-dark-card border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.06)] transition-[border-color,translate,box-shadow] duration-300 ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_-8px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_8px_24px_-10px_rgba(0,0,0,0.5)] hover:border-light-primary hover:-translate-y-[3px] hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:hover:border-dark-primary dark:hover:shadow-[0_2px_4px_rgba(0,0,0,0.5),0_16px_36px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,202,38,0.08)] focus-visible:outline-none focus-visible:border-light-primary focus-visible:-translate-y-[3px] focus-visible:shadow-[0_0_0_2px_var(--color-light-primary),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:focus-visible:border-dark-primary dark:focus-visible:shadow-[0_0_0_2px_var(--color-dark-primary),0_16px_36px_-12px_rgba(0,0,0,0.7)]"
@@ -204,6 +206,8 @@
   import LazyImage from './LazyImage.vue'
   import { useThemeStore } from '../store'
   import { defineAsyncComponent } from 'vue'
+  import { sectionReveal } from '../composables/sectionReveal'
+  import { createScrollScrub } from '../composables/useScrollScrub'
 
   // Tool logos — match the same imports used in PortfolioData so we can
   // map references → display names (URLs may be hashed or inlined data URIs).
@@ -273,34 +277,13 @@
 
   export default {
     name: 'Works',
-    emits: ['close'],
+    emits: ['close', 'remeasure'],
+    mixins: [sectionReveal('works')],
     components: {
       AppDialog,
       WorkDetails: defineAsyncComponent(() => import('./WorkDetails.vue')),
       SkeletonLoader,
       LazyImage
-    },
-    directives: {
-      reveal: {
-        mounted(el) {
-          const io = new IntersectionObserver(
-            (entries) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                  el.classList.add('is-revealed')
-                  io.unobserve(el)
-                }
-              })
-            },
-            { threshold: 0.1, rootMargin: '0px 0px -6% 0px' }
-          )
-          io.observe(el)
-          el._revealIO = io
-        },
-        unmounted(el) {
-          if (el._revealIO) el._revealIO.disconnect()
-        }
-      }
     },
     props: {
       activeSlide: String,
@@ -354,6 +337,29 @@
         if (this.activeFilter === 'all') return this.works2
         return this.works2.filter((w) => w.work === this.activeFilter)
       }
+    },
+    watch: {
+      // Filtering changes how many cards render, so the grid's scrollHeight —
+      // and thus the pause-and-pan length — is stale. Ask WebView to remeasure
+      // the scroll engine once the filtered DOM has committed.
+      activeFilter() {
+        // Cards re-render on filter change — re-collect scrub targets against the
+        // new DOM, then ask WebView to remeasure the pan length.
+        this.$nextTick(() => {
+          this._scrub?.refresh()
+          this.$emit('remeasure')
+        })
+      }
+    },
+    mounted() {
+      // Scroll-linked card reveals — see useScrollScrub (same engine as Features).
+      this.$nextTick(() => {
+        this._scrub = createScrollScrub(this.$refs.worksSection)
+        this._scrub.start()
+      })
+    },
+    beforeUnmount() {
+      this._scrub?.destroy()
     },
     methods: {
       typeIcon(work) {
@@ -467,41 +473,49 @@
     opacity: 0;
   }
 
-  /* Header + filter entrance — keyframes are renamed by Vue scoping, so
-     Tailwind's animate-[…] can't reference them; kept as plain CSS. */
-  .works-header-meta {
-    opacity: 0;
-    transform: translateY(-8px);
-    animation: hdr-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
-  }
-  .filter-pill-anim {
-    opacity: 0;
-    transform: translateY(8px);
-    animation: pill-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    animation-delay: calc(0.25s + var(--pd, 0s));
-  }
-  @keyframes hdr-in {
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pill-in {
-    to { opacity: 1; transform: translateY(0); }
+  /* Header + filter entrance — gated on the panel root's `.is-revealed`
+     (sectionReveal mixin) so they replay every time the section is entered.
+     Desktop only: on mobile the section is active-gated LATER than the cards'
+     scroll-scrub, so gating the header here would let a card fade in while the
+     filters are still hidden. Mobile shows them statically (they sit above the
+     cards in flow, so they're always seen first). */
+  @media (min-width: 768px) {
+    .works-header-meta {
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s,
+                  transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+    }
+    .is-revealed .works-header-meta {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .filter-pill-anim {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+      transition-delay: calc(0.25s + var(--pd, 0s));
+    }
+    .is-revealed .filter-pill-anim {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  /* Scroll reveal — JS directive toggles .is-revealed, so kept as CSS. */
+  /* Card reveal is now SCROLL-LINKED (see useScrollScrub) — opacity/Y are driven
+     inline every frame off the pan container's scroll position, so no CSS
+     transition here (it would smooth/lag the scrub). This from-state only
+     prevents a flash before JS engages. */
   .reveal {
     opacity: 0;
-    transform: translateY(28px) scale(0.97);
-    transition:
-      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: var(--rd, 0s);
-  }
-  .reveal.is-revealed {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    will-change: transform, opacity;
   }
   @media (prefers-reduced-motion: reduce) {
-    .reveal { transition-duration: 0.2s; transform: none; }
+    .works-header-meta,
+    .filter-pill-anim { transition-duration: 0.2s; transition-delay: 0s; transform: none; }
+    /* useScrollScrub reveals scrub targets statically under reduced motion. */
+    .reveal { opacity: 1; }
   }
 
   /* Card thumbnail lives inside the LazyImage child component, reachable

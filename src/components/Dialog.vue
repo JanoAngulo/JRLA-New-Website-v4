@@ -27,7 +27,7 @@
             <button
               type="button"
               aria-label="Close dialog"
-              class="absolute z-10 grid w-10 h-10 rounded-full shadow-xl cursor-pointer top-3 right-3 place-content-center bg-dark-primary hover:bg-light-primary text-dark"
+              class="absolute z-10 grid w-10 h-10 rounded-full shadow-xl cursor-pointer top-3 right-3 place-content-center bg-dark-primary text-dark transition-[background-color,transform] duration-200 hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] hover:scale-105 active:scale-95"
               @click="$emit('close')">
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -66,6 +66,11 @@
 </template>
 
 <script>
+  import { gsap } from 'gsap'
+  import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
+
+  gsap.registerPlugin(ScrollToPlugin)
+
   export default {
     name: 'Dialog',
     props: {
@@ -81,7 +86,10 @@
         dragOffset: 0,
         previouslyFocused: null,
         boundDrag: null,
-        boundEnd: null
+        boundEnd: null,
+        boundWheel: null,
+        smoothTarget: 0,
+        reducedMotion: false
       }
     },
     computed: {
@@ -110,21 +118,51 @@
               }
               // Belt-and-braces: re-pin to top after focus
               el.scrollTop = 0
+              this.enableSmooth(el)
             }
           })
         } else {
           document.documentElement.style.overflow = ''
+          this.disableSmooth()
           if (this.previouslyFocused && typeof this.previouslyFocused.focus === 'function') {
             this.previouslyFocused.focus()
           }
         }
       }
     },
+    mounted() {
+      this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    },
     beforeUnmount() {
       document.documentElement.style.overflow = ''
+      this.disableSmooth()
       this.cleanupDrag()
     },
     methods: {
+      // GSAP-driven smooth wheel scroll for the sheet (desktop). Touch stays
+      // native so momentum + drag-to-dismiss keep working. No Lenis needed.
+      enableSmooth(el) {
+        if (this.reducedMotion || !el) return
+        this.smoothTarget = el.scrollTop
+        this.boundWheel = this.onWheel.bind(this)
+        el.addEventListener('wheel', this.boundWheel, { passive: false })
+      },
+      disableSmooth() {
+        const el = this.$refs.dialogEl
+        if (el && this.boundWheel) el.removeEventListener('wheel', this.boundWheel, { passive: false })
+        if (el) gsap.killTweensOf(el)
+        this.boundWheel = null
+      },
+      onWheel(e) {
+        const el = this.$refs.dialogEl
+        if (!el) return
+        e.preventDefault()
+        const max = el.scrollHeight - el.clientHeight
+        if (max <= 0) return
+        const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * el.clientHeight : e.deltaY
+        this.smoothTarget = gsap.utils.clamp(0, max, this.smoothTarget + dy)
+        gsap.to(el, { scrollTo: { y: this.smoothTarget }, duration: 0.6, ease: 'power3.out', overwrite: true })
+      },
       onTransitionEnd(e) {
         if (this.variant !== 'sheet') return
         if (e.propertyName !== 'transform') return

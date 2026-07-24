@@ -1,14 +1,15 @@
 <template>
   <Transition name="fade">
     <div
-      v-if="activeSlide === 'features'"
+      v-if="true"
       ref="featuresSection"
       class="relative w-full overflow-hidden app-slide">
       <!-- Scroll-feed -->
       <div
-        class="relative w-full overflow-y-auto pb-6 dark:text-light text-dark h-full scroll-smooth">
+        data-pan-scroll
+        class="relative w-full overflow-y-auto pb-6 dark:text-light text-dark h-full">
         <header class="px-6 pt-6 md:px-10 md:pt-10 lg:px-14 lg:pt-14">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
+          <div data-scrub data-scrub-entry data-scrub-y="20" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
             <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">02 — Practice</p>
             <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ portfolioData.portfolio.features.length }} Disciplines</p>
           </div>
@@ -17,27 +18,26 @@
         <article
           v-for="(item, i) in portfolioData.portfolio.features"
           :key="item.id"
-          v-reveal
-          class="reveal grid grid-cols-1 gap-8 px-6 py-12 border-b border-current/10 last:border-b-0 last:pb-6 md:gap-12 md:px-10 md:py-16 md:items-start lg:gap-16 lg:px-14 lg:py-20"
-          :class="i % 2 === 1 ? 'is-reverse md:grid-cols-[7fr_5fr]' : 'md:grid-cols-[5fr_7fr]'">
+          class="grid grid-cols-1 gap-8 px-6 py-12 border-b border-current/10 last:border-b-0 last:pb-6 md:gap-12 md:px-10 md:py-16 md:items-start lg:gap-16 lg:px-14 lg:py-20"
+          :class="i % 2 === 1 ? 'md:grid-cols-[7fr_5fr]' : 'md:grid-cols-[5fr_7fr]'">
           <!-- Visual column: accent block -->
-          <div class="reveal-child relative hidden md:flex md:flex-col" :class="{ 'md:order-2': i % 2 === 1 }" style="--rd:0.05s">
+          <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="48" class="scrub-el relative hidden md:flex md:flex-col" :class="{ 'md:order-2': i % 2 === 1 }">
             <div class="ex-art relative w-full aspect-square max-h-[560px] overflow-hidden flex items-end justify-center sm:aspect-4/5 md:aspect-3/4 md:min-h-[480px] md:max-h-[640px] lg:max-h-[720px] dark:bg-dark-primary bg-light-primary">
               <LazyImage :src="item.img[0]" :alt="item.title + ' illustration'" :eager="i === 0" draggable="false" @dragstart.prevent />
             </div>
           </div>
 
           <!-- Content column -->
-          <div class="reveal-child flex flex-col gap-4" style="--rd:0.18s">
-            <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-60">— {{ ids[item.id] }}</p>
+          <div class="flex flex-col gap-4">
+            <p data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="24" class="scrub-el font-Mono text-xs tracking-[0.35em] uppercase opacity-60">— {{ ids[item.id] }}</p>
             <h3 class="text-[clamp(2.5rem,5.5vw,4.5rem)] tracking-[-0.03em] font-Gilroy-extra-bold uppercase leading-[0.9]">
-              <span class="reveal-line leading-none"><span class="etl-inner" style="--d:0.25s">{{ item.title.split(' ')[0] }}</span></span>
-              <span class="reveal-line leading-none"><span class="etl-inner dark:text-dark-primary text-light-primary" style="--d:0.4s">{{ item.title.split(' ').slice(1).join(' ') }}</span></span>
+              <span class="reveal-line leading-none"><span data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-fade="0" data-scrub-y="105" data-scrub-start="0.9" data-scrub-end="0.62" class="etl-inner">{{ item.title.split(' ')[0] }}</span></span>
+              <span class="reveal-line leading-none"><span data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-fade="0" data-scrub-y="105" data-scrub-start="0.86" data-scrub-end="0.58" class="etl-inner dark:text-dark-primary text-light-primary">{{ item.title.split(' ').slice(1).join(' ') }}</span></span>
             </h3>
             <div class="hairline my-2"></div>
-            <div class="ex-prose" v-html="item.description"></div>
+            <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="30" class="scrub-el ex-prose" v-html="item.description"></div>
 
-            <div class="pt-4">
+            <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="34" data-scrub-start="0.98" data-scrub-end="0.7" class="scrub-el pt-4">
               <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-60 mb-3">Toolkit · {{ featureAsset[item.id]?.length || 0 }}</p>
               <div class="grid grid-cols-[repeat(auto-fill,minmax(64px,1fr))] gap-3">
                 <div
@@ -60,6 +60,7 @@
   import { useThemeStore } from '../store'
   import portfolioData from './PortfolioData'
   import LazyImage from './LazyImage.vue'
+  import { createScrollScrub } from '../composables/useScrollScrub'
 
   // FRONTEND
   import html from '@/assets/img/features/frontend/html.svg'
@@ -98,28 +99,6 @@
   export default {
     name: 'Features',
     components: { LazyImage },
-    directives: {
-      reveal: {
-        mounted(el) {
-          const io = new IntersectionObserver(
-            (entries) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                  el.classList.add('is-revealed')
-                  io.unobserve(el)
-                }
-              })
-            },
-            { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
-          )
-          io.observe(el)
-          el._revealIO = io
-        },
-        unmounted(el) {
-          if (el._revealIO) el._revealIO.disconnect()
-        }
-      }
-    },
     props: {
       activeSlide: String,
       windowWidth: Number,
@@ -153,6 +132,15 @@
       }
     },
     watch: {
+      activeSlide: {
+        immediate: true,
+        handler(v) {
+          // First article + header play a clean timed entrance on arrival
+          // (they have no scroll travel to scrub against). $nextTick so the
+          // scrub instance exists on the initial immediate call.
+          this.$nextTick(() => this._scrub?.setActive(v === 'features'))
+        }
+      },
       currentTheme: {
         immediate: true,
         handler(theme) {
@@ -190,6 +178,17 @@
           ]
         }
       }
+    },
+    mounted() {
+      // Scroll-linked, reversible reveals — see useScrollScrub.
+      this.$nextTick(() => {
+        this._scrub = createScrollScrub(this.$refs.featuresSection)
+        this._scrub.start()
+        this._scrub.setActive(this.activeSlide === 'features')
+      })
+    },
+    beforeUnmount() {
+      this._scrub?.destroy()
     }
   }
 </script>
@@ -205,51 +204,33 @@
     opacity: 0;
   }
 
-  /* Title line-reveal — JS toggles .is-revealed on the article */
+  /* Scroll-LINKED reveals (scrub) — opacity/transform are driven inline every
+     frame by useScrollScrub off scroll position, so no CSS transition here
+     (a transition would smooth/lag the scrub). The initial from-state below
+     just prevents a flash before JS engages / on the pre-engaged (off-screen)
+     frames. */
+
+  /* Masked title lines rise from an overflow-hidden parent; JS drives Y only. */
+  .reveal-line {
+    display: block;
+    overflow: hidden;
+  }
   .etl-inner {
     display: inline-block;
-    transform: translateY(105%);
-    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: var(--d, 0s);
-  }
-  .is-revealed .etl-inner {
-    transform: translateY(0);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .etl-inner { transition-duration: 0.2s; }
+    transform: translateY(105%); /* JS overrides once engaged */
+    will-change: transform;
   }
 
-  /* Scroll reveal — JS toggles .is-revealed (CSS transform, not a Tailwind utility) */
-  .reveal {
+  /* Fading elements: hidden until JS sets opacity/Y. */
+  .scrub-el {
     opacity: 0;
+    will-change: transform, opacity;
   }
-  .reveal.is-revealed {
-    opacity: 1;
-  }
-  .reveal-child {
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: var(--rd, 0s);
-  }
-  .is-revealed .reveal-child {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  @media (min-width: 768px) {
-    .is-reverse .reveal-child:first-child {
-      transform: translateX(28px);
-    }
-    .is-reverse.is-revealed .reveal-child:first-child {
-      transform: translateX(0);
-    }
-  }
+
   @media (prefers-reduced-motion: reduce) {
-    .reveal-child {
-      transition-duration: 0.2s;
-      transform: none;
-    }
+    /* useScrollScrub reveals everything statically; keep from-states cleared. */
+    .etl-inner { transform: none; }
+    .scrub-el { opacity: 1; }
   }
 
   /* Accent illustration lives inside the LazyImage child — reached via descendant */

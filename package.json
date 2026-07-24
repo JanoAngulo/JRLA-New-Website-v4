@@ -11,14 +11,17 @@
     "@botpoison/browser": "^0.1.30",
     "@fontsource/ibm-plex-mono": "^5.2.7",
     "axios": "^1.11.0",
+    "gsap": "^3.15.0",
     "maska": "^2.1.10",
+    "motion-v": "^2.3.0",
     "pinia": "^3.0.2",
-    "swiper": "^12.0.3",
+    "three": "^0.185.1",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.16",
+    "@types/three": "^0.185.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.16",

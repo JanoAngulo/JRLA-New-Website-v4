@@ -1,7 +1,7 @@
 # DESIGN.md — JRLA Portfolio Design System
 
 > Single source of truth for the visual + interaction language of **jrla1219.web.app**.
-> Stack: Vue 3 · Vite · Tailwind CSS v4 · Swiper · Pinia.
+> Stack: Vue 3 · Vite · Tailwind CSS v4 · GSAP (ScrollTrigger) · Pinia.
 > Owner: John Russel L. Angulo (JRLA).
 
 ---
@@ -13,7 +13,7 @@
 | Product | JRLA Portfolio — front-end + UI/UX showcase |
 | Voice | Confident, technical, playful. Minimal copy, expressive type. |
 | Personality | Editorial × dev-tool. Bold display headings, mono micro-labels. |
-| Posture | Horizontal slide architecture; one chapter per slide. |
+| Posture | Horizontal scroll architecture; one chapter per panel. |
 
 ---
 
@@ -23,7 +23,7 @@ Two routes ([src/router/index.js](src/router/index.js)):
 
 | Route | Component | Purpose |
 |---|---|---|
-| `/` | `WebView` → 5 Swiper slides | Main portfolio narrative |
+| `/` | `WebView` → 5 GSAP-scrolled panels | Main portfolio narrative |
 | `/content/:id` | `WorkDetails` | UI/UX case-study deep dive |
 
 **Slide order** ([src/components/WebView.vue](src/components/WebView.vue)):
@@ -60,7 +60,7 @@ Tokens declared in [src/assets/main.css](src/assets/main.css) under `@theme`.
 | `--color-light-primary` | `#ff3656` | Light — red-pink |
 | `--color-dark-primary` | `#ffca26` | Dark — yellow |
 
-Used for: hover fills, focus rings, swiper pagination, hero accent block, CTA text, link underlines.
+Used for: hover fills, focus rings, hero accent block, CTA text, link underlines.
 
 ### Semantic category badges
 
@@ -149,7 +149,7 @@ Never use raw `z-index` values. Always reference these tokens.
 
 | Component | Role |
 |---|---|
-| `WebView` | Swiper container, slide orchestration, keyboard nav, console banner. Reads `$route.hash` on mount to pick the initial slide; writes hash back via `$router.replace` on every slide change so the URL stays sharable. |
+| `WebView` | GSAP ScrollTrigger horizontal scroll engine (via [`useHorizontalScroll`](src/composables/useHorizontalScroll.js) composable), panel orchestration, arrow/keyboard nav, console banner. Reads `$route.hash` on mount to pick the initial panel; writes hash back via `$router.replace` on every active-section change (composable `onActive` callback) so the URL stays sharable. |
 | `Navbar` | Fixed nav, theme cycler (system → light → dark) |
 | `Home` | Hero — animated typed tagline, social pills |
 | `Features` | Expertise feed — theme-aware SVG tool logos |
@@ -159,7 +159,6 @@ Never use raw `z-index` values. Always reference these tokens.
 | `Dialog` | Reusable `variant="modal" \| "sheet"`, drag-to-dismiss on sheet |
 | `WorkDetails` | Async case-study view; modal-mounted inside `Works`, preloads images before Suspense resolves |
 | `NotFound` | 404 view for catch-all route. Editorial layout — giant numeric in primary accent, mono meta strips, primary + ghost CTAs. Marked `noindex, follow` via `meta.robots`. |
-| `Portfolio` / `Resume` | Legacy Swiper carousels (Autoplay) |
 | `CustomCursor` | Pointer-aware custom cursor with hover targets |
 | `LazyImage` | IntersectionObserver-based image loader. Skeleton shimmer until decoded; accepts `width`/`height` for intrinsic sizing (CLS). |
 | `Loader` | Boot + route transition loader |
@@ -173,10 +172,13 @@ Easing default: `cubic-bezier(0.2, 0.8, 0.2, 1)`.
 
 | Pattern | Spec |
 |---|---|
+| Horizontal scrub | GSAP ScrollTrigger `scrub:1` smooth-lag; free-form snap (0.06 dead-zone); off-centre panels depth-scale to `1−0.05·smoothstep(dist)` |
+| Pause-and-pan | tall panels (Features/Works) lock horizontal + pan inner `[data-pan-scroll]` to bottom before continuing |
+| Section reveal | replays on EVERY entry via `sectionReveal` mixin (toggles `.is-revealed` on panel root off `activeSlide`); double-rAF paints baseline first |
 | Slide-in | 0.9s, ±3% translateX, stagger 0.15s |
-| Rise | 0.7s, translateY 2rem → 0, stagger 0.08s |
+| Rise / fade-up | 0.7s, translateY → 0; `.reveal-fade` utility staggers via `--d` |
 | Typed text | 80ms char / 2200ms pause / 40ms delete / 1s blink |
-| Swiper autoplay | 3500ms, `disableOnInteraction: false` |
+| Tactile press | `:active` scale 0.95 on buttons / pills |
 | Card lift | translateY -3px, image scale 1.04 on hover |
 | Status pulse | scale 1 → 1.4, opacity 0.9 → 0.4, 2s loop |
 | Sheet dismiss | drag Y > 0 → close |
@@ -201,7 +203,6 @@ Dark mode swaps:
 - Primary accent (red → yellow)
 - Surfaces (light → dark)
 - Tool-logo SVGs (html/css/js/nextjs/wacom load light variants)
-- Swiper pagination colors
 - Focus ring color
 
 ---
@@ -213,7 +214,7 @@ Dark mode swaps:
 - `aria-label` required on icon-only buttons.
 - `prefers-reduced-motion` honored globally.
 - Semantic landmarks: nav, main slide region, dialog with `role="dialog"` + `aria-modal`.
-- Keyboard: arrow keys drive Swiper; Esc closes Dialog.
+- Keyboard: arrow keys drive section nav (GSAP scroll); Esc closes Dialog.
 
 ---
 
@@ -265,7 +266,7 @@ Routes live in [src/router/index.js](src/router/index.js):
 
 | Path | Behavior |
 |---|---|
-| `/` | Main slider experience (`WebView`). Honors `$route.hash` on entry to pick the initial Swiper slide. |
+| `/` | Main horizontal-scroll experience (`WebView`). Honors `$route.hash` on entry to pick the initial panel. |
 | `/content/:id` | Legacy detail URL — redirected to `/`. Project detail is a modal inside `Works`, not a standalone page. |
 | `/404` or anything else | Catch-all → `NotFound`. `robots: noindex, follow`. |
 
@@ -273,7 +274,7 @@ Routes live in [src/router/index.js](src/router/index.js):
 
 **Invalid hash on `/`** — a `beforeEnter` guard on the `/` route checks the hash. Anything outside `VALID_SLIDE_HASHES` is redirected to `/404` before `WebView` mounts (mounting WebView and *then* redirecting would briefly flash the navbar — guarded at the router instead).
 
-**Hash sync** — `WebView` listens to Swiper's `slideChange` event and calls `$router.replace({ hash })` so the URL always reflects the visible slide. Uses `replace` (not `push`) to keep the browser history clean during swipes.
+**Hash sync** — the `useHorizontalScroll` composable fires an `onActive(idx)` callback as each panel becomes active; `WebView` calls `$router.replace({ hash })` so the URL always reflects the visible panel. Uses `replace` (not `push`) to keep the browser history clean during scroll.
 
 ---
 
@@ -281,7 +282,7 @@ Routes live in [src/router/index.js](src/router/index.js):
 
 - Tailwind utility-first; custom utilities go in `@layer utilities` in main.css.
 - No inline hex outside `@theme` — always reference tokens.
-- Component-scoped `<style scoped>` only for one-off visuals (nav arrows, Swiper overrides).
+- Component-scoped `<style scoped>` only for one-off visuals (nav arrows, scoped reveal keyframes).
 - Z-index must use `var(--z-*)`.
 - New animation? Add easing + duration table row here.
 - New category? Extend the badge table (§3) and `PortfolioData.js` enum.

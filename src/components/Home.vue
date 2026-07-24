@@ -1,8 +1,8 @@
 <template>
   <Transition name="fade">
     <div
-      v-if="activeSlide === 'home'"
-      class="relative w-full app-slide max-md:overflow-y-auto max-md:overflow-x-hidden md:overflow-hidden">
+      v-if="true"
+      :class="['relative w-full app-slide max-md:overflow-y-auto max-md:overflow-x-hidden md:overflow-hidden', { 'is-revealed': entered }]">
       <div class="w-full h-full grid grid-cols-1 grid-rows-[auto_1fr] min-h-full md:grid-cols-[45fr_55fr] md:grid-rows-1">
         <!-- LEFT: accent block -->
         <section class="relative overflow-hidden max-md:overflow-visible text-dark hero-left dark:bg-dark-primary bg-light-primary">
@@ -39,11 +39,11 @@
 
           <!-- Vertical wordmark -->
           <div class="absolute top-0 right-0 flex items-center h-full pr-3 pointer-events-none select-none md:pr-6" aria-hidden="true">
-            <span class="font-Gilroy-extra-bold dark:text-light/5 text-dark/5 text-[clamp(8rem,28vw,22rem)] tracking-[-0.06em] leading-[0.8] [writing-mode:vertical-rl] rotate-180">JRLA</span>
+            <span class="font-Gilroy-extra-bold dark:text-light/5 text-dark/5 text-[clamp(8rem,28vw,22rem)] tracking-[-0.01em] leading-[0.8] [writing-mode:vertical-rl] rotate-180">JRLA</span>
           </div>
 
           <div class="relative flex flex-col justify-between h-full p-6 md:p-10 lg:p-14 max-md:gap-10 max-md:min-h-full">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 text-xs tracking-[0.3em] uppercase font-Mono opacity-70">
+            <div class="reveal-fade flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 text-xs tracking-[0.3em] uppercase font-Mono" style="--d:0.25s;--o:0.7">
               <span>01 — Home</span>
               <span class="hidden sm:inline">v.04</span>
             </div>
@@ -84,8 +84,8 @@
               </div>
               <div class="flex flex-col items-end text-right">
                 <p class="text-xs tracking-[0.3em] uppercase opacity-60 font-Gilroy">Navigate →</p>
-                <p class="hidden mt-1 text-xs opacity-50 font-Gilroy lg:block">arrows or ← → keys</p>
-                <p class="hidden mt-1 text-xs opacity-50 font-Gilroy md:block lg:hidden">← → keys to navigate</p>
+                <p class="hidden mt-1 text-xs opacity-50 font-Gilroy lg:block">scroll or ← → keys</p>
+                <p class="hidden mt-1 text-xs opacity-50 font-Gilroy md:block lg:hidden">scroll or ← → keys</p>
                 <p class="mt-1 text-xs opacity-50 font-Gilroy md:hidden">swipe ← or →</p>
               </div>
             </div>
@@ -97,13 +97,19 @@
 </template>
 
 <script>
+  import { sectionReveal } from '../composables/sectionReveal'
+
   export default {
     name: 'Home',
+    // Entrance replays whenever Home becomes active; initial reveal waits for
+    // WebView's `ready` (wrap is visibility:hidden until then).
+    mixins: [sectionReveal('home', { gateReady: true })],
     props: {
       activeSlide: String,
       windowWidth: Number,
       desktopHeight: Number,
-      mobileHeight: Number
+      mobileHeight: Number,
+      ready: { type: Boolean, default: false }
     },
     data() {
       return {
@@ -164,54 +170,72 @@
     opacity: 0;
   }
 
-  /* Panel slide-in — keyframes are renamed by Vue scoping, so Tailwind's
-     animate-[…] can't reference them; kept as plain CSS. */
+  /* Entrance reveals — gated on `.is-revealed` (added by v-reveal on scroll
+     entry) so they fire when the panel scrolls into view, not at mount. */
   .hero-left {
-    animation: slide-in-l 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    transform: translateX(-3%);
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+                opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .hero-right {
-    animation: slide-in-r 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+    transform: translateX(3%);
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s,
+                opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s;
   }
-  @keyframes slide-in-l {
-    from { transform: translateX(-3%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-  @keyframes slide-in-r {
-    from { transform: translateX(3%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+  .is-revealed .hero-left,
+  .is-revealed .hero-right {
+    transform: translateX(0);
+    opacity: 1;
   }
 
   /* Fade-up — staggered via --d */
   .fade-up {
     opacity: 0;
     transform: translateY(8px);
-    animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: var(--d, 0s);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--d, 0s);
   }
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
+  .is-revealed .fade-up {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   /* Hero name line-reveal */
   .hnl-inner {
     display: inline-block;
     transform: translateY(105%);
-    animation: hnl-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: var(--d, 0s);
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--d, 0s);
   }
-  @keyframes hnl-rise {
-    to { transform: translateY(0); }
+  .is-revealed .hnl-inner {
+    transform: translateY(0);
   }
 
   /* Statement line-reveal */
   .as-inner {
     display: inline-block;
     transform: translateY(105%);
-    animation: as-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: var(--d, 0s);
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--d, 0s);
   }
-  @keyframes as-rise {
-    to { transform: translateY(0); }
+  .is-revealed .as-inner {
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-left,
+    .hero-right,
+    .fade-up,
+    .hnl-inner,
+    .as-inner {
+      transition-duration: 0.2s;
+      transition-delay: 0s;
+    }
+    .hero-left,
+    .hero-right { transform: none; }
   }
 
   /* Status dot pulse */

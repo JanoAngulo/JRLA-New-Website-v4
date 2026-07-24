@@ -74,17 +74,6 @@
     scrollbar-width: none; /* Firefox */
   }
 
-  :root {
-    --swiper-pagination-color: #ff3656; /* Default color */
-  }
-
-  .dark {
-    --swiper-pagination-color: #ffca26; /* Color when dark mode is active */
-    --swiper-pagination-bullet-inactive-color: #fff;
-    --swiper-pagination-bullet-opacity: 1;
-    --swiper-pagination-bullet-inactive-opacity: 0.5;
-  }
-
   body {
     @apply dark:bg-dark bg-light;
     position: relative;
@@ -148,11 +137,19 @@
   .btn {
     @apply inline-flex items-center justify-center gap-[0.6rem] px-6 py-[0.85rem] font-Mono text-[0.7rem] tracking-[0.25em] uppercase cursor-pointer;
   }
+  /* Primary — hover deepens to a darker shade of the same accent (stays on-brand,
+     never flips to black). */
   .btn-primary {
-    @apply border transition-colors duration-250 bg-light-primary text-dark border-light-primary dark:bg-dark-primary dark:border-dark-primary hover:bg-dark hover:text-light-primary hover:border-dark dark:hover:bg-dark-card dark:hover:text-dark-primary dark:hover:border-dark-card;
+    @apply border transition-colors duration-250 bg-light-primary text-dark border-light-primary dark:bg-dark-primary dark:border-dark-primary
+    hover:bg-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:border-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:text-light
+    dark:hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:border-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:text-dark;
   }
+  /* Ghost — hover is a faint accent tint with accent border + text, so it reads
+     as secondary and never collides with the solid primary fill. */
   .btn-ghost {
-    @apply border transition-colors duration-250 bg-transparent text-current border-current hover:bg-light-primary hover:text-dark hover:border-light-primary dark:hover:bg-dark-primary dark:hover:border-dark-primary;
+    @apply border transition-colors duration-250 bg-transparent text-current border-current
+    hover:bg-[color-mix(in_oklab,var(--color-light-primary)_12%,transparent)] hover:border-light-primary hover:text-light-primary
+    dark:hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_14%,transparent)] dark:hover:border-dark-primary dark:hover:text-dark-primary;
   }
 
   /* Thin accent rule — add margins inline where needed */
@@ -178,6 +175,52 @@
   /* Overflow mask wrapper for staggered line-reveal text */
   .reveal-line {
     @apply block overflow-hidden;
+  }
+
+  /* Generic staggered fade-up — gated on an ancestor `.is-revealed` (set on
+     each panel root by the sectionReveal mixin), so it plays on entry and
+     REPLAYS every re-entry. Stagger with an inline `--d` delay. Works on block
+     or inline-block (e.g. clause spans inside a paragraph). */
+  .reveal-fade {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--d, 0s);
+    will-change: opacity, transform;
+  }
+  /* `--o` = revealed opacity (default 1). Set it instead of a Tailwind
+     `opacity-*` utility — utilities sit in a later layer and would beat the
+     hidden state, so dim elements bake their target dim into --o here. */
+  .is-revealed .reveal-fade {
+    opacity: var(--o, 1);
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-fade {
+      transition-duration: 0.2s;
+      transition-delay: 0s;
+      transform: none;
+    }
+  }
+
+}
+
+/* Tactile press — momentary depress on activation. `transform: scale` composes
+   with the `translate`-based hover lifts. Skipped under reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .btn,
+  .social-pill,
+  .tool-pill {
+    transition-property: color, background-color, border-color, box-shadow, transform, translate, opacity;
+    transition-duration: 250ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn:active,
+  .social-pill:active,
+  .tool-pill:active {
+    transform: scale(0.95);
+    transition-duration: 80ms;
   }
 }
 
@@ -224,6 +267,120 @@
 @supports not (height: 100dvh) {
   .app-slide {
     height: calc(100vh - 3.5rem);
+  }
+}
+
+/* ---- GSAP horizontal scroll (replaces Swiper) ---- */
+/* CSS smooth-scroll fights GSAP ScrollTrigger / ScrollToPlugin — force instant */
+html {
+  scroll-behavior: auto;
+}
+/* wrap: pinned viewport-height box that clips the wide track */
+.h-scroll-wrap {
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+}
+@supports not (height: 100dvh) {
+  .h-scroll-wrap {
+    height: 100vh;
+  }
+}
+/* track: single flex row, GSAP translates it on scroll */
+.h-scroll-track {
+  display: flex;
+  flex-wrap: nowrap;
+  height: 100%;
+  will-change: transform;
+}
+/* panel: exactly one viewport wide, content sits below the fixed navbar */
+.h-panel {
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100%;
+  padding-top: 3.5rem;
+  box-sizing: border-box;
+}
+
+/* Section divider between stacked panels — mobile only (desktop is horizontal
+   scroll, so it's hidden there). Lives INSIDE each panel above .app-slide, so
+   it never counts as a track child in the composable's panel indexing. */
+.section-divider {
+  display: none;
+}
+
+/* Mobile: no horizontal pin — panels stack and scroll vertically (free) */
+@media (max-width: 767px) {
+  .h-scroll-wrap {
+    height: auto;
+    overflow: visible;
+  }
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 2.75rem 1.5rem 2.25rem;
+    font-family: var(--font-Mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .section-divider::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 1.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+  }
+  .section-divider::after {
+    content: '';
+    flex: 1 1 auto;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.18;
+  }
+  .section-divider .sd-num {
+    color: var(--color-light-primary);
+    font-weight: 700;
+  }
+  .section-divider .sd-name {
+    opacity: 0.6;
+  }
+  .section-divider .sd-name::before {
+    content: '·';
+    margin: 0 0.55rem 0 0.4rem;
+    opacity: 0.5;
+  }
+  :is(.dark) .section-divider .sd-num {
+    color: var(--color-dark-primary);
+  }
+  .h-scroll-track {
+    flex-direction: column;
+    height: auto;
+    transform: none !important;
+  }
+  .h-panel {
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto;
+    min-height: calc(100dvh - 3.5rem);
+    padding-top: 0;
+    scroll-margin-top: 3.5rem;
+  }
+  .h-panel:first-child {
+    padding-top: 3.5rem;
+  }
+  /* let sections grow to content height instead of a fixed slide box */
+  .h-panel .app-slide {
+    height: auto;
+    min-height: calc(100dvh - 3.5rem);
+  }
+  .h-panel [data-pan-scroll] {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
   }
 }
 
