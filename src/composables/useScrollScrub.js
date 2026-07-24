@@ -28,13 +28,14 @@ import { gsap } from 'gsap'
 const MOBILE = '(max-width: 767px)'
 
 export function createScrollScrub(root) {
-  // Mobile is treated as reduced-motion: the per-frame scroll→gsap.set scrub is
-  // the heaviest thing on the page, so on phones we skip the listener entirely
-  // and reveal everything statically (perf > the reveal flourish on small
-  // screens). Honors the OS reduced-motion setting everywhere.
-  const reduced =
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-    window.matchMedia(MOBILE).matches
+  // Three reveal strategies:
+  //  • OS reduced-motion → everything static, no animation at all.
+  //  • Mobile → the per-frame scroll→gsap.set scrub is too heavy for phones, so
+  //    instead each target plays a cheap ONE-SHOT reveal (opacity/Y tween) the
+  //    first time it enters the viewport, driven by an IntersectionObserver.
+  //  • Desktop → full scroll-linked scrub (see apply()).
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const mobile = window.matchMedia(MOBILE).matches
   const pan = root.querySelector('[data-pan-scroll]') || root
 
   let scrubTargets = []
@@ -43,6 +44,7 @@ export function createScrollScrub(root) {
   let active = false
   let leaveTimer = null
   let entryTl = null
+  let io = null
 
   const num = (v, d) => {
     const n = parseFloat(v)
@@ -151,10 +153,9 @@ export function createScrollScrub(root) {
 
   // Called from the component's activeSlide watcher.
   const setActive = (v) => {
-    if (reduced) {
-      if (v) for (const t of entryTargets) gsap.set(t.el, { opacity: 1, y: 0 })
-      return
-    }
+    // Entry targets are handled statically (reduced) or by the IntersectionObserver
+    // (mobile) — the timed entrance is desktop-only.
+    if (prefersReduced || mobile) return
     if (v) {
       if (leaveTimer) { clearTimeout(leaveTimer); leaveTimer = null }
       if (active) return
@@ -175,14 +176,56 @@ export function createScrollScrub(root) {
     }
   }
 
+  /* -------------------------------------------------------- mobile: IO reveal */
+
+  const staticRevealAll = () => {
+    for (const t of [...scrubTargets, ...entryTargets]) gsap.set(t.el, { opacity: 1, y: 0 })
+  }
+
+  // One-shot reveal: hide every target, then tween each in the first time it
+  // scrolls into view. Cheap enough for phones (no per-frame work) and survives
+  // re-collection (Works filter) — call again after collect() to observe the new
+  // nodes. IO fires an initial callback for anything already on-screen.
+  const revealMobile = () => {
+    io?.disconnect()
+    const all = [...entryTargets, ...scrubTargets]
+    // Masked titles (.etl-inner) start translated fully OUT of their
+    // overflow:hidden .reveal-line parent — so IntersectionObserver (which clips
+    // the target's visible area against overflow ancestors) measures 0% and never
+    // fires. Observe the un-clipped .reveal-line wrapper instead, animate the child.
+    const watchOf = new Map()
+    for (const t of all) {
+      gsap.set(t.el, { opacity: t.fade ? 0 : 1, y: t.dist })
+      watchOf.set(t.el.closest('.reveal-line') || t.el, t.el)
+    }
+    io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          const el = watchOf.get(entry.target)
+          if (el) {
+            gsap.to(el, {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              ease: 'power3.out',
+              force3D: true
+            })
+          }
+          io.unobserve(entry.target)
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.08 }
+    )
+    for (const watch of watchOf.keys()) io.observe(watch)
+  }
+
   /* ------------------------------------------------------------------ lifecycle */
 
   const start = () => {
     collect()
-    if (reduced) {
-      for (const t of [...scrubTargets, ...entryTargets]) gsap.set(t.el, { opacity: 1, y: 0 })
-      return
-    }
+    if (prefersReduced) return staticRevealAll()
+    if (mobile) return revealMobile()
     setEntryHidden()
     window.addEventListener('scroll', onScroll, { capture: true, passive: true })
     window.addEventListener('resize', onScroll, { passive: true })
@@ -191,6 +234,8 @@ export function createScrollScrub(root) {
 
   const refresh = () => {
     collect()
+    if (prefersReduced) return staticRevealAll()
+    if (mobile) return revealMobile()
     onScroll()
   }
 
@@ -200,6 +245,8 @@ export function createScrollScrub(root) {
     if (raf != null) cancelAnimationFrame(raf)
     if (leaveTimer) clearTimeout(leaveTimer)
     entryTl?.kill()
+    io?.disconnect()
+    io = null
     raf = null
   }
 

@@ -83,10 +83,10 @@
                 </div>
               </div>
               <div class="flex flex-col items-end text-right">
-                <p class="text-xs tracking-[0.3em] uppercase opacity-60 font-Gilroy">Navigate →</p>
+                <p class="text-xs tracking-[0.3em] uppercase opacity-60 font-Gilroy">Navigate <span class="md:hidden">↓</span><span class="hidden md:inline">→</span></p>
                 <p class="hidden mt-1 text-xs opacity-50 font-Gilroy lg:block">scroll or ← → keys</p>
                 <p class="hidden mt-1 text-xs opacity-50 font-Gilroy md:block lg:hidden">scroll or ← → keys</p>
-                <p class="mt-1 text-xs opacity-50 font-Gilroy md:hidden">swipe ← or →</p>
+                <p class="mt-1 text-xs opacity-50 font-Gilroy md:hidden">swipe ↑ or ↓</p>
               </div>
             </div>
           </div>

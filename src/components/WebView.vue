@@ -23,6 +23,28 @@
     </div>
   </div>
 
+  <!-- Prev / Next arrows (mobile — vertical, so up/down) -->
+  <div
+    class="fixed bottom-4 end-4 flex flex-col gap-2 pointer-events-none lg:hidden"
+    :style="{ zIndex: 'var(--z-nav)' }">
+    <button
+      type="button"
+      @click="prev"
+      aria-label="Previous section"
+      class="nav-arrow pointer-events-auto grid place-content-center w-11 h-11 rounded-full bg-white/70 dark:bg-dark-card/70 backdrop-blur-[10px] border border-black/8 dark:border-white/10 text-dark dark:text-light text-[0.95rem] cursor-pointer shadow-[0_4px_16px_-4px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)] transition-all duration-300 hover:bg-light-primary hover:text-dark hover:border-light-primary active:scale-95 dark:hover:bg-dark-primary dark:hover:border-dark-primary focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
+      :class="{ 'opacity-0 pointer-events-none translate-y-1': activeIndex === 0 }">
+      <i class="fa-solid fa-chevron-up"></i>
+    </button>
+    <button
+      type="button"
+      @click="next"
+      aria-label="Next section"
+      class="nav-arrow pointer-events-auto grid place-content-center w-11 h-11 rounded-full bg-white/70 dark:bg-dark-card/70 backdrop-blur-[10px] border border-black/8 dark:border-white/10 text-dark dark:text-light text-[0.95rem] cursor-pointer shadow-[0_4px_16px_-4px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)] transition-all duration-300 hover:bg-light-primary hover:text-dark hover:border-light-primary active:scale-95 dark:hover:bg-dark-primary dark:hover:border-dark-primary focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
+      :class="{ 'opacity-0 pointer-events-none': activeIndex === lastIndex }">
+      <i class="fa-solid fa-chevron-down"></i>
+    </button>
+  </div>
+
   <div class="relative website-portfolio">
     <div ref="wrap" class="h-scroll-wrap" :style="{ visibility: ready ? 'visible' : 'hidden' }">
       <div ref="track" class="h-scroll-track">
@@ -181,7 +203,15 @@
       onResize() {
         if (this.resizeRaf) cancelAnimationFrame(this.resizeRaf)
         this.resizeRaf = requestAnimationFrame(() => {
+          this.resizeRaf = null
+          const prevWidth = this.windowWidth
           this.updateHeights()
+          // iOS Safari/Edge fire resize when the address bar shows/hides on scroll
+          // — height changes, width doesn't. On mobile, refresh() reposition-snaps
+          // to the active panel top, yanking the user back mid-scroll. Only refresh
+          // on a real width change (orientation flip, desktop resize).
+          const mobile = window.matchMedia('(max-width: 767px)').matches
+          if (mobile && window.innerWidth === prevWidth) return
           this.scroller?.refresh()
         })
       },

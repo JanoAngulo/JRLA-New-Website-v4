@@ -310,7 +310,10 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
     } else {
       const target = window.scrollY + panels[clamped].getBoundingClientRect().top - navHeight()
       if (immediate || reduced) window.scrollTo(0, Math.max(0, target))
-      else gsap.to(window, { scrollTo: { y: Math.max(0, target), autoKill: true }, duration, ease: 'power2.inOut' })
+      // autoKill:false — on iOS the programmatic scroll's readback lags a frame,
+      // which gsap misreads as a user scroll and kills the tween early (tap moves
+      // only a few px). A tap-to-navigate shouldn't be interruptible anyway.
+      else gsap.to(window, { scrollTo: { y: Math.max(0, target), autoKill: false }, duration, ease: 'power2.inOut' })
     }
   }
 

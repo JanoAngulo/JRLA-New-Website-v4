@@ -11,7 +11,7 @@
     </transition>
 
     <!-- Modal variant: enter/leave via transition -->
-    <transition v-if="variant === 'modal'" name="slide-fade" @after-leave="$emit('after-leave')">
+    <transition v-if="variant === 'modal'" name="slide-fade" @after-enter="onModalShown" @after-leave="$emit('after-leave')">
       <div
         v-if="open"
         ref="dialogEl"
@@ -48,7 +48,7 @@
       :inert="!open"
       tabindex="-1"
       :style="sheetStyle"
-      :class="['fixed bottom-0 left-0 w-full overflow-auto md:h-[90vh] h-[80vh] dark:bg-dark bg-light', !dragging ? 'transition-transform duration-400 ease-in-out' : '', { 'pointer-events-none': !open && !dragging }]"
+      :class="['fixed bottom-0 left-0 w-full overflow-auto md:h-[90dvh] h-[80dvh] dark:bg-dark bg-light', !dragging ? 'transition-transform duration-400 ease-in-out' : '', { 'pointer-events-none': !open && !dragging }]"
       @keydown="onKeydown"
       @transitionend="onTransitionEnd">
       <div
@@ -96,7 +96,9 @@
       sheetStyle() {
         const z = { zIndex: 'var(--z-modal)' }
         if (this.dragging) return { ...z, transform: `translateY(${this.dragOffset}px)` }
-        return { ...z, transform: this.open ? 'translateY(0)' : 'translateY(100vh)' }
+        // Close by the sheet's OWN height (100%), not 100vh — on iOS the dynamic
+        // toolbar makes vh drift, which left a background gap under the sheet.
+        return { ...z, transform: this.open ? 'translateY(0)' : 'translateY(100%)' }
       }
     },
     watch: {
@@ -162,6 +164,17 @@
         const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * el.clientHeight : e.deltaY
         this.smoothTarget = gsap.utils.clamp(0, max, this.smoothTarget + dy)
         gsap.to(el, { scrollTo: { y: this.smoothTarget }, duration: 0.6, ease: 'power3.out', overwrite: true })
+      },
+      onModalShown() {
+        // iOS: an iframe/image whose src is set as it mounts inside an
+        // opacity/transform transition loads but isn't composited until a later
+        // repaint — so it's blank on first open, fine on reopen. Force one repaint
+        // now that the enter transition has settled.
+        const el = this.$refs.dialogEl
+        if (!el) return
+        el.style.display = 'none'
+        void el.offsetHeight // reflow
+        el.style.display = ''
       },
       onTransitionEnd(e) {
         if (this.variant !== 'sheet') return

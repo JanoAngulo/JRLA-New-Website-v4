@@ -118,6 +118,12 @@
     outline-color: var(--color-dark-primary);
   }
 
+  /* Dialog roots (tabindex="-1") are focused programmatically — keep the ring but
+     flush to the edge (no offset gap). */
+  :where([tabindex='-1']):focus-visible {
+    outline-offset: 0;
+  }
+
   /* Respect users who prefer reduced motion */
   @media (prefers-reduced-motion: reduce) {
     *,
