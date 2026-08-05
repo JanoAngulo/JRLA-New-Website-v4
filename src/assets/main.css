@@ -33,6 +33,22 @@
   --color-vector-bg-dark: #431407;
   --color-vector-fg-dark: #f29d2a;
 
+  --color-video-bg: #fee2e2;
+  --color-video-fg: #7f1d1d;
+  --color-video-bg-dark: #4c0519;
+  --color-video-fg-dark: #fecaca;
+
+  /* Semantic form/status colors — the only chromatic tokens outside the accent
+     pair and the category badges. Light/dark pairs like the badges. */
+  --color-danger: #e15050;
+  --color-danger-dark: #ff8a8a;
+  --color-danger-text: #961923;
+  --color-danger-text-dark: #fcc8c8;
+  --color-success: #22c55e;
+  --color-success-dark: #4ade80;
+  --color-success-text: #146e3c;
+  --color-success-text-dark: #bef0d2;
+
   --font-Gilroy: Gilroy;
   --font-Gilroy-extra-bold: GilroyExtraBold;
   --font-Mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
@@ -79,34 +95,6 @@
     position: relative;
   }
 
-  .squares {
-    @apply dark:hover:bg-dark-primary hover:bg-light-primary dark:text-dark-primary dark:hover:text-dark hover:text-light;
-  }
-
-  .card,
-  .card-left,
-  .card-right {
-    @apply dark:bg-dark-card bg-light-card;
-  }
-
-  .card {
-    @apply rounded-xl;
-  }
-
-  .card-left {
-    @apply rounded-l-xl;
-  }
-
-  .card-right {
-    @apply rounded-r-xl;
-  }
-
-  .input {
-    @apply border rounded-md shadow-xs border-transparent p-3 duration-150 transition-colors dark:bg-zinc-800 resize-none dark:text-white placeholder-zinc-400 bg-zinc-50 focus:outline-hidden
-    focus:dark:border-dark-primary focus:ring-1 focus:dark:ring-dark-primary
-    focus:border-light-primary focus:ring-light-primary;
-  }
-
   /* Consistent focus-visible ring across the app */
   :where(button, a, input, textarea, select, [role='button'], [tabindex]):focus-visible {
     outline: 2px solid var(--color-light-primary);
@@ -122,6 +110,15 @@
      flush to the edge (no offset gap). */
   :where([tabindex='-1']):focus-visible {
     outline-offset: 0;
+  }
+
+  /* Accent-filled plates (the left block of Home / About / Contact) ARE the
+     accent color, so an accent focus ring is invisible on them. Inside those
+     surfaces the ring inverts to ink — in both themes, because the plate is
+     accent-filled in both. */
+  [data-accent-surface] :where(button, a, input, textarea, select, [role='button'], [tabindex]):focus-visible,
+  .dark [data-accent-surface] :where(button, a, input, textarea, select, [role='button'], [tabindex]):focus-visible {
+    outline-color: var(--color-dark);
   }
 
   /* Respect users who prefer reduced motion */
@@ -156,6 +153,18 @@
     @apply border transition-colors duration-250 bg-transparent text-current border-current
     hover:bg-[color-mix(in_oklab,var(--color-light-primary)_12%,transparent)] hover:border-light-primary hover:text-light-primary
     dark:hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_14%,transparent)] dark:hover:border-dark-primary dark:hover:text-dark-primary;
+  }
+
+  /* A control that can't be pressed must not answer the pointer. Anchors never
+     match :disabled, so this is scoped to real buttons and stays safe on links. */
+  .btn:disabled {
+    @apply opacity-55 cursor-not-allowed;
+  }
+  .btn-primary:disabled:hover {
+    @apply bg-light-primary border-light-primary text-dark dark:bg-dark-primary dark:border-dark-primary dark:text-dark;
+  }
+  .btn-ghost:disabled:hover {
+    @apply bg-transparent border-current text-current;
   }
 
   /* Thin accent rule — add margins inline where needed */
@@ -231,38 +240,19 @@
 }
 
 @layer utilities {
-  .neumorph {
-    box-shadow: inset -1px 1px 2px rgba(255, 255, 255, 0.3), inset 1px -1px 2px rgba(164, 165, 168, 0.5), 5px 5px 10px rgba(164, 165, 168, 0.2), -5px -5px 10px rgba(164, 165, 168, 0.2), 5px -5px 10px rgba(255, 255, 255, 0.9), -5px 5px 13px rgba(164, 165, 168, 0.9);
+  /* Contact-shadow / lifted pair for square editorial surfaces. Flat at rest;
+     the lifted step is a state response, never a resting decoration. */
+  .surface-rest {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 20px -8px rgba(0, 0, 0, 0.08);
   }
-
-  .dark {
-    .dark\:neumorph-dark {
-      box-shadow: inset -1px -1px 2px rgba(31, 31, 35, 0.3), 1px 1px 2px rgba(15, 15, 17, 0.5), inset 5px -5px 10px rgba(15, 15, 17, 0.2), inset -5px 5px 10px rgba(15, 15, 17, 0.2), inset 5px 5px 10px rgb(38 38 51 / 90%), inset -5px -5px 13px rgb(61 61 61 / 90%);
-    }
-
-    .hover\:dark\:neumorph-yellow {
-      &:hover {
-        box-shadow: -1px -1px 2px rgba(255, 255, 88, 0.3), 1px 1px 2px rgba(163, 135, 44, 0.5), inset 5px -5px 10px rgba(163, 135, 44, 0.2), inset -5px 5px 10px rgba(163, 135, 44, 0.2), inset 5px 5px 10px rgba(255, 255, 88, 0.9), inset -5px -5px 13px rgba(163, 135, 44, 0.9);
-      }
-    }
+  .dark .surface-rest {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -10px rgba(0, 0, 0, 0.5);
   }
-
-  /* Hero radial wash — adds depth without overwhelming */
-  .bg-radial-hero {
-    background-image: radial-gradient(ellipse at 50% 30%, color-mix(in oklab, var(--color-light-primary) 10%, transparent), transparent 60%);
+  .surface-lifted {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06), 0 16px 32px -10px rgba(0, 0, 0, 0.14);
   }
-
-  .dark .bg-radial-hero {
-    background-image: radial-gradient(ellipse at 50% 30%, color-mix(in oklab, var(--color-dark-primary) 8%, transparent), transparent 60%);
-  }
-
-  /* Soft layered card shadow — replaces neumorph for cleaner depth */
-  .card-elevated {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03);
-  }
-
-  .dark .card-elevated {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  .dark .surface-lifted {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 16px 36px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in oklab, var(--color-dark-primary) 8%, transparent);
   }
 }
 
@@ -390,23 +380,65 @@ html {
   }
 }
 
+/* Browser surfaces we didn't draw but still own: scrollbar, caret, tap
+   highlight. Themed from the palette so no default grey ships. */
+* {
+  scrollbar-color: color-mix(in oklab, currentColor 28%, transparent) transparent;
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, currentColor 22%, transparent);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--color-light-primary) 65%, transparent);
+  background-clip: padding-box;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--color-dark-primary) 65%, transparent);
+  background-clip: padding-box;
+}
+
+input,
+textarea {
+  caret-color: var(--color-light-primary);
+}
+html.dark input,
+html.dark textarea {
+  caret-color: var(--color-dark-primary);
+}
+
+/* Kill the blue flash on tap without removing any real state feedback —
+   the `:active` scale on .btn / pills already carries the press. */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Text selection — theme aware */
 ::selection {
-  background: #000;
+  background: var(--color-dark);
   color: var(--color-light-primary);
   text-shadow: none;
 }
 ::-moz-selection {
-  background: #000;
+  background: var(--color-dark);
   color: var(--color-light-primary);
   text-shadow: none;
 }
 html.dark ::selection {
-  background: #000;
+  background: var(--color-dark);
   color: var(--color-dark-primary);
 }
 html.dark ::-moz-selection {
-  background: #000;
+  background: var(--color-dark);
   color: var(--color-dark-primary);
 }
 

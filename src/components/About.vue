@@ -1,12 +1,11 @@
 <template>
   <Transition name="fade">
     <div
-      v-if="true"
       ref="aboutSection"
       :class="['relative w-full overflow-x-hidden md:overflow-hidden overflow-y-auto app-slide', { 'is-revealed': entered }]">
       <div class="grid grid-cols-1 grid-rows-[420px_auto] min-h-full w-full md:grid-cols-[40fr_60fr] md:grid-rows-1 md:h-full">
         <!-- LEFT: portrait on accent block -->
-        <section class="about-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden">
+        <section data-accent-surface class="about-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden">
           <!-- Corner meta labels -->
           <div class="absolute top-0 inset-x-0 z-10 flex items-start justify-between px-5 md:px-8 pt-5 md:pt-8 font-Mono text-[10px] tracking-[0.3em] uppercase">
             <span class="flex items-center gap-2">
@@ -144,15 +143,15 @@
               <div class="flex flex-col sm:flex-row gap-3">
                 <button
                   @click="downloadResume"
-                  class="btn-primary group relative inline-flex items-center justify-center gap-[0.6rem] overflow-hidden cursor-pointer font-Mono uppercase px-[1.1rem] py-3 md:px-6 md:py-[0.85rem] text-[0.65rem] md:text-[0.7rem] tracking-[0.2em] md:tracking-[0.25em]">
+                  class="btn btn-primary group px-[1.1rem] py-3 md:px-6 tracking-[0.2em] md:tracking-[0.25em]">
                   <span>Download CV</span>
-                  <i class="fa-solid fa-arrow-down transition-transform duration-250 ease-in-out group-hover:translate-y-0.5"></i>
+                  <i class="fa-solid fa-arrow-down transition-transform duration-250 ease-in-out group-hover:translate-y-0.5" aria-hidden="true"></i>
                 </button>
                 <button
                   @click="$emit('changeSlide')"
-                  class="btn-ghost group relative inline-flex items-center justify-center gap-[0.6rem] overflow-hidden cursor-pointer font-Mono uppercase px-[1.1rem] py-3 md:px-6 md:py-[0.85rem] text-[0.65rem] md:text-[0.7rem] tracking-[0.2em] md:tracking-[0.25em]">
+                  class="btn btn-ghost group px-[1.1rem] py-3 md:px-6 tracking-[0.2em] md:tracking-[0.25em]">
                   <span>View Works</span>
-                  <i class="fa-solid fa-arrow-right transition-transform duration-250 ease-in-out group-hover:translate-x-[3px]"></i>
+                  <i class="fa-solid fa-arrow-right transition-transform duration-250 ease-in-out group-hover:translate-x-[3px]" aria-hidden="true"></i>
                 </button>
               </div>
             </div>

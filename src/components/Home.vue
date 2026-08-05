@@ -1,11 +1,10 @@
 <template>
   <Transition name="fade">
     <div
-      v-if="true"
       :class="['relative w-full app-slide max-md:overflow-y-auto max-md:overflow-x-hidden md:overflow-hidden', { 'is-revealed': entered }]">
       <div class="w-full h-full grid grid-cols-1 grid-rows-[auto_1fr] min-h-full md:grid-cols-[45fr_55fr] md:grid-rows-1">
         <!-- LEFT: accent block -->
-        <section class="relative overflow-hidden max-md:overflow-visible text-dark hero-left dark:bg-dark-primary bg-light-primary">
+        <section data-accent-surface class="relative overflow-hidden max-md:overflow-visible text-dark hero-left dark:bg-dark-primary bg-light-primary">
           <div class="relative flex flex-col justify-between h-full p-6 md:p-10 lg:p-14 max-md:py-12 max-md:gap-8 max-md:min-h-full">
             <div class="flex items-center gap-3 text-xs tracking-[0.3em] uppercase font-Mono fade-up" style="--d:0.2s">
               <span class="status-dot w-2 h-2 rounded-full bg-current opacity-90"></span>
@@ -20,8 +19,12 @@
                 <span class="reveal-line leading-[0.95]"><span class="hnl-inner [-webkit-text-fill-color:transparent] [-webkit-text-stroke:1.5px_var(--color-dark)] opacity-85" style="--d:0.7s">Angulo</span></span>
               </h1>
               <div class="flex items-baseline gap-2 mt-4 text-base font-Gilroy sm:text-lg md:text-xl fade-up" style="--d:0.95s">
-                <span class="opacity-70">→</span>
-                <span class="capitalize" aria-live="polite">{{ typed }}</span><span class="caret inline-block ml-[0.1em]" aria-hidden="true">|</span>
+                <span class="opacity-70" aria-hidden="true">→</span>
+                <!-- The typing effect is decoration: announcing it would read one
+                     letter at a time forever. Hide it and give assistive tech the
+                     four roles as one static string instead. -->
+                <span class="capitalize" aria-hidden="true">{{ typed }}</span><span class="caret inline-block ml-[0.1em]" aria-hidden="true">|</span>
+                <span class="sr-only">Front-end developer, UI/UX designer, video editor, and vector artist.</span>
               </div>
             </div>
 
@@ -84,8 +87,7 @@
               </div>
               <div class="flex flex-col items-end text-right">
                 <p class="text-xs tracking-[0.3em] uppercase opacity-60 font-Gilroy">Navigate <span class="md:hidden">↓</span><span class="hidden md:inline">→</span></p>
-                <p class="hidden mt-1 text-xs opacity-50 font-Gilroy lg:block">scroll or ← → keys</p>
-                <p class="hidden mt-1 text-xs opacity-50 font-Gilroy md:block lg:hidden">scroll or ← → keys</p>
+                <p class="hidden mt-1 text-xs opacity-50 font-Gilroy md:block">scroll or ← → keys</p>
                 <p class="mt-1 text-xs opacity-50 font-Gilroy md:hidden">swipe ↑ or ↓</p>
               </div>
             </div>
@@ -121,13 +123,34 @@
         timer: null
       }
     },
+    watch: {
+      // The loop used to run forever, even while the visitor was four panels
+      // away — pure timer churn. Type only while Home is on screen.
+      activeSlide(val) {
+        if (val === 'home') this.start()
+        else this.stop()
+      }
+    },
     mounted() {
-      this.tick()
+      this.start()
     },
     beforeUnmount() {
-      clearTimeout(this.timer)
+      this.stop()
     },
     methods: {
+      start() {
+        // Reduced motion gets the full first title, no cycling.
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          this.typed = this.titles[0]
+          return
+        }
+        if (this.timer) return
+        this.tick()
+      },
+      stop() {
+        clearTimeout(this.timer)
+        this.timer = null
+      },
       tick() {
         const current = this.titles[this.titleIdx]
         let delay = 80

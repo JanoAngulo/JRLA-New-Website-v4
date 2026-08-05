@@ -1,7 +1,6 @@
 <template>
   <Transition name="fade">
     <div
-      v-if="true"
       ref="worksSection"
       :class="['relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide', { 'is-revealed': entered }]">
       <!-- Sticky top header -->
@@ -168,8 +167,8 @@
 
           <div v-else-if="content.type === 'vector'" class="relative overflow-hidden bg-current/5">
             <img :src="content.link" :alt="content.title" loading="eager" fetchpriority="high" decoding="async" class="block w-full h-auto object-contain" />
-            <button type="button" class="absolute bottom-4 right-4 inline-flex items-center gap-[0.45rem] px-[0.85rem] py-[0.55rem] font-Mono text-[0.7rem] tracking-[0.25em] uppercase cursor-pointer bg-light-primary text-dark border border-light-primary dark:bg-dark-primary dark:border-dark-primary transition-[background-color,color,translate] duration-250 hover:-translate-y-0.5" @click="downloadImage(content.link)" aria-label="Download artwork">
-              <i class="fa-solid fa-arrow-down"></i>
+            <button type="button" class="btn btn-primary absolute bottom-4 right-4 px-[0.85rem] py-[0.55rem] hover:-translate-y-0.5" @click="downloadImage(content.link)" aria-label="Download artwork">
+              <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
               <span>Download</span>
             </button>
           </div>
@@ -378,7 +377,7 @@
         return {
           uiux: 'text-uiux-fg bg-uiux-bg dark:text-uiux-fg-dark dark:bg-uiux-bg-dark',
           website: 'text-web-fg bg-web-bg dark:text-web-fg-dark dark:bg-web-bg-dark',
-          video: 'text-[rgb(127,29,29)] bg-[rgb(254,226,226)] dark:text-[rgb(254,202,202)] dark:bg-[rgb(76,5,25)]',
+          video: 'text-video-fg bg-video-bg dark:text-video-fg-dark dark:bg-video-bg-dark',
           vector: 'text-vector-fg bg-vector-bg dark:text-vector-fg-dark dark:bg-vector-bg-dark'
         }[work] || ''
       },

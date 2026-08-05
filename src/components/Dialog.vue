@@ -21,13 +21,14 @@
         tabindex="-1"
         class="fixed inset-0 grid p-4 overflow-y-auto"
         style="z-index: var(--z-modal);"
+        @click.self="$emit('close')"
         @keydown="onKeydown">
-        <div class="flex items-center mx-auto">
-          <div class="relative p-7 dark:bg-dark-card bg-white shadow max-w-4xl">
+        <div class="flex items-center mx-auto" @click.self="$emit('close')">
+          <div class="relative p-7 dark:bg-dark-card bg-light-card surface-lifted max-w-4xl">
             <button
               type="button"
               aria-label="Close dialog"
-              class="absolute z-10 grid w-10 h-10 rounded-full shadow-xl cursor-pointer top-3 right-3 place-content-center bg-dark-primary text-dark transition-[background-color,transform] duration-200 hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] hover:scale-105 active:scale-95"
+              class="absolute z-10 grid w-11 h-11 rounded-full cursor-pointer top-3 right-3 place-content-center bg-light-primary text-dark border border-light-primary dark:bg-dark-primary dark:border-dark-primary transition-[background-color,border-color,transform] duration-200 hover:bg-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:border-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:text-light dark:hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:border-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:text-dark hover:scale-105 active:scale-95"
               @click="$emit('close')">
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -196,10 +197,6 @@
           )
         ).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null)
       },
-      focusFirst(root) {
-        const list = this.focusables(root)
-        ;(list[0] || root).focus()
-      },
       trapFocus(e) {
         const root = this.$refs.dialogEl
         if (!root) return
@@ -243,7 +240,12 @@
         }
       },
       endDrag() {
-        if (this.dragOffset > 0) this.$emit('close')
+        // Dismiss only past a real threshold — 12% of the sheet's own height,
+        // floored at 64px. Any movement used to close it, so a 1px twitch while
+        // grabbing the handle threw the case study away.
+        const el = this.$refs.dialogEl
+        const threshold = Math.max(64, (el?.offsetHeight || 0) * 0.12)
+        if (this.dragOffset > threshold) this.$emit('close')
         this.dragging = false
         this.dragOffset = 0
         this.cleanupDrag()
@@ -281,18 +283,5 @@
   .fade-enter-from,
   .fade-leave-to {
     opacity: 0;
-  }
-
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #d1d1d1;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #888;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
   }
 </style>

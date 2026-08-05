@@ -1,15 +1,20 @@
 <template>
   <template v-if="supported">
+    <!-- Position uses the standalone `translate` property, NOT `transform`.
+         The individual properties compose in a fixed order (translate → rotate →
+         scale → transform), so `transform: translate()` would be applied INSIDE
+         `scale`, multiplying the position by the scale factor and throwing the
+         ring across the screen on hover. `translate` sits outside `scale`. -->
     <div
       class="cursor-dot"
       aria-hidden="true"
-      :style="{ transform: `translate(${dot.x}px, ${dot.y}px)` }"
+      :style="{ translate: `${dot.x}px ${dot.y}px` }"
     ></div>
     <div
       class="cursor-ring"
       aria-hidden="true"
       :class="{ 'is-hover': hovering, 'is-click': clicking }"
-      :style="{ transform: `translate(${ring.x}px, ${ring.y}px)` }"
+      :style="{ translate: `${ring.x}px ${ring.y}px` }"
     ></div>
   </template>
 </template>
@@ -92,8 +97,8 @@
     top: 0;
     left: 0;
     pointer-events: none;
-    will-change: transform;
-    z-index: 99998;
+    will-change: translate, scale;
+    z-index: var(--z-grain);
   }
 
   .cursor-dot {
@@ -101,49 +106,54 @@
     height: 6px;
     margin: -3px 0 0 -3px;
     border-radius: 50%;
-    background: #000;
-    transition: width 0.2s ease, height 0.2s ease, margin 0.2s ease;
+    background: var(--color-dark);
   }
   html.dark .cursor-dot {
-    background: #fff;
+    background: var(--color-light);
   }
 
+  /* The ring resizes via the standalone `scale` property, never width/height/
+     margin: those are layout properties, and animating them on an element that
+     already repaints every pointer frame forced layout on each tick. Box stays
+     36px and scales about its own centre, so the margin offset stays valid.
+     Pairs with the `translate` property for position — see the template note. */
   .cursor-ring {
     width: 36px;
     height: 36px;
     margin: -18px 0 0 -18px;
     border-radius: 50%;
-    border: 1.5px solid #000;
+    border: 1.5px solid var(--color-dark);
+    scale: 1;
     transition:
-      width 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-      height 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-      margin 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      scale 0.25s cubic-bezier(0.22, 1, 0.36, 1),
       background-color 0.25s ease,
       border-color 0.25s ease,
       opacity 0.2s ease;
     opacity: 1;
   }
   html.dark .cursor-ring {
-    border-color: #fff;
+    border-color: var(--color-light);
   }
 
   .cursor-ring.is-hover {
-    width: 56px;
-    height: 56px;
-    margin: -28px 0 0 -28px;
-    background: color-mix(in srgb, #000 18%, transparent);
-    border-color: #000;
+    scale: 1.5556;
+    background: color-mix(in oklab, var(--color-dark) 18%, transparent);
+    border-color: var(--color-dark);
   }
   html.dark .cursor-ring.is-hover {
-    background: color-mix(in srgb, #fff 18%, transparent);
-    border-color: #fff;
+    background: color-mix(in oklab, var(--color-light) 18%, transparent);
+    border-color: var(--color-light);
   }
 
   .cursor-ring.is-click {
-    width: 24px;
-    height: 24px;
-    margin: -12px 0 0 -12px;
+    scale: 0.6667;
     opacity: 0.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-ring {
+      transition-duration: 0.01ms;
+    }
   }
 
   /* Hide on touch / coarse-pointer / small screens */
