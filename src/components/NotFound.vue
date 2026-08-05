@@ -24,7 +24,7 @@
 
       <!-- CTA row -->
       <div class="flex flex-col gap-3 pt-1 sm:flex-row sm:flex-wrap">
-        <router-link to="/" class="btn btn-primary group py-[0.95rem] no-underline transition-all hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+        <router-link :to="{ path: '/', hash: '#works' }" class="btn btn-primary group py-[0.95rem] no-underline transition-all hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
           <i class="fa-solid fa-arrow-left transition-transform duration-250 ease-in-out group-hover:-translate-x-[3px] motion-reduce:transition-none" aria-hidden="true"></i>
           <span>Back to Works</span>
         </router-link>

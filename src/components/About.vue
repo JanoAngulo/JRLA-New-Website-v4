@@ -1,12 +1,11 @@
 <template>
   <Transition name="fade">
     <div
-      v-if="activeSlide === 'about'"
       ref="aboutSection"
-      class="relative w-full overflow-x-hidden md:overflow-hidden overflow-y-auto app-slide">
+      :class="['relative w-full overflow-x-hidden md:overflow-hidden overflow-y-auto app-slide', { 'is-revealed': entered }]">
       <div class="grid grid-cols-1 grid-rows-[420px_auto] min-h-full w-full md:grid-cols-[40fr_60fr] md:grid-rows-1 md:h-full">
         <!-- LEFT: portrait on accent block -->
-        <section class="about-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden">
+        <section data-accent-surface class="about-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden">
           <!-- Corner meta labels -->
           <div class="absolute top-0 inset-x-0 z-10 flex items-start justify-between px-5 md:px-8 pt-5 md:pt-8 font-Mono text-[10px] tracking-[0.3em] uppercase">
             <span class="flex items-center gap-2">
@@ -25,7 +24,7 @@
             <LazyImage
               :src="portraitSrc"
               alt="Portrait of John Russel Angulo, photographed in Bulacan"
-              class="w-full h-full object-cover object-top transition-transform duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] select-none pointer-events-none [-webkit-user-drag:none] group-hover:scale-[1.04]"
+              class="w-full h-full object-cover object-top select-none pointer-events-none [-webkit-user-drag:none] group-hover:scale-[1.04]"
               draggable="false"
               @dragstart.prevent />
           </div>
@@ -38,13 +37,13 @@
         </section>
 
         <!-- RIGHT: biography -->
-        <section class="about-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto">
+        <section data-pan-scroll class="about-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto">
           <!-- Subtle dot-grid backdrop -->
           <div class="dot-grid bg-size-[22px_22px]" aria-hidden="true"></div>
 
           <div class="relative flex flex-col md:justify-between p-6 md:p-10 lg:p-14 gap-6 md:h-full min-w-0">
             <!-- Top eyebrow -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">
+            <div class="reveal-fade flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase" style="--d:0.1s;--o:0.7">
               <span>04 — Biography</span>
               <span class="hidden sm:inline">Issue / 2026</span>
             </div>
@@ -58,28 +57,28 @@
               </h2>
               <div class="hairline"></div>
               <p class="font-Gilroy text-[0.95rem] md:text-lg leading-relaxed opacity-90 max-w-2xl text-pretty">
-                I'm Jano — a UI/UX designer and front-end developer from Bulacan with <span class="dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">3+ years</span> building interfaces that feel <em class="not-italic dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">considered</em>.
+                <span class="reveal-fade inline-block" style="--d:0.35s">I'm Jano — a UI/UX designer and front-end developer from Bulacan </span><span class="reveal-fade inline-block" style="--d:0.48s">with <span class="dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">3+ years</span> building interfaces </span><span class="reveal-fade inline-block" style="--d:0.61s">that feel <em class="not-italic dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">considered</em>.</span>
               </p>
             </div>
 
             <!-- Stats counter -->
             <div class="grid grid-cols-2 items-start gap-x-5 gap-y-4 max-[380px]:gap-2 border-y border-current/12 py-4 md:flex md:flex-wrap md:items-center md:gap-4 md:border-0">
-              <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]">
+              <div class="reveal-fade flex flex-col gap-1 min-w-0 md:min-w-[70px]" style="--d:0.2s">
                 <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.years }}<span class="text-[0.7em] opacity-70 ml-0.5">+</span></p>
                 <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-[0.55]">Years exp.</p>
               </div>
               <div class="hidden md:block w-px h-7 bg-current opacity-[0.18]"></div>
-              <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]">
+              <div class="reveal-fade flex flex-col gap-1 min-w-0 md:min-w-[70px]" style="--d:0.28s">
                 <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.technologies }}<span class="text-[0.7em] opacity-70 ml-0.5">+</span></p>
                 <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-[0.55]">Technologies</p>
               </div>
               <div class="hidden md:block w-px h-7 bg-current opacity-[0.18]"></div>
-              <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]">
+              <div class="reveal-fade flex flex-col gap-1 min-w-0 md:min-w-[70px]" style="--d:0.36s">
                 <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.tools }}<span class="text-[0.7em] opacity-70 ml-0.5">+</span></p>
                 <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-[0.55]">Creative Tools</p>
               </div>
               <div class="hidden md:block w-px h-7 bg-current opacity-[0.18]"></div>
-              <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]">
+              <div class="reveal-fade flex flex-col gap-1 min-w-0 md:min-w-[70px]" style="--d:0.44s">
                 <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.disciplines }}</p>
                 <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-[0.55]">Disciplines</p>
               </div>
@@ -87,15 +86,15 @@
 
             <!-- Meta facts grid -->
             <div class="grid grid-cols-2 max-[380px]:grid-cols-1 gap-x-5 gap-y-[0.9rem] md:gap-x-8 md:gap-y-5 lg:grid-cols-[repeat(3,max-content)] lg:justify-start lg:gap-x-12 border-y border-current/12 py-4 md:py-5">
-              <div class="flex flex-col gap-[0.35rem]">
+              <div class="reveal-fade flex flex-col gap-[0.35rem]" style="--d:0.24s">
                 <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-[0.55]">Based in</p>
                 <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em]">Bulacan · PH</p>
               </div>
-              <div class="flex flex-col gap-[0.35rem]">
+              <div class="reveal-fade flex flex-col gap-[0.35rem]" style="--d:0.32s">
                 <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-[0.55]">Disciplines</p>
                 <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em]">Web · UI/UX · Motion</p>
               </div>
-              <div class="flex flex-col gap-[0.35rem]">
+              <div class="reveal-fade flex flex-col gap-[0.35rem]" style="--d:0.4s">
                 <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-[0.55]">Available</p>
                 <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em] flex items-center gap-2"><span class="status-dot"></span> 2026 Onwards</p>
               </div>
@@ -133,27 +132,26 @@
 
             <!-- Powered by + CTAs -->
             <div class="flex flex-col gap-5 pt-2">
-              <div class="flex items-center gap-3 flex-wrap">
+              <div class="reveal-fade flex items-center gap-3 flex-wrap" style="--d:0.3s">
                 <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-60">Powered by</p>
                 <div class="flex items-center gap-2">
                   <img class="h-5 w-auto opacity-90" src="@/assets/img/features/frontend/vue.svg" alt="Vue.js" loading="lazy" decoding="async" />
                   <img class="h-5 w-auto opacity-90" src="@/assets/img/features/frontend/tailwind.svg" alt="Tailwind CSS" loading="lazy" decoding="async" />
-                  <img class="h-5 w-auto opacity-90" src="@/assets/img/features/frontend/swiper-logo.svg" alt="Swiper" loading="lazy" decoding="async" />
                 </div>
               </div>
 
               <div class="flex flex-col sm:flex-row gap-3">
                 <button
                   @click="downloadResume"
-                  class="btn-primary group relative inline-flex items-center justify-center gap-[0.6rem] overflow-hidden cursor-pointer font-Mono uppercase px-[1.1rem] py-3 md:px-6 md:py-[0.85rem] text-[0.65rem] md:text-[0.7rem] tracking-[0.2em] md:tracking-[0.25em]">
+                  class="btn btn-primary group px-[1.1rem] py-3 md:px-6 tracking-[0.2em] md:tracking-[0.25em]">
                   <span>Download CV</span>
-                  <i class="fa-solid fa-arrow-down transition-transform duration-250 ease-in-out group-hover:translate-y-0.5"></i>
+                  <i class="fa-solid fa-arrow-down transition-transform duration-250 ease-in-out group-hover:translate-y-0.5" aria-hidden="true"></i>
                 </button>
                 <button
                   @click="$emit('changeSlide')"
-                  class="btn-ghost group relative inline-flex items-center justify-center gap-[0.6rem] overflow-hidden cursor-pointer font-Mono uppercase px-[1.1rem] py-3 md:px-6 md:py-[0.85rem] text-[0.65rem] md:text-[0.7rem] tracking-[0.2em] md:tracking-[0.25em]">
+                  class="btn btn-ghost group px-[1.1rem] py-3 md:px-6 tracking-[0.2em] md:tracking-[0.25em]">
                   <span>View Works</span>
-                  <i class="fa-solid fa-arrow-right transition-transform duration-250 ease-in-out group-hover:translate-x-[3px]"></i>
+                  <i class="fa-solid fa-arrow-right transition-transform duration-250 ease-in-out group-hover:translate-x-[3px]" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
@@ -171,9 +169,12 @@
   import { useThemeStore } from '../store'
   import LazyImage from './LazyImage.vue'
 
+  import { sectionReveal } from '../composables/sectionReveal'
+
   export default {
     name: 'About',
     components: { LazyImage },
+    mixins: [sectionReveal('about')],
     props: {
       activeSlide: String,
       windowWidth: Number,
@@ -185,8 +186,7 @@
       return {
         Resume,
         stats: { years: 0, technologies: 0, tools: 0, disciplines: 0 },
-        statsTargets: { years: 3, technologies: 13, tools: 10, disciplines: 4 },
-        _countAnimDone: false
+        statsTargets: { years: 3, technologies: 13, tools: 10, disciplines: 4 }
       }
     },
     computed: {
@@ -195,10 +195,9 @@
       }
     },
     watch: {
+      // Re-count on every entry so the stat counters replay with the section.
       activeSlide(val) {
-        if (val === 'about' && !this._countAnimDone) {
-          this.animateStats()
-        }
+        if (val === 'about') this.animateStats()
       }
     },
     mounted() {
@@ -206,7 +205,6 @@
     },
     methods: {
       animateStats() {
-        this._countAnimDone = true
         const duration = 1400
         const start = performance.now()
         const targets = this.statsTargets
@@ -245,25 +243,27 @@
     opacity: 0;
   }
 
+  /* Entrance reveals — gated on `.is-revealed` (v-reveal, scroll entry). */
   .about-left {
-    animation: slide-in-l 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     min-width: 0;
     overflow: hidden;
+    transform: translateX(-3%);
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+                opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-
   .about-right {
-    animation: slide-in-r 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
     min-width: 0;
     overflow-x: hidden;
+    transform: translateX(3%);
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s,
+                opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s;
   }
-
-  @keyframes slide-in-l {
-    from { transform: translateX(-3%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-  @keyframes slide-in-r {
-    from { transform: translateX(3%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+  .is-revealed .about-left,
+  .is-revealed .about-right {
+    transform: translateX(0);
+    opacity: 1;
   }
 
   /* Live dot in top-left meta */
@@ -284,13 +284,23 @@
   .hl-inner {
     display: inline-block;
     transform: translateY(105%);
-    animation: hl-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .heading-line:nth-child(1) .hl-inner { animation-delay: 0.2s; }
-  .heading-line:nth-child(2) .hl-inner { animation-delay: 0.32s; }
-  .heading-line:nth-child(3) .hl-inner { animation-delay: 0.44s; }
-  @keyframes hl-rise {
-    to { transform: translateY(0); }
+  .heading-line:nth-child(1) .hl-inner { transition-delay: 0.2s; }
+  .heading-line:nth-child(2) .hl-inner { transition-delay: 0.32s; }
+  .heading-line:nth-child(3) .hl-inner { transition-delay: 0.44s; }
+  .is-revealed .hl-inner {
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .about-left,
+    .about-right,
+    .hl-inner {
+      transition-duration: 0.2s;
+      transition-delay: 0s;
+    }
+    .about-left,
+    .about-right { transform: none; }
   }
 
   .status-dot {
