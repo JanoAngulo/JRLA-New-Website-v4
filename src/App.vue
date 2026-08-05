@@ -3,17 +3,12 @@
     <Loader v-if="showLoader" @finished="onLoaderFinished" />
     <CustomCursor v-if="!showLoader" />
 
-    <!-- The app renders BEHIND the boot overlay rather than waiting for it. It
-         used to sit behind `v-if="!showLoader"`, so nothing existed in the DOM for
-         the ~2.6s the intro held: no markup to parse, no images decoding, no fonts
-         resolving, no layout to measure. Every bit of that cost landed after the
-         overlay left, serialised instead of overlapped.
-
-         The overlay is `position: fixed` at the top of the z scale and owns the
-         scroll lock, so it still covers everything. `inert` keeps the hidden app
-         out of focus and assistive-tech reach while it does — otherwise a screen
-         reader would be reading the portfolio to someone whose screen still says
-         LOADING. -->
+    <!-- The app mounts behind the boot overlay rather than waiting for it, so
+         markup, images, fonts and layout resolve while the intro plays instead of
+         serialising after it. The overlay is `position: fixed` at the top of the z
+         scale and owns the scroll lock, so it still covers everything; `inert`
+         keeps the app underneath out of focus and assistive-tech reach until the
+         overlay leaves. -->
     <div :inert="showLoader">
       <div v-if="$route.name === 'Works'">
         <web-view></web-view>
@@ -49,10 +44,9 @@
     methods: {
       onLoaderFinished() {
         this.showLoader = false
-        // The pager built and measured itself while the overlay held
-        // `overflow: hidden` on <html>. Now the lock is off, tell it to re-fit and
-        // to run any deep-link scroll it deferred (a programmatic scroll cannot
-        // move a locked document, so it had to wait).
+        // The pager measured itself while the overlay held `overflow: hidden` on
+        // <html>. With the lock off, tell it to re-fit and run any deep-link
+        // scroll it deferred — a programmatic scroll can't move a locked document.
         requestAnimationFrame(() => window.dispatchEvent(new Event('jrla:booted')))
       }
     },

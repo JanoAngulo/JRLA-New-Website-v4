@@ -95,15 +95,11 @@
         this.themeSpin++
         const store = useThemeStore()
 
-        // Every surface, both accents and all text invert in a single frame —
-        // the largest uncushioned state change in the app. A View Transition
-        // cross-fades the before and after snapshots so the eye is handed from
-        // one theme to the other instead of being cut between them.
-        //
-        // Progressive enhancement, deliberately: browsers without the API (and
-        // anyone on reduced motion, where the CSS cancels the animation) fall
-        // through to the identical instant swap. The theme logic itself is the
-        // same call either way, so this cannot desync the store.
+        // A View Transition cross-fades the before/after snapshots, since every
+        // surface, accent and text colour inverts in a single frame. Progressive
+        // enhancement: browsers without the API — and reduced motion, where the
+        // CSS cancels the animation — fall through to the instant swap. The store
+        // call is the same either way, so this can't desync it.
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         if (!document.startViewTransition || reduced) {
           store.cycleMode()

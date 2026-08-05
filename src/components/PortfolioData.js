@@ -21,7 +21,7 @@ import landscape from '@/assets/img/portfolio/LandscapePink.webp'
 import dahyun from '@/assets/img/portfolio/Dahyun.webp'
 import desertNightTime from '@/assets/img/portfolio/Desert-Night-Time.webp'
 
-// For Downloads (served from /public/downloads/ to skip Vite asset processing)
+// Downloads are served from /public/downloads/ to skip Vite asset processing.
 const dlUnderwater = '/downloads/Underwater.png'
 const dlLucifer = '/downloads/Lucifer.png'
 const dlLandscape = '/downloads/Landscape.png'

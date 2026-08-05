@@ -48,7 +48,7 @@ export const useThemeStore = defineStore('theme', {
       const next = { system: 'light', light: 'dark', dark: 'system' }[this.mode] || 'system'
       this.setMode(next)
     },
-    // Back-compat with existing Navbar wiring
+    // Alias kept for compatibility; nothing in the app calls it directly.
     toggleDarkMode() {
       this.cycleMode()
     },

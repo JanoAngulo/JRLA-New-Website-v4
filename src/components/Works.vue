@@ -25,18 +25,15 @@
       </div>
     </div>
 
-    <!-- Grid of works.
-         `.works-grid` fades as a single surface across a filter change. The
-         swap used to be instantaneous: the grid teleported to a different set
-         of cards, and then the scrub engine re-revealed them, so the same
-         content appeared to arrive twice. Fading the CONTAINER (rather than
-         each card) is deliberate — the cards' own opacity is written inline by
-         GSAP every frame, so a per-card transition would be overwritten. -->
-    <!-- `md:flex-1 md:min-h-0` instead of the old `max-h-[calc(100%-130px)]`: 130px
-         was a hand-measured guess at the header's height, so the pan region was
-         wrong by however much the filter row wrapped or the meta line stacked.
-         Flex derives it. `min-h-0` is the part that matters — without it a flex
-         child refuses to shrink below its content and never scrolls. -->
+    <!-- Grid of works. `.works-grid` fades as one surface across a filter change;
+         it has to be the container rather than each card, because the cards' own
+         opacity is written inline by GSAP every frame and would overwrite a
+         per-card transition.
+
+         The pan region's height comes from `md:flex-1 md:min-h-0`, so it tracks
+         the header however the filter row wraps. `min-h-0` is load-bearing:
+         without it a flex child won't shrink below its content and never
+         scrolls. -->
     <div data-pan-scroll class="pt-6 px-5 pb-12 md:pt-8 md:px-8 md:pb-12 md:flex-1 md:min-h-0 lg:px-12 lg:pb-16 md:overflow-y-auto">
       <div class="works-grid grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7" :class="{ 'is-swapping': swapping }">
         <div
@@ -90,12 +87,9 @@
     </div>
 
     <app-dialog variant="sheet" :open="isOffcanvasOpen" :aria-label="content.title || 'Project details'" @close="closeOffCanvas" @after-leave="resetUiuxContent">
-      <!-- The skeleton and the real case study have unrelated geometry, so the
-           resolve used to read as the panel being replaced rather than filled.
-           `mode="out-in"` cross-fades them: opacity only, because moving two
-           layouts that share no structure would describe a transformation that
-           isn't happening. Reduced motion is covered by the global rule, which
-           keeps opacity transitions at 150ms. -->
+      <!-- The skeleton and the real case study share no geometry, so `mode="out-in"`
+           cross-fades them on opacity alone — moving two unrelated layouts would
+           describe a transformation that isn't happening. -->
       <Suspense v-if="isUiUx">
         <template #default>
           <Transition name="content-swap" mode="out-in" appear>
@@ -227,13 +221,12 @@
   import { sectionReveal } from '../composables/sectionReveal'
   import { createScrollScrub } from '../composables/useScrollScrub'
 
-  // How long the grid dims before the filtered set swaps in. Short enough that
-  // it reads as a transition rather than a load, and it must match the
+  // How long the grid dims before the filtered set swaps in. Must match the
   // `.works-grid` transition-duration below.
   const SWAP_FADE_MS = 120
 
-  // Tool logos — match the same imports used in PortfolioData so we can
-  // map references → display names (URLs may be hashed or inlined data URIs).
+  // Same imports as PortfolioData, so tool references can be mapped back to
+  // display names (the URLs may be hashed or inlined as data URIs).
   import html from '@/assets/img/features/frontend/html.svg'
   import htmlLight from '@/assets/img/features/frontend/html-light.svg'
   import css from '@/assets/img/features/frontend/css.svg'
@@ -318,7 +311,7 @@
       return {
         works2: portfolioData.portfolio.myWorks2,
         activeFilter: 'all',
-        // True only for the ~120ms the grid is dimmed between filter sets.
+        // True only while the grid is dimmed between filter sets (SWAP_FADE_MS).
         swapping: false,
         isModalOpen: false,
         isOffcanvasOpen: false,
@@ -364,24 +357,21 @@
       }
     },
     watch: {
-      // Filtering changes how many cards render, so the grid's scrollHeight —
-      // and thus the pause-and-pan length — is stale. Ask WebView to remeasure
-      // the scroll engine once the filtered DOM has committed.
+      // Filtering re-renders the cards, so the scrub targets are stale and the
+      // grid's scrollHeight — the pause-and-pan length — has changed. Re-collect
+      // against the new DOM, then ask WebView to remeasure.
       activeFilter() {
-        // Cards re-render on filter change — re-collect scrub targets against the
-        // new DOM, then ask WebView to remeasure the pan length.
         this.$nextTick(() => {
           this._scrub?.refresh()
           this.$emit('remeasure')
-          // Hand the grid back once the re-revealed cards have had a frame to
-          // take their opening values, so it fades in over the new set rather
-          // than over a flash of the old one.
+          // Give the re-revealed cards one frame to take their opening values, so
+          // the grid fades in over the new set rather than a flash of the old one.
           requestAnimationFrame(() => { this.swapping = false })
         })
       }
     },
     mounted() {
-      // Scroll-linked card reveals — see useScrollScrub (same engine as Features).
+      // Scroll-linked card reveals — see useScrollScrub.
       this.$nextTick(() => {
         this._scrub = createScrollScrub(this.$refs.worksSection)
         this._scrub.start()
@@ -392,11 +382,9 @@
     },
     methods: {
       // Filter changes go through here rather than assigning `activeFilter`
-      // inline, so the grid can dim BEFORE the DOM swaps underneath it. Vue
-      // needs the class on screen for a frame before the re-render, hence the
-      // rAF; without it the fade-out and the swap land in the same paint and
-      // nothing is bridged. Re-clicking the current filter is a no-op — flashing
-      // the grid to reveal an identical set is worse than doing nothing.
+      // inline, so the grid can dim before the DOM swaps under it. The rAF gets
+      // the dim class on screen for a frame first; without it the fade-out and
+      // the swap land in the same paint and nothing is bridged.
       setFilter(id) {
         if (id === this.activeFilter) return
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -509,12 +497,11 @@
 </script>
 
 <style lang="css" scoped>
-  /* Header + filter entrance — gated on the panel root's `.is-revealed`
-     (sectionReveal mixin) so they replay every time the section is entered.
-     Desktop only: on mobile the section is active-gated LATER than the cards'
-     scroll-scrub, so gating the header here would let a card fade in while the
-     filters are still hidden. Mobile shows them statically (they sit above the
-     cards in flow, so they're always seen first). */
+  /* Header + filter entrance, gated on the panel root's `.is-revealed`
+     (sectionReveal mixin) so they replay on every section entry. Desktop only:
+     on mobile the section is active-gated later than the cards' scroll-scrub, so
+     gating the header here would let a card fade in while the filters are still
+     hidden. Mobile shows them statically. */
   @media (min-width: 768px) {
     .works-header-meta {
       opacity: 0;
@@ -539,10 +526,6 @@
     }
   }
 
-  /* Card reveal is now SCROLL-LINKED (see useScrollScrub) — opacity/Y are driven
-     inline every frame off the pan container's scroll position, so no CSS
-     transition here (it would smooth/lag the scrub). This from-state only
-     prevents a flash before JS engages. */
   /* Skeleton -> case-study cross-fade (see the <Suspense> block above). */
   .content-swap-enter-active,
   .content-swap-leave-active {
@@ -553,16 +536,15 @@
     opacity: 0;
   }
 
-  /* Filter swap. The grid dims as one surface, the set changes behind it, then
-     it comes back — so the visitor sees one substitution instead of a teleport
-     followed by a re-reveal. Opacity only: the cards keep their positions, and
-     moving them as well would describe a rearrangement that isn't happening. */
+  /* Filter swap: the grid dims as one surface, the set changes behind it, then it
+     comes back, so it reads as one substitution. Duration must match
+     SWAP_FADE_MS in the script. */
   .works-grid {
     transition: opacity 120ms var(--ease-out);
   }
   .works-grid.is-swapping {
-    /* Not 0 — dropping to nothing reads as a page load. Holding a trace of the
-       old set keeps it legible as the same grid, re-filtered. */
+    /* Not 0: keeping a trace of the old set reads as the same grid re-filtered
+       rather than a page load. */
     opacity: 0.25;
   }
   @media (prefers-reduced-motion: reduce) {
@@ -573,9 +555,12 @@
     }
   }
 
-  /* No `will-change`: with 20 cards this promoted 20 permanent compositor
-     layers, which costs more memory than the scrub saves. GSAP's force3D on the
-     scrub writes already keeps these on the GPU while they are actually moving. */
+  /* Card reveals are scroll-linked (see useScrollScrub): opacity/Y are written
+     inline every frame, so a CSS transition here would lag the scrub. This
+     from-state only prevents a flash before JS engages.
+
+     No `will-change` either — it would promote a permanent compositor layer per
+     card, and GSAP's force3D already covers them while they move. */
   .reveal {
     opacity: 0;
   }
@@ -586,8 +571,8 @@
     .reveal { opacity: 1; }
   }
 
-  /* Card thumbnail lives inside the LazyImage child component, reachable
-     only via :deep / descendant selectors — can't be utilities on the parent. */
+  /* The thumbnail lives inside the LazyImage child, so it needs a descendant /
+     :deep selector rather than utilities on the parent. */
   .work-card-img img {
     width: 100%;
     height: 100%;
@@ -598,10 +583,8 @@
     object-fit: contain;
     object-position: center bottom;
   }
-  /* Hover zoom is gated on a real pointer. On touch, tapping a card fires a
-     phantom :hover that sticks after navigation, so the card stayed zoomed with
-     no cursor anywhere near it. 250ms rather than 500ms: hover is seen dozens of
-     times per visit, and at that frequency slow reads as lag. */
+  /* Gated on a real pointer: on touch, tapping a card fires a phantom :hover that
+     sticks after navigation, leaving the card zoomed. */
   @media (hover: hover) and (pointer: fine) {
     .work-card:hover .work-card-img img {
       transform: scale(1.04);

@@ -19,9 +19,9 @@
             </h1>
             <div class="flex items-baseline gap-2 mt-4 text-base font-Gilroy sm:text-lg md:text-xl fade-up" style="--d:0.3s">
               <span class="opacity-70" aria-hidden="true">→</span>
-              <!-- The typing effect is decoration: announcing it would read one
-                   letter at a time forever. Hide it and give assistive tech the
-                   four roles as one static string instead. -->
+              <!-- The typing effect is decoration — announced, it would read one
+                   letter at a time forever. Assistive tech gets the four roles as
+                   one static string instead. -->
               <span class="capitalize" aria-hidden="true">{{ typed }}</span><span class="caret inline-block ml-[0.1em]" aria-hidden="true">|</span>
               <span class="sr-only">Front-end developer, UI/UX designer, video editor, and vector artist.</span>
             </div>
@@ -101,8 +101,8 @@
 
   export default {
     name: 'Home',
-    // Entrance replays whenever Home becomes active; initial reveal waits for
-    // WebView's `ready` (wrap is visibility:hidden until then).
+    // Entrance replays whenever Home becomes active. The initial reveal waits for
+    // WebView's `ready` — the wrap is visibility:hidden until then.
     mixins: [sectionReveal('home', { gateReady: true })],
     props: {
       activeSlide: String,
@@ -122,8 +122,8 @@
       }
     },
     watch: {
-      // The loop used to run forever, even while the visitor was four panels
-      // away — pure timer churn. Type only while Home is on screen.
+      // Only type while Home is on screen; otherwise the loop is timer churn for
+      // a panel nobody is looking at.
       activeSlide(val) {
         if (val === 'home') this.start()
         else this.stop()
@@ -181,13 +181,10 @@
 </script>
 
 <style lang="css" scoped>
-  /* Entrance reveals — gated on `.is-revealed`, which the sectionReveal mixin
-     sets on every entry, so this REPLAYS each time the visitor comes back to
-     Home. That reclassifies it: not a once-per-visit flourish but occasional-
-     frequency motion, which has to stay inside a UI budget. The old ladder ran
-     0.9s durations behind delays up to 0.95s — the hero finished 1.65s after
-     arriving, every single time. Durations are now --dur-reveal (450ms) and the
-     delay ladder (set inline as --d) tops out at 0.34s. */
+  /* Entrance reveals, gated on `.is-revealed` (set by the sectionReveal mixin on
+     every entry). Because it replays on each return to Home rather than playing
+     once, it has to stay inside a UI motion budget: durations are --dur-reveal
+     and the inline `--d` delay ladder tops out at 0.34s. */
   .hero-left {
     transform: translateX(-3%);
     opacity: 0;

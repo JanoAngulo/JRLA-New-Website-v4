@@ -132,9 +132,9 @@
       activeSlide: {
         immediate: true,
         handler(v) {
-          // First article + header play a clean timed entrance on arrival
-          // (they have no scroll travel to scrub against). $nextTick so the
-          // scrub instance exists on the initial immediate call.
+          // The first article + header have no scroll travel to scrub against, so
+          // they play a timed entrance on arrival instead. $nextTick so the scrub
+          // instance exists on the initial immediate call.
           this.$nextTick(() => this._scrub?.setActive(v === 'features'))
         }
       },
@@ -191,21 +191,18 @@
 </script>
 
 <style lang="css" scoped>
-  /* Scroll-LINKED reveals (scrub) — opacity/transform are driven inline every
-     frame by useScrollScrub off scroll position, so no CSS transition here
-     (a transition would smooth/lag the scrub). The initial from-state below
-     just prevents a flash before JS engages / on the pre-engaged (off-screen)
-     frames. */
+  /* Reveals here are scroll-linked: useScrollScrub writes opacity/transform inline
+     every frame, so there is no CSS transition — one would lag the scrub. The
+     from-states below only prevent a flash before JS engages.
+
+     No `will-change` either: GSAP's force3D already puts these on the GPU while
+     they move, and a standing hint would hold a layer per line all session. */
 
   /* Masked title lines rise from an overflow-hidden parent; JS drives Y only. */
   .reveal-line {
     display: block;
     overflow: hidden;
   }
-  /* No `will-change` on either of these. GSAP writes these transforms with
-     force3D, which already puts them on the GPU for the duration of the reveal;
-     a standing hint just keeps every line and every article on its own layer for
-     the whole session, long after they have finished moving. */
   .etl-inner {
     display: inline-block;
     transform: translateY(105%); /* JS overrides once engaged */
@@ -217,12 +214,13 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    /* useScrollScrub reveals everything statically; keep from-states cleared. */
+    /* useScrollScrub reveals everything statically, so clear the from-states. */
     .etl-inner { transform: none; }
     .scrub-el { opacity: 1; }
   }
 
-  /* Accent illustration lives inside the LazyImage child — reached via descendant */
+  /* The illustration lives inside the LazyImage child, hence the descendant
+     selector. */
   .ex-art img {
     width: 100%;
     height: 100%;
@@ -234,7 +232,7 @@
     pointer-events: none;
   }
 
-  /* Prose from v-html — injected markup can't carry utility classes */
+  /* Prose comes from v-html, so the injected markup can't carry utility classes. */
   .ex-prose :deep(p) {
     font-family: var(--font-Gilroy);
     font-size: clamp(1rem, 1.05vw, 1.125rem);
