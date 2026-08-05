@@ -1,201 +1,220 @@
 <template>
-  <Transition name="fade">
-    <div
-      ref="worksSection"
-      :class="['relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide', { 'is-revealed': entered }]">
-      <!-- Sticky top header -->
-      <div class="relative z-5 px-5 pt-5 md:px-8 md:pt-6 lg:px-12 lg:pt-8 bg-light dark:bg-dark">
-        <div class="works-header-meta flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
-          <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">03 — Selected Works</p>
-          <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ filteredWorks.length }} / {{ works2.length }} Projects</p>
-        </div>
-
-        <!-- Filter pills -->
-        <div class="no-swipe relative flex gap-[0.4rem] sm:gap-2 pt-4 pb-5 overflow-x-auto snap-x snap-proximity [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] [mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] sm:[mask-image:none] sm:[-webkit-mask-image:none]">
-          <button
-            v-for="(f, i) in filters"
-            :key="f.id"
-            @click="activeFilter = f.id"
-            :aria-pressed="activeFilter === f.id"
-            :style="{ '--pd': (i * 0.07) + 's' }"
-            class="filter-pill-anim group inline-flex items-center gap-[0.4rem] sm:gap-2 px-3 sm:px-[0.9rem] py-[0.55rem] sm:py-[0.6rem] font-Mono text-[0.65rem] sm:text-[0.7rem] tracking-[0.18em] sm:tracking-[0.22em] uppercase bg-transparent border rounded-full cursor-pointer transition-[background,border-color,color] duration-200 whitespace-nowrap shrink-0 snap-start"
-            :class="activeFilter === f.id ? 'bg-light-primary text-dark border-light-primary dark:bg-dark-primary dark:border-dark-primary' : 'border-current/35 hover:border-current/65'">
-            <span>{{ f.label }}</span>
-            <span class="font-Mono tabular-nums text-[0.7rem] opacity-70 group-aria-pressed:opacity-80">{{ f.count }}</span>
-          </button>
-        </div>
+  <div
+    ref="worksSection"
+    :class="['relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide md:flex md:flex-col', { 'is-revealed': entered }]">
+    <!-- Sticky top header -->
+    <div class="relative z-5 px-5 pt-5 md:px-8 md:pt-6 lg:px-12 lg:pt-8 bg-light dark:bg-dark md:shrink-0">
+      <div class="works-header-meta flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
+        <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">03 — Selected Works</p>
+        <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ filteredWorks.length }} / {{ works2.length }} Projects</p>
       </div>
 
-      <!-- Grid of works -->
-      <div data-pan-scroll class="pt-6 px-5 pb-12 md:pt-8 md:px-8 md:pb-12 md:max-h-[calc(100%-130px)] lg:px-12 lg:pb-16 md:overflow-y-auto">
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
-          <div
-            v-for="(item, i) in filteredWorks"
-            :key="i + item.id + item.title"
-            data-scrub
-            data-scrub-y="28"
-            data-scrub-start="0.85"
-            data-scrub-end="0.6"
-            class="reveal">
-          <button
-            type="button"
-            class="work-card group relative flex flex-col text-left overflow-hidden w-full h-full p-0 [font:inherit] text-inherit cursor-pointer bg-light-card dark:bg-dark-card border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.06)] transition-[border-color,translate,box-shadow] duration-300 ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_-8px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_8px_24px_-10px_rgba(0,0,0,0.5)] hover:border-light-primary hover:-translate-y-[3px] hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:hover:border-dark-primary dark:hover:shadow-[0_2px_4px_rgba(0,0,0,0.5),0_16px_36px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,202,38,0.08)] focus-visible:outline-none focus-visible:border-light-primary focus-visible:-translate-y-[3px] focus-visible:shadow-[0_0_0_2px_var(--color-light-primary),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:focus-visible:border-dark-primary dark:focus-visible:shadow-[0_0_0_2px_var(--color-dark-primary),0_16px_36px_-12px_rgba(0,0,0,0.7)]"
-            :aria-label="`Open ${item.title} project details`"
-            @click="openWork(item)">
-            <!-- Image area -->
-            <div class="work-card-img relative aspect-[4/3] overflow-hidden bg-current/5" :class="{ 'work-card-img--contain': item.work === 'uiux' }">
-              <LazyImage :src="item.thumbnail" :alt="item.title + ' thumbnail'" :eager="i < 3" />
-              <div class="absolute inset-0 z-3 flex items-center justify-center bg-dark/[0.78] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
-                <span class="inline-flex items-center gap-2 px-[1.2rem] py-[0.7rem] font-Mono text-xs tracking-[0.25em] uppercase text-light border border-light">
-                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                  View Project
-                </span>
-              </div>
-            </div>
-
-            <!-- Meta -->
-            <div class="px-[1.1rem] pt-4 pb-5 flex flex-col gap-2 border-t border-current/10">
-              <div class="flex items-center justify-between gap-3 mb-1">
-                <span class="font-Mono text-[0.7rem] tracking-[0.3em] opacity-75">{{ String(i + 1).padStart(2, '0') }}</span>
-                <span class="inline-flex items-center gap-[0.4rem] px-[0.6rem] py-[0.3rem] font-Mono text-[0.7rem] tracking-[0.22em] uppercase" :class="tagClasses(item.work)">
-                  <i :class="typeIcon(item.work)"></i>
-                  {{ workTypeLabel(item.work) }}
-                </span>
-              </div>
-              <h3 class="text-[clamp(1.15rem,2vw,1.4rem)] tracking-[-0.02em] leading-[1.05] font-Gilroy-extra-bold uppercase">{{ item.title }}</h3>
-              <div class="flex items-center gap-2 font-Mono text-xs tracking-[0.18em] uppercase opacity-80 pt-1">
-                <span>{{ item.role }}</span>
-                <span class="opacity-65">·</span>
-                <span class="tabular-nums">{{ item.year }}</span>
-              </div>
-            </div>
-          </button>
-          </div>
-        </div>
-
-        <!-- Empty state -->
-        <div v-if="filteredWorks.length === 0" class="py-16 px-8 text-center">
-          <p class="font-Mono text-xs tracking-[0.3em] uppercase opacity-60">No projects in this filter yet.</p>
-        </div>
+      <!-- Filter pills -->
+      <div class="no-swipe relative flex gap-[0.4rem] sm:gap-2 pt-4 pb-5 overflow-x-auto snap-x snap-proximity [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] [mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] sm:[mask-image:none] sm:[-webkit-mask-image:none]">
+        <button
+          v-for="(f, i) in filters"
+          :key="f.id"
+          @click="setFilter(f.id)"
+          :aria-pressed="activeFilter === f.id"
+          :style="{ '--pd': (i * 0.05) + 's' }"
+          class="filter-pill filter-pill-anim group inline-flex items-center gap-[0.4rem] sm:gap-2 px-3 sm:px-[0.9rem] py-[0.55rem] sm:py-[0.6rem] font-Mono text-[0.65rem] sm:text-[0.7rem] tracking-[0.18em] sm:tracking-[0.22em] uppercase bg-transparent border rounded-full cursor-pointer transition-[background,border-color,color] duration-200 whitespace-nowrap shrink-0 snap-start"
+          :class="activeFilter === f.id ? 'bg-light-primary text-dark border-light-primary dark:bg-dark-primary dark:border-dark-primary' : 'border-current/35 hover:border-current/65'">
+          <span>{{ f.label }}</span>
+          <span class="font-Mono tabular-nums text-[0.7rem] opacity-70 group-aria-pressed:opacity-80">{{ f.count }}</span>
+        </button>
       </div>
-
-      <app-dialog variant="sheet" :open="isOffcanvasOpen" :aria-label="content.title || 'Project details'" @close="closeOffCanvas" @after-leave="resetUiuxContent">
-        <Suspense v-if="isUiUx">
-          <template #default>
-            <work-details :work="uiuxContent" @close="closeOffCanvas" />
-          </template>
-          <template #fallback>
-            <skeleton-loader />
-          </template>
-        </Suspense>
-        <div v-else class="flex flex-col gap-7 pb-12 text-dark dark:text-light">
-          <!-- Header -->
-          <div class="flex flex-col gap-2">
-            <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">— Project · {{ workTypeLabel(content.type) }}</p>
-            <h2 class="text-[clamp(1.75rem,4vw,3rem)] tracking-[-0.025em] leading-[0.95] mt-1 font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
-            <div class="hairline mt-3"></div>
-          </div>
-
-          <!-- Preview area -->
-          <div v-if="content.link" class="relative w-full">
-            <iframe :src="content.link" :title="content.title" frameborder="0" class="block w-full aspect-[9/16] min-h-[70vh] md:aspect-[16/10] md:min-h-0 bg-white border border-current/12" loading="lazy"></iframe>
-          </div>
-
-          <!-- Meta grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-current/12">
-            <div v-if="content.role" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
-              <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Role</span>
-              <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em]">{{ content.role }}</span>
-            </div>
-            <div v-if="content.year" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
-              <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Year</span>
-              <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em] tabular-nums">{{ content.year }}</span>
-            </div>
-            <div v-if="content.projectType" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
-              <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Type</span>
-              <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em]">{{ content.projectType }}</span>
-            </div>
-            <div v-if="content.status" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
-              <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Status</span>
-              <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em]">{{ content.status }}</span>
-            </div>
-          </div>
-
-          <!-- Description -->
-          <div class="flex flex-col gap-3">
-            <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-60">— About</p>
-            <p class="font-Gilroy text-base sm:text-lg leading-relaxed opacity-90 whitespace-pre-wrap">{{ content.description }}</p>
-          </div>
-
-          <!-- Toolkit -->
-          <div v-if="content.tools && content.tools.length" class="flex flex-col gap-[0.85rem]">
-            <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-60">Toolkit · {{ content.tools.length }}</p>
-            <div class="grid grid-cols-[repeat(auto-fill,minmax(64px,1fr))] gap-[0.65rem]">
-              <div v-for="(t, idx) in content.tools" :key="idx" class="tool-pill" :title="toolUsed(t)">
-                <img :src="toolLogo(t)" :alt="toolUsed(t)" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
-              </div>
-            </div>
-          </div>
-
-          <!-- CTA -->
-          <div v-if="content.link" class="flex flex-col gap-3 pt-3 sm:flex-row">
-            <button type="button" class="btn btn-primary group" @click="openLink(content.link)">
-              <span>{{ content.btnText || 'Visit Live' }}</span>
-              <i class="fa-solid fa-arrow-up-right-from-square transition-transform duration-250 ease-in-out group-hover:translate-x-[2px] group-hover:-translate-y-[2px]"></i>
-            </button>
-            <button type="button" class="btn btn-ghost" @click="closeOffCanvas">
-              <span>Close</span>
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </div>
-        </div>
-      </app-dialog>
-
-      <app-dialog variant="modal" :open="isModalOpen" :aria-label="content.title || 'Project'" @close="isModalOpen = false">
-        <div class="flex flex-col gap-5 text-dark dark:text-light min-w-[min(80vw,720px)]">
-          <!-- Media -->
-          <iframe
-            v-if="content.type === 'video'"
-            :src="content.link"
-            :title="content.title"
-            class="w-full aspect-video bg-black"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen>
-          </iframe>
-
-          <div v-else-if="content.type === 'vector'" class="relative overflow-hidden bg-current/5">
-            <img :src="content.link" :alt="content.title" loading="eager" fetchpriority="high" decoding="async" class="block w-full h-auto object-contain" />
-            <button type="button" class="btn btn-primary absolute bottom-4 right-4 px-[0.85rem] py-[0.55rem] hover:-translate-y-0.5" @click="downloadImage(content.link)" aria-label="Download artwork">
-              <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-              <span>Download</span>
-            </button>
-          </div>
-
-          <!-- Header -->
-          <div class="flex flex-col gap-[0.4rem]">
-            <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">— {{ workTypeLabel(content.type) }}</p>
-            <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] tracking-[-0.025em] leading-none font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
-            <div class="hairline mt-3"></div>
-          </div>
-
-          <!-- Description -->
-          <p class="font-Gilroy text-base leading-relaxed opacity-90 whitespace-pre-wrap">{{ content.description }}</p>
-
-          <!-- Tools -->
-          <div v-if="content.tools && content.tools.length" class="flex flex-col gap-[0.65rem]">
-            <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-60">Toolkit</p>
-            <div class="grid grid-cols-[repeat(auto-fill,minmax(56px,1fr))] gap-[0.55rem] max-w-[360px]">
-              <div v-for="(t, idx) in content.tools" :key="idx" class="tool-pill" :title="toolUsed(t)">
-                <img :src="toolLogo(t)" :alt="toolUsed(t)" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </app-dialog>
     </div>
-  </Transition>
+
+    <!-- Grid of works.
+         `.works-grid` fades as a single surface across a filter change. The
+         swap used to be instantaneous: the grid teleported to a different set
+         of cards, and then the scrub engine re-revealed them, so the same
+         content appeared to arrive twice. Fading the CONTAINER (rather than
+         each card) is deliberate — the cards' own opacity is written inline by
+         GSAP every frame, so a per-card transition would be overwritten. -->
+    <!-- `md:flex-1 md:min-h-0` instead of the old `max-h-[calc(100%-130px)]`: 130px
+         was a hand-measured guess at the header's height, so the pan region was
+         wrong by however much the filter row wrapped or the meta line stacked.
+         Flex derives it. `min-h-0` is the part that matters — without it a flex
+         child refuses to shrink below its content and never scrolls. -->
+    <div data-pan-scroll class="pt-6 px-5 pb-12 md:pt-8 md:px-8 md:pb-12 md:flex-1 md:min-h-0 lg:px-12 lg:pb-16 md:overflow-y-auto">
+      <div class="works-grid grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7" :class="{ 'is-swapping': swapping }">
+        <div
+          v-for="(item, i) in filteredWorks"
+          :key="i + item.id + item.title"
+          data-scrub
+          data-scrub-y="28"
+          data-scrub-start="0.85"
+          data-scrub-end="0.6"
+          class="reveal">
+        <button
+          type="button"
+          class="work-card group relative flex flex-col text-left overflow-hidden w-full h-full p-0 [font:inherit] text-inherit cursor-pointer bg-light-card dark:bg-dark-card border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.06)] transition-[border-color,translate,box-shadow] duration-300 ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_-8px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_8px_24px_-10px_rgba(0,0,0,0.5)] hover:border-light-primary hover-fine:hover:-translate-y-[3px] hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:hover:border-dark-primary dark:hover:shadow-[0_2px_4px_rgba(0,0,0,0.5),0_16px_36px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,202,38,0.08)] focus-visible:outline-none focus-visible:border-light-primary focus-visible:-translate-y-[3px] focus-visible:shadow-[0_0_0_2px_var(--color-light-primary),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:focus-visible:border-dark-primary dark:focus-visible:shadow-[0_0_0_2px_var(--color-dark-primary),0_16px_36px_-12px_rgba(0,0,0,0.7)]"
+          :aria-label="`Open ${item.title} project details`"
+          @click="openWork(item)">
+          <!-- Image area -->
+          <div class="work-card-img relative aspect-[4/3] overflow-hidden bg-current/5" :class="{ 'work-card-img--contain': item.work === 'uiux' }">
+            <LazyImage :src="item.thumbnail" :alt="item.title + ' thumbnail'" :eager="i < 3" />
+            <div class="absolute inset-0 z-3 flex items-center justify-center bg-dark/[0.78] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+              <span class="inline-flex items-center gap-2 px-[1.2rem] py-[0.7rem] font-Mono text-xs tracking-[0.25em] uppercase text-light border border-light">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                View Project
+              </span>
+            </div>
+          </div>
+
+          <!-- Meta -->
+          <div class="px-[1.1rem] pt-4 pb-5 flex flex-col gap-2 border-t border-current/10">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <span class="font-Mono text-[0.7rem] tracking-[0.3em] opacity-75">{{ String(i + 1).padStart(2, '0') }}</span>
+              <span class="inline-flex items-center gap-[0.4rem] px-[0.6rem] py-[0.3rem] font-Mono text-[0.7rem] tracking-[0.22em] uppercase" :class="tagClasses(item.work)">
+                <i :class="typeIcon(item.work)"></i>
+                {{ workTypeLabel(item.work) }}
+              </span>
+            </div>
+            <h3 class="text-[clamp(1.15rem,2vw,1.4rem)] tracking-[-0.02em] leading-[1.05] font-Gilroy-extra-bold uppercase">{{ item.title }}</h3>
+            <div class="flex items-center gap-2 font-Mono text-xs tracking-[0.18em] uppercase opacity-80 pt-1">
+              <span>{{ item.role }}</span>
+              <span class="opacity-65">·</span>
+              <span class="tabular-nums">{{ item.year }}</span>
+            </div>
+          </div>
+        </button>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div v-if="filteredWorks.length === 0" class="py-16 px-8 text-center">
+        <p class="font-Mono text-xs tracking-[0.3em] uppercase opacity-65">No projects in this filter yet.</p>
+      </div>
+    </div>
+
+    <app-dialog variant="sheet" :open="isOffcanvasOpen" :aria-label="content.title || 'Project details'" @close="closeOffCanvas" @after-leave="resetUiuxContent">
+      <!-- The skeleton and the real case study have unrelated geometry, so the
+           resolve used to read as the panel being replaced rather than filled.
+           `mode="out-in"` cross-fades them: opacity only, because moving two
+           layouts that share no structure would describe a transformation that
+           isn't happening. Reduced motion is covered by the global rule, which
+           keeps opacity transitions at 150ms. -->
+      <Suspense v-if="isUiUx">
+        <template #default>
+          <Transition name="content-swap" mode="out-in" appear>
+            <work-details :work="uiuxContent" @close="closeOffCanvas" />
+          </Transition>
+        </template>
+        <template #fallback>
+          <Transition name="content-swap" appear>
+            <skeleton-loader />
+          </Transition>
+        </template>
+      </Suspense>
+      <div v-else class="flex flex-col gap-7 pb-12 text-dark dark:text-light">
+        <!-- Header -->
+        <div class="flex flex-col gap-2">
+          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">— Project · {{ workTypeLabel(content.type) }}</p>
+          <h2 class="text-[clamp(1.75rem,4vw,3rem)] tracking-[-0.025em] leading-[0.95] mt-1 font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
+          <div class="hairline mt-3"></div>
+        </div>
+
+        <!-- Preview area -->
+        <div v-if="content.link" class="relative w-full">
+          <iframe :src="content.link" :title="content.title" frameborder="0" class="block w-full aspect-[9/16] min-h-[70vh] md:aspect-[16/10] md:min-h-0 bg-white border border-current/12" loading="lazy"></iframe>
+        </div>
+
+        <!-- Meta grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-current/12">
+          <div v-if="content.role" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
+            <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Role</span>
+            <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em]">{{ content.role }}</span>
+          </div>
+          <div v-if="content.year" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
+            <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Year</span>
+            <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em] tabular-nums">{{ content.year }}</span>
+          </div>
+          <div v-if="content.projectType" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
+            <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Type</span>
+            <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em]">{{ content.projectType }}</span>
+          </div>
+          <div v-if="content.status" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
+            <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Status</span>
+            <span class="font-Gilroy text-[0.95rem] tracking-[-0.005em]">{{ content.status }}</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="flex flex-col gap-3">
+          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65">— About</p>
+          <p class="font-Gilroy text-base sm:text-lg leading-relaxed opacity-90 whitespace-pre-wrap">{{ content.description }}</p>
+        </div>
+
+        <!-- Toolkit -->
+        <div v-if="content.tools && content.tools.length" class="flex flex-col gap-[0.85rem]">
+          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65">Toolkit · {{ content.tools.length }}</p>
+          <div class="grid grid-cols-[repeat(auto-fill,minmax(64px,1fr))] gap-[0.65rem]">
+            <div v-for="(t, idx) in content.tools" :key="idx" class="tool-pill" :title="toolUsed(t)">
+              <img :src="toolLogo(t)" :alt="toolUsed(t)" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div v-if="content.link" class="flex flex-col gap-3 pt-3 sm:flex-row">
+          <button type="button" class="btn btn-primary group" @click="openLink(content.link)">
+            <span>{{ content.btnText || 'Visit Live' }}</span>
+            <i class="fa-solid fa-arrow-up-right-from-square transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-x-[2px] hover-fine:group-hover:-translate-y-[2px]"></i>
+          </button>
+          <button type="button" class="btn btn-ghost" @click="closeOffCanvas">
+            <span>Close</span>
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+    </app-dialog>
+
+    <app-dialog variant="modal" :open="isModalOpen" :aria-label="content.title || 'Project'" @close="isModalOpen = false">
+      <div class="flex flex-col gap-5 text-dark dark:text-light min-w-[min(80vw,720px)]">
+        <!-- Media -->
+        <iframe
+          v-if="content.type === 'video'"
+          :src="content.link"
+          :title="content.title"
+          class="w-full aspect-video bg-black"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+
+        <div v-else-if="content.type === 'vector'" class="relative overflow-hidden bg-current/5">
+          <img :src="content.link" :alt="content.title" loading="eager" fetchpriority="high" decoding="async" class="block w-full h-auto object-contain" />
+          <button type="button" class="btn btn-primary absolute bottom-4 right-4 px-[0.85rem] py-[0.55rem] hover-fine:hover:-translate-y-0.5" @click="downloadImage(content.link)" aria-label="Download artwork">
+            <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+            <span>Download</span>
+          </button>
+        </div>
+
+        <!-- Header -->
+        <div class="flex flex-col gap-[0.4rem]">
+          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">— {{ workTypeLabel(content.type) }}</p>
+          <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] tracking-[-0.025em] leading-none font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
+          <div class="hairline mt-3"></div>
+        </div>
+
+        <!-- Description -->
+        <p class="font-Gilroy text-base leading-relaxed opacity-90 whitespace-pre-wrap">{{ content.description }}</p>
+
+        <!-- Tools -->
+        <div v-if="content.tools && content.tools.length" class="flex flex-col gap-[0.65rem]">
+          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65">Toolkit</p>
+          <div class="grid grid-cols-[repeat(auto-fill,minmax(56px,1fr))] gap-[0.55rem] max-w-[360px]">
+            <div v-for="(t, idx) in content.tools" :key="idx" class="tool-pill" :title="toolUsed(t)">
+              <img :src="toolLogo(t)" :alt="toolUsed(t)" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-dialog>
+  </div>
 </template>
 
 <script>
@@ -207,6 +226,11 @@
   import { defineAsyncComponent } from 'vue'
   import { sectionReveal } from '../composables/sectionReveal'
   import { createScrollScrub } from '../composables/useScrollScrub'
+
+  // How long the grid dims before the filtered set swaps in. Short enough that
+  // it reads as a transition rather than a load, and it must match the
+  // `.works-grid` transition-duration below.
+  const SWAP_FADE_MS = 120
 
   // Tool logos — match the same imports used in PortfolioData so we can
   // map references → display names (URLs may be hashed or inlined data URIs).
@@ -294,6 +318,8 @@
       return {
         works2: portfolioData.portfolio.myWorks2,
         activeFilter: 'all',
+        // True only for the ~120ms the grid is dimmed between filter sets.
+        swapping: false,
         isModalOpen: false,
         isOffcanvasOpen: false,
         isUiUx: false,
@@ -347,6 +373,10 @@
         this.$nextTick(() => {
           this._scrub?.refresh()
           this.$emit('remeasure')
+          // Hand the grid back once the re-revealed cards have had a frame to
+          // take their opening values, so it fades in over the new set rather
+          // than over a flash of the old one.
+          requestAnimationFrame(() => { this.swapping = false })
         })
       }
     },
@@ -361,6 +391,23 @@
       this._scrub?.destroy()
     },
     methods: {
+      // Filter changes go through here rather than assigning `activeFilter`
+      // inline, so the grid can dim BEFORE the DOM swaps underneath it. Vue
+      // needs the class on screen for a frame before the re-render, hence the
+      // rAF; without it the fade-out and the swap land in the same paint and
+      // nothing is bridged. Re-clicking the current filter is a no-op — flashing
+      // the grid to reveal an identical set is worse than doing nothing.
+      setFilter(id) {
+        if (id === this.activeFilter) return
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          this.activeFilter = id
+          return
+        }
+        this.swapping = true
+        requestAnimationFrame(() => {
+          setTimeout(() => { this.activeFilter = id }, SWAP_FADE_MS)
+        })
+      },
       typeIcon(work) {
         return {
           uiux: 'fa-solid fa-swatchbook',
@@ -462,16 +509,6 @@
 </script>
 
 <style lang="css" scoped>
-  /* Vue <Transition> classes */
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.4s ease;
-  }
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
-  }
-
   /* Header + filter entrance — gated on the panel root's `.is-revealed`
      (sectionReveal mixin) so they replay every time the section is entered.
      Desktop only: on mobile the section is active-gated LATER than the cards'
@@ -482,8 +519,8 @@
     .works-header-meta {
       opacity: 0;
       transform: translateY(-8px);
-      transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s,
-                  transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+      transition: opacity var(--dur-reveal) var(--ease-out) 0.04s,
+                  transform var(--dur-reveal) var(--ease-out) 0.04s;
     }
     .is-revealed .works-header-meta {
       opacity: 1;
@@ -492,9 +529,9 @@
     .filter-pill-anim {
       opacity: 0;
       transform: translateY(8px);
-      transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-                  transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-      transition-delay: calc(0.25s + var(--pd, 0s));
+      transition: opacity var(--dur-reveal) var(--ease-out),
+                  transform var(--dur-reveal) var(--ease-out);
+      transition-delay: calc(0.1s + var(--pd, 0s));
     }
     .is-revealed .filter-pill-anim {
       opacity: 1;
@@ -506,9 +543,41 @@
      inline every frame off the pan container's scroll position, so no CSS
      transition here (it would smooth/lag the scrub). This from-state only
      prevents a flash before JS engages. */
+  /* Skeleton -> case-study cross-fade (see the <Suspense> block above). */
+  .content-swap-enter-active,
+  .content-swap-leave-active {
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .content-swap-enter-from,
+  .content-swap-leave-to {
+    opacity: 0;
+  }
+
+  /* Filter swap. The grid dims as one surface, the set changes behind it, then
+     it comes back — so the visitor sees one substitution instead of a teleport
+     followed by a re-reveal. Opacity only: the cards keep their positions, and
+     moving them as well would describe a rearrangement that isn't happening. */
+  .works-grid {
+    transition: opacity 120ms var(--ease-out);
+  }
+  .works-grid.is-swapping {
+    /* Not 0 — dropping to nothing reads as a page load. Holding a trace of the
+       old set keeps it legible as the same grid, re-filtered. */
+    opacity: 0.25;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .works-grid,
+    .works-grid.is-swapping {
+      transition: none;
+      opacity: 1;
+    }
+  }
+
+  /* No `will-change`: with 20 cards this promoted 20 permanent compositor
+     layers, which costs more memory than the scrub saves. GSAP's force3D on the
+     scrub writes already keeps these on the GPU while they are actually moving. */
   .reveal {
     opacity: 0;
-    will-change: transform, opacity;
   }
   @media (prefers-reduced-motion: reduce) {
     .works-header-meta,
@@ -523,13 +592,19 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform var(--dur-slow) var(--ease-out);
   }
   .work-card-img--contain :deep(.lazy-img) {
     object-fit: contain;
     object-position: center bottom;
   }
-  .work-card:hover .work-card-img img {
-    transform: scale(1.04);
+  /* Hover zoom is gated on a real pointer. On touch, tapping a card fires a
+     phantom :hover that sticks after navigation, so the card stayed zoomed with
+     no cursor anywhere near it. 250ms rather than 500ms: hover is seen dozens of
+     times per visit, and at that frequency slow reads as lag. */
+  @media (hover: hover) and (pointer: fine) {
+    .work-card:hover .work-card-img img {
+      transform: scale(1.04);
+    }
   }
 </style>

@@ -27,6 +27,19 @@ import { gsap } from 'gsap'
 //                         — scrub reveal band as fractions of viewport height.
 const MOBILE = '(max-width: 767px)'
 
+// Reveal band, as fractions of the scroll viewport's height. An element is
+// untouched until its top rises past BAND_START, fully revealed once it reaches
+// BAND_END, and interpolated in between — so the distance between them IS the
+// pacing. Lower START = nothing happens until the element is further up the
+// screen (a longer wait). A wider gap = more scroll distance to complete (a
+// slower, more gradual reveal).
+//
+// Per-element overrides live on the markup as data-scrub-start / data-scrub-end
+// and are read relative to these; the titles sit slightly ahead of their body
+// copy so a heading leads its paragraph rather than racing it.
+const BAND_START = 0.82
+const BAND_END = 0.48
+
 export function createScrollScrub(root) {
   // Three reveal strategies:
   //  • OS reduced-motion → everything static, no animation at all.
@@ -58,8 +71,8 @@ export function createScrollScrub(root) {
       const t = {
         el,
         dist: num(el.dataset.scrubY, 42),
-        start: num(el.dataset.scrubStart, 0.92),
-        end: num(el.dataset.scrubEnd, 0.62),
+        start: num(el.dataset.scrubStart, BAND_START),
+        end: num(el.dataset.scrubEnd, BAND_END),
         fade: el.dataset.scrubFade !== '0'
       }
       if ('scrubEntry' in el.dataset) entryTargets.push(t)
@@ -122,16 +135,24 @@ export function createScrollScrub(root) {
     for (const t of entryTargets) gsap.set(t.el, { opacity: t.fade ? 0 : 1, y: t.dist })
   }
 
+  // Timing budget: this entrance replays every time the section becomes active,
+  // so it is occasional-frequency motion, not a one-time reveal. It used to take
+  // 0.18 + 4x0.14 + 1.1 = ~1.84s to settle, with a 140ms stagger that read as
+  // items queueing rather than arriving together.
+  const ENTRY_LEAD = 0.15 // a held beat before anything moves
+  const ENTRY_STAGGER = 0.08 // top of the 30-80ms band; past it items read as queueing, not arriving
+  const ENTRY_DUR = 0.65
+  const EXIT_DUR = 0.3 // exits stay quick — nobody wants to wait to leave
+
   const playEntry = () => {
     entryTl?.kill()
     setEntryHidden()
     entryTl = gsap.timeline()
-    const lead = 0.18 // brief hold before anything moves
     entryTargets.forEach((t, i) => {
       entryTl.to(
         t.el,
-        { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out', force3D: true },
-        lead + i * 0.14
+        { opacity: 1, y: 0, duration: ENTRY_DUR, ease: 'power3.out', force3D: true },
+        ENTRY_LEAD + i * ENTRY_STAGGER
       )
     })
   }
@@ -145,8 +166,11 @@ export function createScrollScrub(root) {
     entryTargets.forEach((t, i) => {
       entryTl.to(
         t.el,
-        { opacity: t.fade ? 0 : 1, y: t.dist, duration: 0.5, ease: 'power2.in', force3D: true },
-        i * 0.05
+        // power2.OUT, not in. An ease-in exit holds still for the first half of
+        // its duration — exactly the frames the visitor is watching as the panel
+        // leaves — so it reads as lag, not as departure.
+        { opacity: t.fade ? 0 : 1, y: t.dist, duration: EXIT_DUR, ease: 'power2.out', force3D: true },
+        i * 0.04
       )
     })
   }
@@ -172,7 +196,7 @@ export function createScrollScrub(root) {
         leaveTimer = null
         entryTl?.kill()
         setEntryHidden()
-      }, 700)
+      }, EXIT_DUR * 1000 + 150)
     }
   }
 
@@ -207,7 +231,7 @@ export function createScrollScrub(root) {
             gsap.to(el, {
               opacity: 1,
               y: 0,
-              duration: 0.85,
+              duration: 0.6,
               ease: 'power3.out',
               force3D: true
             })
@@ -215,7 +239,11 @@ export function createScrollScrub(root) {
           io.unobserve(entry.target)
         }
       },
-      { rootMargin: '0px 0px -12% 0px', threshold: 0.08 }
+      // Mobile has no scroll-linked band to widen, so the wait is bought here
+      // instead: the negative bottom margin shrinks the observed viewport, so an
+      // element must climb well clear of the fold before it counts as visible.
+      // -25% roughly matches the desktop band's new start point.
+      { rootMargin: '0px 0px -25% 0px', threshold: 0.12 }
     )
     for (const watch of watchOf.keys()) io.observe(watch)
   }

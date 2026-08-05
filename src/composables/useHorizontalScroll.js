@@ -214,13 +214,27 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
     if (mode !== 'h' || depthTick) return
     innerEls = inners()
     depthScales = innerEls.map(() => 1)
+    // A lerp approaches its target asymptotically and never arrives, so the
+    // previous version wrote a `scale` to EVERY panel on EVERY frame forever —
+    // including while the pager sat perfectly still. Snapping inside an epsilon
+    // and skipping the write when a panel is already settled means a resting
+    // pager costs nothing, while motion still gets the same eased scale.
+    const EPS = 0.0005
     depthTick = () => {
       const vw = window.innerWidth
       const x = gsap.getProperty(track, 'x') || 0
       for (let i = 0; i < count; i++) {
         const d = Math.min(Math.abs(i + x / vw), 1)
         const target = 1 - 0.05 * smoothstep(d)
-        depthScales[i] += (target - depthScales[i]) * 0.12 // lerp → buttery
+        const cur = depthScales[i]
+        if (Math.abs(target - cur) < EPS) {
+          if (cur !== target) {
+            depthScales[i] = target
+            gsap.set(innerEls[i], { scale: target, transformOrigin: 'center center', force3D: true })
+          }
+          continue
+        }
+        depthScales[i] = cur + (target - cur) * 0.12 // lerp → buttery
         gsap.set(innerEls[i], { scale: depthScales[i], transformOrigin: 'center center', force3D: true })
       }
     }

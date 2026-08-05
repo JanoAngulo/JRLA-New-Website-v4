@@ -1,9 +1,16 @@
 <template>
+  <!-- The overlay itself is pure decoration — a screen reader announcing
+       "SYS.ONLINE · LAT 14.5995 · INIT KERNEL OK · LOADING 100%" would be reading
+       out a stage set. It is hidden wholesale, and the one fact that matters is
+       announced here instead. -->
+  <p v-if="visible" class="sr-only" role="status">Loading portfolio…</p>
   <transition name="loader-fade">
     <div
       v-if="visible"
       class="loader-overlay"
+      aria-hidden="true"
       :class="[exiting ? 'loader-exit' : '', isDark ? 'is-dark' : 'is-light']"
+      :style="{ '--boot-tempo': tempo }"
     >
       <div class="bg-grid"></div>
       <div class="bg-noise"></div>
@@ -98,12 +105,41 @@
 <script>
   import { useThemeStore } from '../store'
 
+  // Session-scoped, so it clears when the tab closes: a returning visitor on a
+  // new day still gets the intro, a visitor bouncing between panels does not.
+  const SEEN_KEY = 'jrla:boot-seen'
+
+  // ---------------------------------------------------------------- tempo knob
+  // THE ONE NUMBER TO CHANGE if the intro feels too fast or too slow.
+  //
+  // Every choreographed duration and delay in the style block below is written
+  // as `calc(var(--boot-tempo) * <base>)`, and the hold is derived from the same
+  // value — so this scales the whole boot screen as a unit and the CSS timing can
+  // never drift out of sync with how long the overlay actually stays up. Ambient
+  // loops (grid pan, shard float, caret blink, ring pulse) are deliberately NOT
+  // scaled: they have no endpoint, so changing their rate alters their character
+  // rather than the pace of the sequence.
+  //
+  //   1.0 = the compressed baseline    1.5 = 50% slower    2.4 ~ the old 2.6s toll
+  const BOOT_TEMPO = 1.5
+
+  // What the choreography takes at tempo 1.0: the last elements to land are the
+  // fourth boot row (0.85 + 0.28) and the progress fill (0.25 + 0.9).
+  const BASE_TIMELINE_MS = 1150
+  // Hold until the sequence has actually finished, plus a short beat to read it.
+  const MIN_HOLD = Math.round(BASE_TIMELINE_MS * BOOT_TEMPO) + 150
+  // Hard ceiling: a slow network must not turn the intro into a wait.
+  const MAX_HOLD = MIN_HOLD + 1000
+  // Matches the .loader-overlay opacity/transform transition below.
+  const EXIT_MS = 700
+
   export default {
     name: 'Loader',
     data() {
       return {
         visible: true,
-        exiting: false
+        exiting: false,
+        timers: []
       }
     },
     computed: {
@@ -112,18 +148,72 @@
       },
       isDark() {
         return this.themeStore.darkMode
+      },
+      // Hands BOOT_TEMPO to the stylesheet, so the CSS choreography and the JS
+      // hold are driven by the same constant rather than two numbers kept in
+      // sync by hand.
+      tempo() {
+        return BOOT_TEMPO
       }
     },
     mounted() {
-      document.documentElement.style.overflow = 'hidden'
-      setTimeout(() => {
-        this.exiting = true
-      }, 2600)
-      setTimeout(() => {
+      // The boot screen used to hold the page for a flat 3.3s on EVERY load,
+      // driven by two timers with no relationship to whether anything had
+      // actually loaded. For a portfolio whose visitor is a recruiter skimming
+      // between candidate tabs, that is the most expensive animation in the
+      // product: it spends the entire first impression on a progress theatre.
+      //
+      // Three changes, in order of how much they matter:
+      //  1. It plays ONCE per browser session. A shared link opened twice, or a
+      //     hash link back into the site, no longer re-charges the toll.
+      //  2. It resolves on `window.load` (capped), not on a fixed timer, so it
+      //     covers real work instead of impersonating it.
+      //  3. Reduced-motion skips it outright — it is pure decoration, and there
+      //     is nothing to "gentle down" to.
+      const done = () => {
         this.visible = false
         document.documentElement.style.overflow = ''
         this.$emit('finished')
-      }, 3300)
+      }
+
+      // Reduced motion wins absolutely — that is an accessibility contract, not a
+      // convenience, so nothing below overrides it.
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      // The session gate is bypassed in dev and with `?boot`. sessionStorage
+      // survives reloads (it only clears when the TAB closes), so without this
+      // escape hatch the intro plays once and is then unreachable for the rest of
+      // the day's work — you cannot iterate on an animation you cannot trigger.
+      const seen = sessionStorage.getItem(SEEN_KEY) === '1'
+      const replay = import.meta.env.DEV || new URLSearchParams(location.search).has('boot')
+
+      if (reduced || (seen && !replay)) return done()
+
+      sessionStorage.setItem(SEEN_KEY, '1')
+      document.documentElement.style.overflow = 'hidden'
+
+      // Hold until the page is actually ready, but never past MAX_HOLD, and
+      // never so briefly that the intro flickers past unread.
+      const startedAt = performance.now()
+      const beginExit = () => {
+        if (this.exiting) return
+        this.exiting = true
+        this.timers.push(setTimeout(done, EXIT_MS))
+      }
+      const settle = () => {
+        const waited = performance.now() - startedAt
+        this.timers.push(setTimeout(beginExit, Math.max(0, MIN_HOLD - waited)))
+      }
+
+      if (document.readyState === 'complete') settle()
+      else window.addEventListener('load', settle, { once: true })
+      this.timers.push(setTimeout(beginExit, MAX_HOLD))
+    },
+    beforeUnmount() {
+      // Nothing should keep ticking after the overlay is gone — an orphaned
+      // timer here would re-emit `finished` and re-show the app shell.
+      this.timers.forEach(clearTimeout)
+      this.timers = []
+      document.documentElement.style.overflow = ''
     }
   }
 </script>
@@ -137,14 +227,21 @@
     place-items: center;
     perspective: 1400px;
     overflow: hidden;
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    /* Exit is the one moment here the visitor is waiting on, so it leads with
+       speed. Duration matches EXIT_MS in the script block. */
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
   }
 
   /* The boot screen is the first paint the visitor gets — it has to be the real
      accent pair, not a near-miss. These used to be #ffd93d / #e10600, neither of
      which is in the palette. */
+  /* Centre is the page ground, edge falls BELOW it — the vignette sinks, it does
+     not lift. An earlier pass mirrored the light branch here (card-surface at the
+     centre, page at the edge) to remove a raw `#000`, which lightened both stops
+     and washed the screen out, worst of all mid-fade. `--color-dark-deep` is the
+     same intent as that mix, declared once in `@theme` instead. */
   .loader-overlay.is-dark {
-    background: radial-gradient(ellipse at center, var(--color-dark) 0%, color-mix(in oklab, var(--color-dark) 55%, #000) 70%);
+    background: radial-gradient(ellipse at center, var(--color-dark) 0%, var(--color-dark-deep) 70%);
     --logo-color: var(--color-dark-primary);
     --accent-color: color-mix(in oklab, var(--color-dark-primary) 55%, transparent);
     --corner-color: var(--color-dark-primary);
@@ -163,6 +260,19 @@
     opacity: 0;
     transform: scale(1.1);
   }
+  /* Grain and glow both brighten what they sit over, so they go first and let the
+     ground carry the rest of the fade on its own. */
+  .loader-exit .bg-noise {
+    opacity: 0;
+  }
+  /* `glowPulse` runs with `both`, so its fill keeps writing opacity: 0.5 and would
+     outrank a plain declaration here — the animation has to be cancelled, not
+     overridden. Its final transform is scale(1), so dropping it snaps nothing. */
+  .loader-exit .logo-glow {
+    animation: none;
+    opacity: 0;
+    transition: opacity 0.18s var(--ease-out);
+  }
 
   /* ===== Grid =====
      Dot-grid, not a two-axis line grid: the dot pattern is this system's
@@ -176,17 +286,23 @@
     opacity: 0;
     mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
     -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-    animation: gridFade 3s ease-out both, gridPan 18s linear infinite;
+    animation: gridFade calc(var(--boot-tempo, 1) * 1.2s) var(--ease-out) both, gridPan 18s linear infinite;
     pointer-events: none;
   }
 
-  /* ===== Noise/grain ===== */
+  /* ===== Noise/grain =====
+     `overlay` lightens whatever is behind it. That was inert while the overlay
+     covered a solid plate and nothing else existed, but the app now renders
+     underneath, so the moment the plate starts to go transparent the grain begins
+     blending with live content — a pale haze over the page for the length of the
+     fade. It leaves ahead of everything else. */
   .bg-noise {
     position: absolute;
     inset: 0;
     pointer-events: none;
     opacity: 0.08;
     mix-blend-mode: overlay;
+    transition: opacity 0.18s var(--ease-out);
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
@@ -198,18 +314,23 @@
     place-items: center;
     pointer-events: none;
   }
+  /* Fixed box, scaled — never sized. `ringPulse` used to animate width/height,
+     which relayouts three elements every frame of an infinite loop, during the
+     single most frame-sensitive moment in the session. The box is now the ring's
+     largest intended size and `scale` takes it there on the compositor. */
   .pulse-ring {
     position: absolute;
-    width: 200px;
-    height: 200px;
+    width: min(900px, 130vmin);
+    height: min(900px, 130vmin);
     border: 2px solid var(--accent-color);
     border-radius: 50%;
     opacity: 0;
-    animation: ringPulse 2.4s ease-out infinite;
+    will-change: transform, opacity;
+    animation: ringPulse 1.6s var(--ease-out) infinite;
   }
-  .pulse-ring-1 { animation-delay: 1.2s; }
-  .pulse-ring-2 { animation-delay: 1.6s; }
-  .pulse-ring-3 { animation-delay: 2s; }
+  .pulse-ring-1 { animation-delay: calc(var(--boot-tempo, 1) * 0.5s); }
+  .pulse-ring-2 { animation-delay: calc(var(--boot-tempo, 1) * 0.75s); }
+  .pulse-ring-3 { animation-delay: calc(var(--boot-tempo, 1) * 1s); }
 
   /* ===== Floating angular shards ===== */
   .bg-shards {
@@ -225,16 +346,16 @@
     background: var(--accent-color);
     opacity: 0;
     transform: rotate(45deg);
-    animation: shardFloat 6s ease-in-out infinite, shardIn 1.4s ease-out both;
+    animation: shardFloat 6s ease-in-out infinite, shardIn calc(var(--boot-tempo, 1) * 0.7s) var(--ease-out) both;
   }
-  .shard-1 { top: 15%; left: 12%;  animation-delay: 0.6s, 0.6s; width: 10px; height: 10px; }
-  .shard-2 { top: 22%; right: 22%; animation-delay: 0.9s, 0.9s; width: 18px; height: 18px; }
-  .shard-3 { top: 38%; left: 8%;   animation-delay: 1.2s, 1.2s; width: 8px;  height: 8px; }
-  .shard-4 { top: 18%; right: 38%; animation-delay: 0.75s, 0.75s; width: 14px; height: 14px; }
-  .shard-5 { top: 48%; left: 4%;   animation-delay: 1.05s, 1.05s; width: 6px;  height: 6px; }
-  .shard-6 { top: 32%; right: 6%;  animation-delay: 0.5s, 0.5s; width: 12px; height: 12px; }
-  .shard-7 { bottom: 38%; right: 8%;  animation-delay: 0.85s, 0.85s; width: 14px; height: 14px; }
-  .shard-8 { bottom: 50%; right: 18%; animation-delay: 1.15s, 1.15s; width: 8px;  height: 8px; }
+  .shard-1 { top: 15%; left: 12%;  animation-delay: calc(var(--boot-tempo, 1) * 0.3s), calc(var(--boot-tempo, 1) * 0.3s); width: 10px; height: 10px; }
+  .shard-2 { top: 22%; right: 22%; animation-delay: calc(var(--boot-tempo, 1) * 0.45s), calc(var(--boot-tempo, 1) * 0.45s); width: 18px; height: 18px; }
+  .shard-3 { top: 38%; left: 8%;   animation-delay: calc(var(--boot-tempo, 1) * 0.6s), calc(var(--boot-tempo, 1) * 0.6s); width: 8px;  height: 8px; }
+  .shard-4 { top: 18%; right: 38%; animation-delay: calc(var(--boot-tempo, 1) * 0.38s), calc(var(--boot-tempo, 1) * 0.38s); width: 14px; height: 14px; }
+  .shard-5 { top: 48%; left: 4%;   animation-delay: calc(var(--boot-tempo, 1) * 0.52s), calc(var(--boot-tempo, 1) * 0.52s); width: 6px;  height: 6px; }
+  .shard-6 { top: 32%; right: 6%;  animation-delay: calc(var(--boot-tempo, 1) * 0.25s), calc(var(--boot-tempo, 1) * 0.25s); width: 12px; height: 12px; }
+  .shard-7 { bottom: 38%; right: 8%;  animation-delay: calc(var(--boot-tempo, 1) * 0.42s), calc(var(--boot-tempo, 1) * 0.42s); width: 14px; height: 14px; }
+  .shard-8 { bottom: 50%; right: 18%; animation-delay: calc(var(--boot-tempo, 1) * 0.58s), calc(var(--boot-tempo, 1) * 0.58s); width: 8px;  height: 8px; }
 
   /* ===== Corner brackets ===== */
   .corner {
@@ -243,8 +364,8 @@
     height: 52px;
     color: var(--corner-color);
     opacity: 0;
-    animation: cornerIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: 0.3s;
+    animation: cornerIn calc(var(--boot-tempo, 1) * 0.5s) var(--ease-out) both;
+    animation-delay: calc(var(--boot-tempo, 1) * 0.15s);
   }
   .corner-tl { top: 32px; left: 32px;     border-top: 3px solid var(--corner-color); border-left: 3px solid var(--corner-color); }
   .corner-tr { top: 32px; right: 32px;    border-top: 3px solid var(--corner-color); border-right: 3px solid var(--corner-color); }
@@ -259,8 +380,8 @@
     letter-spacing: 0.22em;
     color: var(--corner-color);
     opacity: 0;
-    animation: hudIn 0.7s ease-out both;
-    animation-delay: 0.6s;
+    animation: hudIn calc(var(--boot-tempo, 1) * 0.4s) var(--ease-out) both;
+    animation-delay: calc(var(--boot-tempo, 1) * 0.3s);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -291,12 +412,12 @@
   }
   .boot-row {
     opacity: 0;
-    animation: bootRow 0.4s ease-out both;
+    animation: bootRow calc(var(--boot-tempo, 1) * 0.28s) var(--ease-out) both;
   }
-  .boot-row:nth-child(1) { animation-delay: 0.5s; }
-  .boot-row:nth-child(2) { animation-delay: 0.9s; }
-  .boot-row:nth-child(3) { animation-delay: 1.3s; }
-  .boot-row:nth-child(4) { animation-delay: 1.7s; }
+  .boot-row:nth-child(1) { animation-delay: calc(var(--boot-tempo, 1) * 0.25s); }
+  .boot-row:nth-child(2) { animation-delay: calc(var(--boot-tempo, 1) * 0.45s); }
+  .boot-row:nth-child(3) { animation-delay: calc(var(--boot-tempo, 1) * 0.65s); }
+  .boot-row:nth-child(4) { animation-delay: calc(var(--boot-tempo, 1) * 0.85s); }
   .boot-tag { opacity: 0.6; margin-right: 6px; }
   .boot-ok {
     background: var(--corner-color);
@@ -326,8 +447,8 @@
     color: var(--corner-color);
     letter-spacing: 0.18em;
     opacity: 0;
-    animation: hudIn 0.6s ease-out both;
-    animation-delay: 0.6s;
+    animation: hudIn calc(var(--boot-tempo, 1) * 0.4s) var(--ease-out) both;
+    animation-delay: calc(var(--boot-tempo, 1) * 0.3s);
   }
   .progress-track {
     width: 100%;
@@ -336,12 +457,17 @@
     overflow: hidden;
     margin-bottom: 8px;
   }
+  /* Full-width bar scaled from the left, not a width animation — same reason as
+     the rings. `transform-origin` is what makes it read as filling rather than
+     growing from the centre. */
   .progress-fill {
     height: 100%;
-    width: 0;
+    width: 100%;
+    transform-origin: left center;
+    transform: scaleX(0);
     background: var(--corner-color);
-    animation: progFill 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    animation-delay: 0.6s;
+    animation: progFill calc(var(--boot-tempo, 1) * 0.9s) var(--ease-out) forwards;
+    animation-delay: calc(var(--boot-tempo, 1) * 0.25s);
   }
   .progress-label {
     display: flex;
@@ -363,7 +489,7 @@
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
-    animation: enter3d 2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: enter3d calc(var(--boot-tempo, 1) * 0.9s) var(--ease-out) both;
   }
 
   .logo-svg {
@@ -382,15 +508,18 @@
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
     fill-opacity: 0;
+    /* Whole timeline rescaled ~0.5x. The choreography is unchanged — draw, then
+       fill, staggered across the four shapes — it just no longer assumes it owns
+       the visitor's first 2.8 seconds. */
     animation:
-      draw 1.1s cubic-bezier(0.65, 0, 0.35, 1) both,
-      fillIn 0.6s ease-out both;
+      draw 0.55s cubic-bezier(0.65, 0, 0.35, 1) both,
+      fillIn 0.3s var(--ease-out) both;
   }
 
-  .shape-1 { animation-delay: 0.2s, 1.2s; }
-  .shape-2 { animation-delay: 0.35s, 1.35s; }
-  .shape-3 { animation-delay: 0.55s, 1.55s; }
-  .shape-4 { animation-delay: 0.7s, 1.7s; }
+  .shape-1 { animation-delay: calc(var(--boot-tempo, 1) * 0.1s), calc(var(--boot-tempo, 1) * 0.55s); }
+  .shape-2 { animation-delay: calc(var(--boot-tempo, 1) * 0.18s), calc(var(--boot-tempo, 1) * 0.63s); }
+  .shape-3 { animation-delay: calc(var(--boot-tempo, 1) * 0.28s), calc(var(--boot-tempo, 1) * 0.73s); }
+  .shape-4 { animation-delay: calc(var(--boot-tempo, 1) * 0.35s), calc(var(--boot-tempo, 1) * 0.8s); }
 
   .logo-glow {
     position: absolute;
@@ -398,8 +527,8 @@
     background: radial-gradient(circle, var(--glow-color) 0%, transparent 60%);
     filter: blur(40px);
     opacity: 0;
-    animation: glowPulse 2.4s ease-out both;
-    animation-delay: 1.2s;
+    animation: glowPulse calc(var(--boot-tempo, 1) * 1.1s) var(--ease-out) both;
+    animation-delay: calc(var(--boot-tempo, 1) * 0.6s);
     pointer-events: none;
     z-index: -1;
   }
@@ -438,13 +567,17 @@
     100% { background-position: 60px 60px, 60px 60px; }
   }
 
+  /* 80px → full box, expressed as a scale of the fixed size above. The ratio is
+     computed against the same min() so the start size is unchanged. */
   @keyframes ringPulse {
-    0% { width: 80px; height: 80px; opacity: 0.6; }
-    100% { width: min(900px, 130vmin); height: min(900px, 130vmin); opacity: 0; }
+    0% { transform: scale(calc(80 / 900)); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 0; }
   }
 
+  /* Starts at 0.9, not 0 — nothing in the real world appears from nothing, and
+     the opacity ramp is what carries the arrival anyway. */
   @keyframes shardIn {
-    0% { opacity: 0; transform: rotate(45deg) scale(0); }
+    0% { opacity: 0; transform: rotate(45deg) scale(0.9); }
     100% { opacity: 0.8; transform: rotate(45deg) scale(1); }
   }
   @keyframes shardFloat {
@@ -465,9 +598,9 @@
     100% { opacity: 1; transform: translateX(0); }
   }
   @keyframes progFill {
-    0% { width: 0; }
-    60% { width: 78%; }
-    100% { width: 100%; }
+    0% { transform: scaleX(0); }
+    60% { transform: scaleX(0.78); }
+    100% { transform: scaleX(1); }
   }
 
   @keyframes cornerIn {
@@ -530,10 +663,23 @@
       background-size: 40px 40px;
     }
 
-    .pulse-ring {
-      width: 140px;
-      height: 140px;
-    }
+    /* No ring size override here any more. It used to set the RESTING size while
+       the keyframe drove width/height directly; now the element's box IS the ring's
+       full extent and `scale` animates it, so overriding the size here would cap
+       the pulse at 140px instead of letting it reach 130vmin as it always did. */
+
+    /* Four of the eight shards are dropped on small screens, and the four that
+       remain were all authored for a wide canvas: 1–4 live in the top 15–38% band,
+       with 2 and 4 both on the right within 4% of each other. On a tall phone that
+       reads as a clump above the logo and a lot of empty screen below it.
+       Re-scattered down the full height, alternating sides, and kept clear of the
+       three things that occupy the middle and the bottom — the centred logo stage
+       (~40vw wide), the boot log, and the progress bar. Each shard keeps the side
+       it was authored on, so no offset needs unsetting. */
+    .shard-1 { top: 18%; left: 9%; }
+    .shard-2 { top: 34%; right: 11%; width: 13px; height: 13px; }
+    .shard-3 { top: 58%; left: 6%; }
+    .shard-4 { top: 76%; right: 15%; }
 
     .shard-5,
     .shard-6,
@@ -546,12 +692,8 @@
     .hud-tr { display: none; }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .logo-3d,
-    .logo-shape,
-    .logo-glow {
-      animation-duration: 0.4s !important;
-      animation-delay: 0s !important;
-    }
-  }
+  /* No reduced-motion block here. The script skips the boot screen outright for
+     `prefers-reduced-motion: reduce` — it is pure decoration with nothing to gentle
+     down to — so the overlay never mounts and rules targeting it were unreachable.
+     See the `reduced` check in mounted(). */
 </style>

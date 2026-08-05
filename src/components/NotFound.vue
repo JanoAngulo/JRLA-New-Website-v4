@@ -24,18 +24,18 @@
 
       <!-- CTA row -->
       <div class="flex flex-col gap-3 pt-1 sm:flex-row sm:flex-wrap">
-        <router-link :to="{ path: '/', hash: '#works' }" class="btn btn-primary group py-[0.95rem] no-underline transition-all hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
-          <i class="fa-solid fa-arrow-left transition-transform duration-250 ease-in-out group-hover:-translate-x-[3px] motion-reduce:transition-none" aria-hidden="true"></i>
+        <router-link :to="{ path: '/', hash: '#works' }" class="btn btn-primary group py-[0.95rem] no-underline transition-[color,background-color,border-color,translate] duration-200 ease-out hover-fine:hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+          <i class="fa-solid fa-arrow-left transition-transform duration-250 ease-in-out hover-fine:group-hover:-translate-x-[3px] motion-reduce:transition-none" aria-hidden="true"></i>
           <span>Back to Works</span>
         </router-link>
-        <router-link :to="{ path: '/', hash: '#contact' }" class="btn btn-ghost group py-[0.95rem] no-underline transition-all hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+        <router-link :to="{ path: '/', hash: '#contact' }" class="btn btn-ghost group py-[0.95rem] no-underline transition-[color,background-color,border-color,translate] duration-200 ease-out hover-fine:hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
           <span>Report a broken link</span>
-          <i class="fa-solid fa-arrow-right transition-transform duration-250 ease-in-out group-hover:translate-x-[3px] motion-reduce:transition-none" aria-hidden="true"></i>
+          <i class="fa-solid fa-arrow-right transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-x-[3px] motion-reduce:transition-none" aria-hidden="true"></i>
         </router-link>
       </div>
 
       <!-- Bottom meta strip -->
-      <div class="font-Mono flex items-center gap-[0.6rem] pt-4 border-t border-current/12 text-[0.625rem] sm:text-[0.7rem] tracking-[0.3em] sm:tracking-[0.35em] uppercase opacity-60 flex-wrap">
+      <div class="font-Mono flex items-center gap-[0.6rem] pt-4 border-t border-current/12 text-[0.625rem] sm:text-[0.7rem] tracking-[0.3em] sm:tracking-[0.35em] uppercase opacity-65 flex-wrap">
         <span>JRLA Portfolio</span>
         <span class="opacity-50" aria-hidden="true">·</span>
         <span>UI/UX Designer · Front-End Developer · Video Editor · Vector Artist</span>

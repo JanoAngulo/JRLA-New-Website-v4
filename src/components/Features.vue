@@ -1,58 +1,56 @@
 <template>
-  <Transition name="fade">
+  <div
+    ref="featuresSection"
+    class="relative w-full overflow-hidden app-slide">
+    <!-- Scroll-feed -->
     <div
-      ref="featuresSection"
-      class="relative w-full overflow-hidden app-slide">
-      <!-- Scroll-feed -->
-      <div
-        data-pan-scroll
-        class="relative w-full overflow-y-auto pb-6 dark:text-light text-dark h-full">
-        <header class="px-6 pt-6 md:px-10 md:pt-10 lg:px-14 lg:pt-14">
-          <div data-scrub data-scrub-entry data-scrub-y="20" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
-            <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">02 — Practice</p>
-            <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ portfolioData.portfolio.features.length }} Disciplines</p>
+      data-pan-scroll
+      class="relative w-full overflow-y-auto pb-6 dark:text-light text-dark h-full">
+      <header class="px-6 pt-6 md:px-10 md:pt-10 lg:px-14 lg:pt-14">
+        <div data-scrub data-scrub-entry data-scrub-y="20" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
+          <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">02 — Practice</p>
+          <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ portfolioData.portfolio.features.length }} Disciplines</p>
+        </div>
+      </header>
+
+      <article
+        v-for="(item, i) in portfolioData.portfolio.features"
+        :key="item.id"
+        class="grid grid-cols-1 gap-8 px-6 py-12 border-b border-current/10 last:border-b-0 last:pb-6 md:gap-12 md:px-10 md:py-16 md:items-start lg:gap-16 lg:px-14 lg:py-20"
+        :class="i % 2 === 1 ? 'md:grid-cols-[7fr_5fr]' : 'md:grid-cols-[5fr_7fr]'">
+        <!-- Visual column: accent block -->
+        <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="48" class="scrub-el relative hidden md:flex md:flex-col" :class="{ 'md:order-2': i % 2 === 1 }">
+          <div data-accent-surface class="ex-art relative w-full aspect-square max-h-[560px] overflow-hidden flex items-end justify-center sm:aspect-4/5 md:aspect-3/4 md:min-h-[480px] md:max-h-[640px] lg:max-h-[720px] dark:bg-dark-primary bg-light-primary">
+            <LazyImage :src="item.img[0]" :alt="item.title + ' illustration'" :eager="i === 0" draggable="false" @dragstart.prevent />
           </div>
-        </header>
+        </div>
 
-        <article
-          v-for="(item, i) in portfolioData.portfolio.features"
-          :key="item.id"
-          class="grid grid-cols-1 gap-8 px-6 py-12 border-b border-current/10 last:border-b-0 last:pb-6 md:gap-12 md:px-10 md:py-16 md:items-start lg:gap-16 lg:px-14 lg:py-20"
-          :class="i % 2 === 1 ? 'md:grid-cols-[7fr_5fr]' : 'md:grid-cols-[5fr_7fr]'">
-          <!-- Visual column: accent block -->
-          <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="48" class="scrub-el relative hidden md:flex md:flex-col" :class="{ 'md:order-2': i % 2 === 1 }">
-            <div data-accent-surface class="ex-art relative w-full aspect-square max-h-[560px] overflow-hidden flex items-end justify-center sm:aspect-4/5 md:aspect-3/4 md:min-h-[480px] md:max-h-[640px] lg:max-h-[720px] dark:bg-dark-primary bg-light-primary">
-              <LazyImage :src="item.img[0]" :alt="item.title + ' illustration'" :eager="i === 0" draggable="false" @dragstart.prevent />
-            </div>
-          </div>
+        <!-- Content column -->
+        <div class="flex flex-col gap-4">
+          <p data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="24" class="scrub-el font-Mono text-xs tracking-[0.35em] uppercase opacity-65">— {{ ids[item.id] }}</p>
+          <h3 class="text-[clamp(2.5rem,5.5vw,4.5rem)] tracking-[-0.03em] font-Gilroy-extra-bold uppercase leading-[0.9]">
+            <span class="reveal-line leading-none"><span data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-fade="0" data-scrub-y="105" data-scrub-start="0.80" data-scrub-end="0.48" class="etl-inner">{{ item.title.split(' ')[0] }}</span></span>
+            <span class="reveal-line leading-none"><span data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-fade="0" data-scrub-y="105" data-scrub-start="0.76" data-scrub-end="0.44" class="etl-inner dark:text-dark-primary text-light-primary">{{ item.title.split(' ').slice(1).join(' ') }}</span></span>
+          </h3>
+          <div class="hairline my-2"></div>
+          <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="30" class="scrub-el ex-prose" v-html="item.description"></div>
 
-          <!-- Content column -->
-          <div class="flex flex-col gap-4">
-            <p data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="24" class="scrub-el font-Mono text-xs tracking-[0.35em] uppercase opacity-60">— {{ ids[item.id] }}</p>
-            <h3 class="text-[clamp(2.5rem,5.5vw,4.5rem)] tracking-[-0.03em] font-Gilroy-extra-bold uppercase leading-[0.9]">
-              <span class="reveal-line leading-none"><span data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-fade="0" data-scrub-y="105" data-scrub-start="0.9" data-scrub-end="0.62" class="etl-inner">{{ item.title.split(' ')[0] }}</span></span>
-              <span class="reveal-line leading-none"><span data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-fade="0" data-scrub-y="105" data-scrub-start="0.86" data-scrub-end="0.58" class="etl-inner dark:text-dark-primary text-light-primary">{{ item.title.split(' ').slice(1).join(' ') }}</span></span>
-            </h3>
-            <div class="hairline my-2"></div>
-            <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="30" class="scrub-el ex-prose" v-html="item.description"></div>
-
-            <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="34" data-scrub-start="0.98" data-scrub-end="0.7" class="scrub-el pt-4">
-              <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-60 mb-3">Toolkit · {{ featureAsset[item.id]?.length || 0 }}</p>
-              <div class="grid grid-cols-[repeat(auto-fill,minmax(64px,1fr))] gap-3">
-                <div
-                  v-for="(t, j) in featureAsset[item.id]"
-                  :key="j"
-                  class="tool-pill"
-                  :title="t.name">
-                  <img :src="t.src" :alt="t.name" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
-                </div>
+          <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="34" data-scrub-start="0.88" data-scrub-end="0.56" class="scrub-el pt-4">
+            <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65 mb-3">Toolkit · {{ featureAsset[item.id]?.length || 0 }}</p>
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(64px,1fr))] gap-3">
+              <div
+                v-for="(t, j) in featureAsset[item.id]"
+                :key="j"
+                class="tool-pill"
+                :title="t.name">
+                <img :src="t.src" :alt="t.name" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
               </div>
             </div>
           </div>
-        </article>
-      </div>
+        </div>
+      </article>
     </div>
-  </Transition>
+  </div>
 </template>
 
 <script>
@@ -193,16 +191,6 @@
 </script>
 
 <style lang="css" scoped>
-  /* Vue <Transition> classes */
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.4s ease;
-  }
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
-  }
-
   /* Scroll-LINKED reveals (scrub) — opacity/transform are driven inline every
      frame by useScrollScrub off scroll position, so no CSS transition here
      (a transition would smooth/lag the scrub). The initial from-state below
@@ -214,16 +202,18 @@
     display: block;
     overflow: hidden;
   }
+  /* No `will-change` on either of these. GSAP writes these transforms with
+     force3D, which already puts them on the GPU for the duration of the reveal;
+     a standing hint just keeps every line and every article on its own layer for
+     the whole session, long after they have finished moving. */
   .etl-inner {
     display: inline-block;
     transform: translateY(105%); /* JS overrides once engaged */
-    will-change: transform;
   }
 
   /* Fading elements: hidden until JS sets opacity/Y. */
   .scrub-el {
     opacity: 0;
-    will-change: transform, opacity;
   }
 
   @media (prefers-reduced-motion: reduce) {

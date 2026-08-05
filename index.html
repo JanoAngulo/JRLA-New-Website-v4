@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <!-- Newsprint Grey, not white: the light page ground is deliberately not #fff,
+         and a white browser chrome left a visible seam against it. -->
+    <meta name="theme-color" content="#e8ebf0" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#18181b" media="(prefers-color-scheme: dark)" />
 
     <title>John Russel Angulo — Front-End Developer & UI/UX Designer</title>
@@ -38,8 +40,13 @@
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#4f4f4f" />
     <meta name="msapplication-TileColor" content="#ffffff" />
 
-    <link rel="preconnect" href="https://www.google.com" crossorigin />
-    <link rel="dns-prefetch" href="https://www.google.com" />
+    <!-- The two faces that draw the hero. They were discovered only after the CSS
+         parsed and its @font-face rules were reached, so the name rendered in
+         system-ui first and swapped a beat later — the one piece of type on the
+         page nobody should see twice. Font Awesome's four stylesheets were already
+         preloaded; the brand itself was not. -->
+    <link rel="preload" as="font" type="font/woff" href="/fonts/Gilroy/Gilroy-ExtraBold.woff" crossorigin />
+    <link rel="preload" as="font" type="font/woff" href="/fonts/Gilroy/Gilroy-Regular.woff" crossorigin />
 
     <link rel="preload" as="style" href="/fonts/fontawesome/css/fontawesome.min.css" onload="this.onload=null;this.rel='stylesheet'" />
     <link rel="preload" as="style" href="/fonts/fontawesome/css/brands.min.css" onload="this.onload=null;this.rel='stylesheet'" />
