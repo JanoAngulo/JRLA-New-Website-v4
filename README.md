@@ -3,13 +3,14 @@
 # JRLA · Portfolio v4
 
 **Front-end developer & UI/UX designer.**
-A horizontal slide portfolio built for speed, type, and texture.
+A horizontal-scroll portfolio built for speed, type, and texture.
 
 [Live →](https://jrla1219.web.app/) &nbsp;·&nbsp; [Design system](./DESIGN.md) &nbsp;·&nbsp; [Contact](mailto:Angulo.johnrussel.l.7814@gmail.com)
 
 ![Vue](https://img.shields.io/badge/Vue-3-42b883?style=flat-square&labelColor=18181b)
 ![Vite](https://img.shields.io/badge/Vite-8-646cff?style=flat-square&labelColor=18181b)
 ![Tailwind](https://img.shields.io/badge/Tailwind-v4-38bdf8?style=flat-square&labelColor=18181b)
+![GSAP](https://img.shields.io/badge/GSAP-3-88ce02?style=flat-square&labelColor=18181b)
 ![Pinia](https://img.shields.io/badge/Pinia-3-ffd859?style=flat-square&labelColor=18181b)
 ![Firebase](https://img.shields.io/badge/Hosted-Firebase-ffca28?style=flat-square&labelColor=18181b)
 
@@ -19,7 +20,7 @@ A horizontal slide portfolio built for speed, type, and texture.
 
 ## Overview
 
-Five-slide narrative — **Home · Features · Works · About · Contact** — driven by Swiper with keyboard, touch, and pointer nav. UI/UX case studies open in a side sheet; video/vector pieces open in a modal. Theme cycles **system → light → dark** with FOUC-safe boot.
+Five-panel narrative — **Home · Features · Works · About · Contact** — driven by a GSAP ScrollTrigger horizontal-scroll engine with keyboard, arrow, and touch nav (vertical scroll → horizontal scrub on desktop; native vertical stack on mobile). UI/UX case studies open in a side sheet; video/vector pieces open in a modal. Theme cycles **system → light → dark** with FOUC-safe boot.
 
 Primary accent flips by mode:
 - ☀️ Light — **`#ff3656`** red-pink
@@ -37,7 +38,7 @@ Full visual language lives in **[DESIGN.md](./DESIGN.md)** — colors, type scal
 | Build | Vite 8 |
 | Styles | Tailwind CSS v4 (`@theme` tokens) |
 | State | Pinia 3 (theme store) |
-| Carousel | Swiper 12 (web component) |
+| Scroll engine | GSAP 3 — ScrollTrigger + ScrollToPlugin |
 | Forms | Formspark + Botpoison |
 | Type | Gilroy · GilroyExtraBold · IBM Plex Mono |
 | Icons | Font Awesome 6 |
@@ -63,12 +64,12 @@ Node 20.19+ or 22.12+ required (Vite 7+ requirement).
 ```
 src/
 ├── App.vue              ─ root, theme bootstrap, route switch
-├── main.js              ─ Pinia · router · swiper register
+├── main.js              ─ Pinia · router · reveal directive
 ├── assets/
 │   ├── main.css         ─ Tailwind v4 + @theme tokens + utilities
 │   └── img/             ─ static art
 ├── components/
-│   ├── WebView.vue      ─ Swiper orchestrator + slide host
+│   ├── WebView.vue      ─ GSAP scroll orchestrator + panel host
 │   ├── Navbar.vue       ─ fixed nav + theme cycler
 │   ├── Home.vue         ─ hero + typed tagline
 │   ├── Features.vue     ─ expertise feed (theme-aware SVG)
@@ -83,6 +84,9 @@ src/
 │   ├── Loader.vue       ─ boot/route loader
 │   ├── SkeletonLoader.vue
 │   └── PortfolioData.js ─ all work entries (uiux · web · video · vector)
+├── composables/
+│   ├── useHorizontalScroll.js ─ GSAP ScrollTrigger horizontal scroll engine
+│   └── sectionReveal.js ─ replay-on-entry reveal mixin (activeSlide-driven)
 ├── store/index.js       ─ useThemeStore (system | light | dark)
 └── router/index.js      ─ /  ·  /content/:id → redirect /  ·  catch-all → NotFound
                           ·  hash deep-links: /#home · /#features · /#works · /#about · /#contact

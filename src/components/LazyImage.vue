@@ -2,6 +2,7 @@
   <div class="lazy-img-wrap" :class="{ 'is-loaded': loaded }" :style="aspectStyle">
     <div v-if="!loaded" class="lazy-img-skeleton" aria-hidden="true"></div>
     <img
+      ref="img"
       v-bind="$attrs"
       :src="src"
       :alt="alt"
@@ -37,14 +38,22 @@
         return this.aspect ? { aspectRatio: this.aspect } : {}
       }
     },
+    mounted() {
+      this.checkComplete()
+    },
     watch: {
       src() {
         this.loaded = false
+        this.$nextTick(this.checkComplete)
       }
     },
     methods: {
       onLoad() {
         this.loaded = true
+      },
+      checkComplete() {
+        const img = this.$refs.img
+        if (img && img.complete && img.naturalWidth > 0) this.onLoad()
       }
     }
   }
@@ -77,7 +86,15 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 0.45s ease;
+    /* Include transform + the individual `scale`/`translate`/`rotate` props so
+       hover-scale eases smoothly. Tailwind v4's `scale-*` sets the standalone
+       CSS `scale:` property (NOT `transform: scale()`), and this unlayered
+       scoped rule outranks Tailwind's `transition-transform`, so `scale` must be
+       named here explicitly or the hover would snap instantly. */
+    transition: opacity 0.45s ease,
+                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                scale 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                translate 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 2;
   }
   .lazy-img-wrap.is-loaded .lazy-img {
