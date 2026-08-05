@@ -2,9 +2,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Gates hover motion behind a real pointer: on touch, a tap fires a phantom
+   :hover that sticks until the next tap elsewhere. Use as `hover-fine:hover:…`
+   or `hover-fine:group-hover:…`. */
+@custom-variant hover-fine (@media (hover: hover) and (pointer: fine));
+
 @theme {
   --color-dark: #18181b;
   --color-dark-card: #212124;
+  --color-dark-deep: #0b0b0d;
   --color-dark-primary: #ffca26;
   --color-light: #e8ebf0;
   --color-light-card: #f5f7fa;
@@ -38,8 +44,7 @@
   --color-video-bg-dark: #4c0519;
   --color-video-fg-dark: #fecaca;
 
-  /* Semantic form/status colors — the only chromatic tokens outside the accent
-     pair and the category badges. Light/dark pairs like the badges. */
+  /* Form/status colors, light/dark pairs like the badges above. */
   --color-danger: #e15050;
   --color-danger-dark: #ff8a8a;
   --color-danger-text: #961923;
@@ -52,26 +57,42 @@
   --font-Gilroy: Gilroy;
   --font-Gilroy-extra-bold: GilroyExtraBold;
   --font-Mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* The three canonical easing curves — use these rather than the built-in CSS
+     keywords. There is deliberately no `--ease-in`: both entrances and exits
+     start fast, or they stall on the frame the visitor is watching. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Duration scale. UI stays under 300ms; --dur-reveal is the one exception, for
+     section entrances. */
+  --dur-press: 80ms;
+  --dur-fast: 160ms;
+  --dur-base: 200ms;
+  --dur-slow: 250ms;
+  --dur-drawer: 400ms;
+  --dur-reveal: 450ms;
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-*/
+/* Keeps Tailwind v4's `currentcolor` border default rather than the upgrade
+   shim's `--color-gray-200`, which resolves to a light grey in BOTH themes and
+   would paint grey hairlines on charcoal. A hairline belongs to its text. */
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: currentcolor;
   }
 }
 
 @layer base {
+  /* No `scroll-smooth`: the GSAP pager needs instant scroll positioning and
+     forces `scroll-behavior: auto` further down. */
   html {
-    @apply w-full scroll-smooth;
+    @apply w-full;
     font-family: Gilroy, system-ui, sans-serif;
     overscroll-behavior: contain;
     -webkit-font-smoothing: antialiased;
@@ -79,15 +100,13 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Hide scrollbar for Chrome, Safari and Opera */
   .hide-scrollbar *::-webkit-scrollbar {
     display: none;
   }
 
-  /* Hide scrollbar for IE, Edge and Firefox */
   .hide-scrollbar * {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   body {
@@ -106,30 +125,43 @@
     outline-color: var(--color-dark-primary);
   }
 
-  /* Dialog roots (tabindex="-1") are focused programmatically — keep the ring but
-     flush to the edge (no offset gap). */
+  /* Dialog roots (tabindex="-1") are focused programmatically: keep the ring, but
+     flush to the edge. */
   :where([tabindex='-1']):focus-visible {
     outline-offset: 0;
   }
 
-  /* Accent-filled plates (the left block of Home / About / Contact) ARE the
-     accent color, so an accent focus ring is invisible on them. Inside those
-     surfaces the ring inverts to ink — in both themes, because the plate is
-     accent-filled in both. */
+  /* The skip link's destination is a container, not a control: focus still moves
+     there for assistive tech, but a ring around the whole page would describe a
+     selection that doesn't exist. */
+  [data-skip-target]:focus,
+  [data-skip-target]:focus-visible {
+    outline: none;
+  }
+
+  /* Accent-filled plates (the left block of Home / About / Contact) are the accent
+     color, so an accent ring is invisible on them. Inside those surfaces it
+     inverts to ink, in both themes — the plate is accent-filled in both. */
   [data-accent-surface] :where(button, a, input, textarea, select, [role='button'], [tabindex]):focus-visible,
   .dark [data-accent-surface] :where(button, a, input, textarea, select, [role='button'], [tabindex]):focus-visible {
     outline-color: var(--color-dark);
   }
 
-  /* Respect users who prefer reduced motion */
+  /* Reduced motion drops movement, not all feedback. Looping and decorative
+     animations stop and transforms snap, but colour, opacity and border
+     transitions are kept short rather than zeroed — they aid comprehension
+     instead of moving things. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+      transition-property: color, background-color, border-color, outline-color, fill, stroke,
+        opacity, box-shadow !important;
+      transition-duration: 150ms !important;
+      transition-timing-function: var(--ease-out) !important;
     }
   }
 }
@@ -147,16 +179,15 @@
     hover:bg-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:border-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:text-light
     dark:hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:border-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:text-dark;
   }
-  /* Ghost — hover is a faint accent tint with accent border + text, so it reads
-     as secondary and never collides with the solid primary fill. */
+  /* Ghost — a faint accent tint on hover, so it reads as secondary against the
+     primary's solid fill. */
   .btn-ghost {
     @apply border transition-colors duration-250 bg-transparent text-current border-current
     hover:bg-[color-mix(in_oklab,var(--color-light-primary)_12%,transparent)] hover:border-light-primary hover:text-light-primary
     dark:hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_14%,transparent)] dark:hover:border-dark-primary dark:hover:text-dark-primary;
   }
 
-  /* A control that can't be pressed must not answer the pointer. Anchors never
-     match :disabled, so this is scoped to real buttons and stays safe on links. */
+  /* Anchors never match :disabled, so this only affects real buttons. */
   .btn:disabled {
     @apply opacity-55 cursor-not-allowed;
   }
@@ -167,19 +198,92 @@
     @apply bg-transparent border-current text-current;
   }
 
+  /* Pager arrows (WebView: desktop left/right, mobile up/down).
+
+     Mind the transition-property list. Tailwind v4 emits `translate-*` and
+     `scale-*` as the standalone `translate` / `scale` properties, not inside
+     `transform`, so naming only `transform` silently drops the hover nudge and
+     the press. `opacity` is listed because the arrows hide at either end of the
+     pager by toggling `opacity-0`, and would otherwise vanish between frames. */
+  .nav-arrow {
+    @apply pointer-events-auto grid place-content-center w-11 h-11 rounded-full cursor-pointer
+    bg-white/70 dark:bg-dark-card/70 backdrop-blur-[10px] border border-black/8 dark:border-white/10
+    text-dark dark:text-light text-[0.95rem]
+    shadow-[0_4px_16px_-4px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)]
+    hover:bg-light-primary hover:text-dark hover:border-light-primary
+    dark:hover:bg-dark-primary dark:hover:border-dark-primary;
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform,
+      translate, scale;
+    transition-duration: var(--dur-base);
+    transition-timing-function: var(--ease-out);
+  }
+  /* Hidden at either end of the pager. */
+  .nav-arrow.is-hidden {
+    @apply opacity-0 pointer-events-none;
+  }
+  .nav-arrow:active {
+    scale: 0.95;
+    transition-duration: var(--dur-press);
+  }
+  /* Directional hover: each arrow leans the way it will send you. */
+  @media (hover: hover) and (pointer: fine) {
+    .nav-arrow-prev:hover { translate: -3px 0; }
+    .nav-arrow-next:hover { translate: 3px 0; }
+    .nav-arrow-up:hover { translate: 0 -3px; }
+    .nav-arrow-down:hover { translate: 0 3px; }
+  }
+
+  /* Skip link — the first tab stop, and the only way past the navbar and pager
+     arrows without walking through them. Translated off the top rather than
+     `display: none`, because a hidden element can't be focused. */
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    inset-inline-start: 0.75rem;
+    z-index: var(--z-toast);
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-light-primary);
+    color: var(--color-dark);
+    font-family: var(--font-Mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    translate: 0 calc(-100% - 1.5rem);
+    transition: translate var(--dur-fast) var(--ease-out);
+  }
+  .dark .skip-link {
+    background: var(--color-dark-primary);
+  }
+  .skip-link:focus {
+    translate: 0 0;
+  }
+
   /* Thin accent rule — add margins inline where needed */
   .hairline {
     @apply h-px w-16 bg-current opacity-30;
   }
 
-  /* Square tool/logo chip with hover lift */
+  /* Square tool/logo chip. The hover lift is gated on a real pointer (see the
+     `hover-fine` variant at the top of this file). */
   .tool-pill {
-    @apply aspect-square w-full flex items-center justify-center p-3 border border-current/12 rounded-lg transition-[border-color,translate] duration-300 ease-in-out hover:border-light-primary hover:-translate-y-0.5 dark:hover:border-dark-primary;
+    @apply aspect-square w-full flex items-center justify-center p-3 border border-current/12 rounded-lg transition-[border-color,translate] duration-200;
+    transition-timing-function: var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tool-pill {
+      @apply hover:border-light-primary hover:-translate-y-0.5 dark:hover:border-dark-primary;
+    }
   }
 
-  /* Circular social icon button — set border/hover colors inline per surface */
+  /* Circular social icon button — set border/hover colors inline per surface.
+     Properties are enumerated rather than `transition-all`, which would sweep in
+     layout properties as soon as one is added. */
   .social-pill {
-    @apply grid place-content-center w-11 h-11 rounded-full border transition-all duration-300 ease-in-out;
+    @apply grid place-content-center w-11 h-11 rounded-full border transition-[color,background-color,border-color,translate,transform,opacity] duration-200;
+    transition-timing-function: var(--ease-out);
   }
 
   /* Radial dot-grid backdrop — set bg-size per use */
@@ -192,28 +296,29 @@
     @apply block overflow-hidden;
   }
 
-  /* Generic staggered fade-up — gated on an ancestor `.is-revealed` (set on
-     each panel root by the sectionReveal mixin), so it plays on entry and
-     REPLAYS every re-entry. Stagger with an inline `--d` delay. Works on block
-     or inline-block (e.g. clause spans inside a paragraph). */
+  /* Generic staggered fade-up, gated on an ancestor `.is-revealed` (set on each
+     panel root by the sectionReveal mixin), so it replays on every re-entry.
+     Stagger with an inline `--d` delay. Works on block or inline-block.
+
+     No `will-change`: these elements are permanent page furniture, so a standing
+     hint would hold a compositor layer per node all session for one transition. */
   .reveal-fade {
     opacity: 0;
     transform: translateY(10px);
-    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity var(--dur-reveal) var(--ease-out),
+                transform var(--dur-reveal) var(--ease-out);
     transition-delay: var(--d, 0s);
-    will-change: opacity, transform;
   }
-  /* `--o` = revealed opacity (default 1). Set it instead of a Tailwind
-     `opacity-*` utility — utilities sit in a later layer and would beat the
-     hidden state, so dim elements bake their target dim into --o here. */
+  /* `--o` = revealed opacity (default 1). Use it instead of a Tailwind `opacity-*`
+     utility, which sits in a later layer and would beat the hidden state. */
   .is-revealed .reveal-fade {
     opacity: var(--o, 1);
     transform: none;
   }
+  /* Reduced motion keeps the fade but drops the travel and the stagger. Duration
+     comes from the global rule above. */
   @media (prefers-reduced-motion: reduce) {
     .reveal-fade {
-      transition-duration: 0.2s;
       transition-delay: 0s;
       transform: none;
     }
@@ -221,27 +326,39 @@
 
 }
 
-/* Tactile press — momentary depress on activation. `transform: scale` composes
-   with the `translate`-based hover lifts. Skipped under reduced-motion. */
+/* Tactile press — momentary depress on activation, skipped under reduced motion.
+   `transform: scale` is used so it composes with the `translate`-based hover
+   lifts. This is the only press feedback these controls get, since
+   `-webkit-tap-highlight-color: transparent` (below) removes the browser's.
+
+   `.work-card` presses less (0.985 vs 0.95): perceived displacement scales with
+   element size, so a large surface needs a smaller ratio to read as equal. */
 @media (prefers-reduced-motion: no-preference) {
   .btn,
   .social-pill,
-  .tool-pill {
+  .tool-pill,
+  .filter-pill,
+  .work-card {
     transition-property: color, background-color, border-color, box-shadow, transform, translate, opacity;
-    transition-duration: 250ms;
-    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-duration: var(--dur-fast);
+    transition-timing-function: var(--ease-out);
   }
   .btn:active,
   .social-pill:active,
-  .tool-pill:active {
+  .tool-pill:active,
+  .filter-pill:active {
     transform: scale(0.95);
-    transition-duration: 80ms;
+    transition-duration: var(--dur-press);
+  }
+  .work-card:active {
+    transform: scale(0.985);
+    transition-duration: var(--dur-press);
   }
 }
 
 @layer utilities {
-  /* Contact-shadow / lifted pair for square editorial surfaces. Flat at rest;
-     the lifted step is a state response, never a resting decoration. */
+  /* Contact-shadow / lifted pair for square editorial surfaces. Flat at rest —
+     the lifted step is a state response, not resting decoration. */
   .surface-rest {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 20px -8px rgba(0, 0, 0, 0.08);
   }
@@ -266,8 +383,8 @@
   }
 }
 
-/* ---- GSAP horizontal scroll (replaces Swiper) ---- */
-/* CSS smooth-scroll fights GSAP ScrollTrigger / ScrollToPlugin — force instant */
+/* ---- GSAP horizontal scroll ---- */
+/* CSS smooth-scroll fights ScrollTrigger / ScrollToPlugin — force instant. */
 html {
   scroll-behavior: auto;
 }
@@ -282,7 +399,8 @@ html {
     height: 100vh;
   }
 }
-/* track: single flex row, GSAP translates it on scroll */
+/* track: single flex row, GSAP translates it on scroll. `will-change` is
+   warranted here — it really is transformed on every scroll frame. */
 .h-scroll-track {
   display: flex;
   flex-wrap: nowrap;
@@ -298,14 +416,14 @@ html {
   box-sizing: border-box;
 }
 
-/* Section divider between stacked panels — mobile only (desktop is horizontal
-   scroll, so it's hidden there). Lives INSIDE each panel above .app-slide, so
-   it never counts as a track child in the composable's panel indexing. */
+/* Section divider between stacked panels, mobile only. It lives inside each panel
+   above .app-slide, so it never counts as a track child in the composable's
+   panel indexing. */
 .section-divider {
   display: none;
 }
 
-/* Mobile: no horizontal pin — panels stack and scroll vertically (free) */
+/* Mobile: no horizontal pin — panels stack and scroll vertically. */
 @media (max-width: 767px) {
   .h-scroll-wrap {
     height: auto;
@@ -368,7 +486,7 @@ html {
   .h-panel:first-child {
     padding-top: 3.5rem;
   }
-  /* let sections grow to content height instead of a fixed slide box */
+  /* Let sections grow to content height instead of a fixed slide box. */
   .h-panel .app-slide {
     height: auto;
     min-height: calc(100dvh - 3.5rem);
@@ -380,8 +498,8 @@ html {
   }
 }
 
-/* Browser surfaces we didn't draw but still own: scrollbar, caret, tap
-   highlight. Themed from the palette so no default grey ships. */
+/* Browser-drawn surfaces — scrollbar, caret, tap highlight — themed from the
+   palette so no default grey ships. */
 * {
   scrollbar-color: color-mix(in oklab, currentColor 28%, transparent) transparent;
   scrollbar-width: thin;
@@ -416,10 +534,32 @@ html.dark textarea {
   caret-color: var(--color-dark-primary);
 }
 
-/* Kill the blue flash on tap without removing any real state feedback —
-   the `:active` scale on .btn / pills already carries the press. */
+/* Drops the blue tap flash; the `:active` scale on .btn / pills carries the
+   press instead. */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Theme swap: every surface, text colour and both accents flip in one frame, so a
+   short View Transition cross-fade bridges the two states. Additive — browsers
+   without the API keep the instant swap.
+
+   Cross-fade only, no slide or scale: the page is re-colouring, not moving. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--dur-base);
+    animation-timing-function: var(--ease-out);
+    /* Without this the new snapshot paints over the old one and the fade is
+       invisible. */
+    mix-blend-mode: normal;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }
 
 /* Text selection — theme aware */

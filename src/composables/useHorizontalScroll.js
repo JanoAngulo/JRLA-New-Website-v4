@@ -7,14 +7,14 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 const MOBILE_QUERY = '(max-width: 767px)'
 
 /**
- * Section pager (replaces Swiper).
+ * Section pager.
  *
- * Desktop: scroll-driven HORIZONTAL pager with pause-and-pan — a panel taller
+ * Desktop: scroll-driven horizontal pager with pause-and-pan — a panel taller
  * than the viewport locks horizontal movement and pans its inner scroller to
- * the bottom before horizontal resumes.
+ * the bottom before horizontal travel resumes.
  *
- * Mobile: panels stack VERTICALLY and scroll freely (native feel). Active
- * section / hash is tracked with an IntersectionObserver.
+ * Mobile: panels stack vertically and scroll natively; the active section is
+ * resolved from panel positions on scroll.
  *
  * @param {Object} opts
  * @param {HTMLElement} opts.wrap  - pinned viewport-height container (desktop)
@@ -37,10 +37,10 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
   let current = -1
   const panState = [] // { el, prevOverflow } for restoring native overflow
 
-  // horizontal layout, in scroll pixels — recomputed on every refresh so a
+  // Horizontal layout in scroll pixels, recomputed on every refresh so a
   // content-height change (e.g. Works filter) reshapes the scrub without a
-  // teardown. The track x + pan scrollTops are driven directly from progress
-  // (no bound GSAP timeline), so `ScrollTrigger.refresh()` alone re-fits it.
+  // teardown. Track x + pan scrollTops are driven straight from progress rather
+  // than a bound timeline, so `ScrollTrigger.refresh()` alone re-fits it.
   let arrivals = []
   let panEnds = []
   let total = 0
@@ -87,10 +87,9 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
 
   /* ------------------------------------------------------ desktop: horizontal */
 
-  // (Re)measure the horizontal layout from the CURRENT DOM. Called on build and
-  // again inside ScrollTrigger's onRefreshInit, so filtering/resizing reshapes
-  // the scrub in place. Restores native overflow first so pan heights measure
-  // true, then re-locks the pan containers.
+  // (Re)measure the horizontal layout from the current DOM. Runs on build and
+  // again from ScrollTrigger's onRefreshInit. Native overflow is restored first
+  // so pan heights measure true, then the pan containers are re-locked.
   const layoutHorizontal = () => {
     releasePanels()
     vwPx = window.innerWidth
@@ -147,10 +146,10 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
   const buildHorizontal = () => {
     layoutHorizontal()
 
-    // A normalized 0→1 driver linked to ScrollTrigger. `scrub:1` smooths the
-    // driver's playhead (the lagged easing that makes the scrub feel buttery);
-    // applyProgress runs off the SMOOTHED value. The driver is layout-agnostic
-    // (duration 1), so remeasuring only changes `total` — no timeline rebuild.
+    // Normalized 0→1 driver linked to ScrollTrigger. `scrub: 1` lags the
+    // driver's playhead and applyProgress runs off that smoothed value. The
+    // driver is layout-agnostic (duration 1), so a remeasure only changes
+    // `total` — no timeline rebuild.
     const driver = { p: 0 }
     tl = gsap.timeline({ defaults: { ease: 'none' } })
     tl.to(driver, { p: 1, duration: 1, onUpdate: () => applyProgress(driver.p) })
@@ -165,11 +164,10 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
       invalidateOnRefresh: true,
       onRefreshInit: layoutHorizontal,
       snap: {
-        // free-form: only pull when the natural stop lands NEAR a section
+        // Free-form: only pull when the natural stop lands near a section.
         snapTo: (value) => {
-          // During programmatic nav, resolve the snap to the EXACT destination
-          // so post-tween inertia can't carry the scroll past the arrival into
-          // the pan zone (which panned the inner content a few px).
+          // During programmatic nav, snap to the exact destination so trailing
+          // inertia can't carry the scroll past the arrival into the pan zone.
           if (navTarget !== null) return navTarget
           const m = 0.004
           for (const [s, e] of panZones) {
@@ -189,8 +187,8 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
         ease: 'power2.out'
       },
       onUpdate: (self) => {
-        // track x + pan are driven by the smoothed driver (tl.onUpdate);
-        // here we only resolve the active section from raw scroll progress.
+        // Track x + pan come from the smoothed driver (tl.onUpdate); this only
+        // resolves the active section, off raw scroll progress.
         const px = self.progress * total
         const half = window.innerHeight / 2
         for (let i = 0; i < count - 1; i++) {
@@ -203,8 +201,8 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
     startDepth()
   }
 
-  // Subtle depth, continuously lerped on the ticker so the scale EASES toward
-  // its target every frame (smooth even through snap), instead of jumping.
+  // Subtle depth: the scale is lerped on the ticker so it eases toward its
+  // target every frame (staying smooth through snap) instead of jumping.
   const inners = () => panels.map((p) => p.querySelector('.app-slide') || p)
   const smoothstep = (t) => t * t * (3 - 2 * t)
   let innerEls = []
@@ -214,13 +212,25 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
     if (mode !== 'h' || depthTick) return
     innerEls = inners()
     depthScales = innerEls.map(() => 1)
+    // A lerp never actually arrives, so without an epsilon this writes a scale
+    // to every panel on every frame forever, even at rest. Snap inside EPS and
+    // skip the write once settled.
+    const EPS = 0.0005
     depthTick = () => {
       const vw = window.innerWidth
       const x = gsap.getProperty(track, 'x') || 0
       for (let i = 0; i < count; i++) {
         const d = Math.min(Math.abs(i + x / vw), 1)
         const target = 1 - 0.05 * smoothstep(d)
-        depthScales[i] += (target - depthScales[i]) * 0.12 // lerp → buttery
+        const cur = depthScales[i]
+        if (Math.abs(target - cur) < EPS) {
+          if (cur !== target) {
+            depthScales[i] = target
+            gsap.set(innerEls[i], { scale: target, transformOrigin: 'center center', force3D: true })
+          }
+          continue
+        }
+        depthScales[i] = cur + (target - cur) * 0.12
         gsap.set(innerEls[i], { scale: depthScales[i], transformOrigin: 'center center', force3D: true })
       }
     }
@@ -241,10 +251,9 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
       if (inner) gsap.set(inner, { clearProps: 'transform,opacity' })
     })
 
-    // Active = last panel whose top has crossed a probe line just below the
-    // navbar. Position-based, so it's correct regardless of how tall a panel
-    // is (intersectionRatio breaks down when a panel — e.g. Works with 19
-    // cards — is far taller than the viewport).
+    // Active = last panel whose top has crossed a probe line below the navbar.
+    // Position-based on purpose: intersectionRatio breaks down when a panel
+    // (e.g. Works) is far taller than the viewport.
     const pick = () => {
       const probe = navHeight() + Math.min(window.innerHeight * 0.35, 200)
       let best = 0
@@ -297,8 +306,8 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
       if (immediate || reduced) {
         st.scroll(y)
       } else {
-        // Lock snap to this exact arrival for the duration of the tween (plus a
-        // beat for snap to settle), so trailing inertia can't drift the scroll.
+        // Lock snap to this arrival for the tween (plus a beat for snap to
+        // settle), so trailing inertia can't drift the scroll off it.
         navTarget = arrivals[clamped] / total
         gsap.to(window, {
           scrollTo: { y, autoKill: false },
@@ -310,9 +319,8 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
     } else {
       const target = window.scrollY + panels[clamped].getBoundingClientRect().top - navHeight()
       if (immediate || reduced) window.scrollTo(0, Math.max(0, target))
-      // autoKill:false — on iOS the programmatic scroll's readback lags a frame,
-      // which gsap misreads as a user scroll and kills the tween early (tap moves
-      // only a few px). A tap-to-navigate shouldn't be interruptible anyway.
+      // autoKill:false — on iOS the scroll readback lags a frame, which gsap
+      // misreads as a user scroll and kills the tween after only a few px.
       else gsap.to(window, { scrollTo: { y: Math.max(0, target), autoKill: false }, duration, ease: 'power2.inOut' })
     }
   }
@@ -326,9 +334,9 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
     goTo(active, { immediate: true })
   }
 
-  // Light remeasure — no teardown. Recomputes the layout via ScrollTrigger's
-  // onRefreshInit while keeping the pin and current scroll position, so a
-  // Works filter reshapes the scrub without the jump a full rebuild causes.
+  // Light remeasure, no teardown: relayout via ScrollTrigger's onRefreshInit
+  // while keeping the pin and scroll position, so a Works filter reshapes the
+  // scrub without the jump a full rebuild causes.
   const remeasure = () => {
     if (mode !== 'h' || !st) return
     ScrollTrigger.refresh()

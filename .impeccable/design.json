@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-05T03:13:14Z",
+  "generatedAt": "2026-08-05T13:59:54Z",
   "title": "Design System: JRLA Portfolio",
   "extensions": {
     "colorMeta": {
@@ -62,6 +62,21 @@
           "oklch(70% 0.005 286)",
           "oklch(83% 0.005 286)",
           "oklch(95% 0.005 286)"
+        ]
+      },
+      "dark-deep": {
+        "role": "neutral",
+        "displayName": "Deep Ink",
+        "canonical": "oklch(13.5% 0.004 285)",
+        "tonalRamp": [
+          "oklch(8% 0.004 285)",
+          "oklch(13.5% 0.004 285)",
+          "oklch(20% 0.004 285)",
+          "oklch(30% 0.004 285)",
+          "oklch(45% 0.004 285)",
+          "oklch(62% 0.004 285)",
+          "oklch(80% 0.004 285)",
+          "oklch(95% 0.004 285)"
         ]
       },
       "light": {
@@ -190,6 +205,10 @@
         "displayName": "Display",
         "purpose": "Hero name only. Sized to be read across a room; one per page, never per panel."
       },
+      "headline-lg": {
+        "displayName": "Headline Large",
+        "purpose": "Discipline titles in Features, the 404 headline, and the Contact pull-quote. One step below the hero name and the loudest thing on any panel that is not Home."
+      },
       "headline": {
         "displayName": "Headline",
         "purpose": "Section headings, uppercase, delivered as stacked overflow-masked lines so each reveals independently."
@@ -204,7 +223,7 @@
       },
       "label": {
         "displayName": "Mono Label",
-        "purpose": "Instrumentation. Eyebrows, chapter numbers, metadata keys, badges, button text. Always attached to a value. Ships as a five-step scale (0.5 / 0.55 / 0.65 / 0.7 / 0.75rem) because label density varies by surface — the tracking tightens as the size drops."
+        "purpose": "Instrumentation. Eyebrows, chapter numbers, metadata keys, badges, button text. Always attached to a value. Ships as a scale from 0.5rem to 0.875rem because label density varies by surface — the tracking tightens as the size drops. Weight stays 400/500; those are the only weights loaded, so font-semibold renders synthetic."
       },
       "body-sm": {
         "displayName": "Body Small",
@@ -240,56 +259,106 @@
         "name": "focus-lift",
         "value": "0 0 0 2px var(--color-light-primary), 0 16px 32px -10px rgba(0,0,0,0.14)",
         "purpose": "Keyboard focus on a card: accent ring plus the same lift hover gets, so both states are equally loud."
+      },
+      {
+        "name": "nav-arrow",
+        "value": "0 4px 16px -4px rgba(0,0,0,0.15)",
+        "purpose": ".nav-arrow — the one element that genuinely floats. It sits over content on a translucent blur(10px) ground, so it carries a resting shadow the flat rule otherwise forbids. Overlay controls are the exception; surfaces are not."
+      },
+      {
+        "name": "nav-arrow-dark",
+        "value": "0 4px 16px -4px rgba(0,0,0,0.5)",
+        "purpose": "Dark-theme equivalent of nav-arrow."
+      },
+      {
+        "name": "dialog-scrim",
+        "value": "background: rgba(0,0,0,0.3) / rgba(0,0,0,0.6) dark",
+        "purpose": "True layering behind a dialog, so the plate needs nothing beyond surface-lifted."
       }
     ],
     "motion": [
       {
-        "name": "ease-reveal",
-        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
-        "purpose": "The dominant curve (30 uses). Reveals, presses, hover lifts, tool and social pills."
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "The default curve (--ease-out). Reveals, presses, hover lifts, colour and border changes, pager arrows, view-transition cross-fade. Built-in CSS easings are too weak for deliberate motion, so nothing here is ease or ease-in-out."
       },
       {
-        "name": "ease-scroll",
-        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
-        "purpose": "Scroll-linked and layout transitions (17 uses)."
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "purpose": "Only the genuinely symmetric moves — icon nudges that travel out and back."
       },
       {
-        "name": "ease-spring",
-        "value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
-        "purpose": "Momentary single-element confirmations only — theme-toggle icon swap and submit checkmark pop. Overshoot is the point; never on content."
+        "name": "ease-drawer",
+        "value": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "purpose": "Sheet travel only. Almost all the distance happens up front, then it glides in — the reason a native sheet feels attached to your thumb rather than played back at you."
       },
       {
-        "name": "duration-press",
+        "name": "ease-in (absent by design)",
+        "value": "none",
+        "purpose": "--ease-in deliberately does not exist. Entering and exiting UI always starts fast; an ease-in holds still for the first half of its duration, which is exactly the frames the visitor is watching."
+      },
+      {
+        "name": "dur-press",
         "value": "80ms",
-        "purpose": "Tactile depress to scale(0.95) on :active."
+        "purpose": "Tactile depress to scale(0.95) on :active; work cards use scale(0.985)."
       },
       {
-        "name": "duration-state",
+        "name": "dur-fast",
+        "value": "160ms",
+        "purpose": "Press/hover transition base on .btn, pills and cards."
+      },
+      {
+        "name": "dur-base",
+        "value": "200ms",
+        "purpose": "Modal enter/leave, scrim fade, tool and social pills, theme cross-fade, error slide-fade."
+      },
+      {
+        "name": "dur-slow",
         "value": "250ms",
-        "purpose": "Default colour/border/transform transition on buttons and pills."
+        "purpose": "Button colour hover, icon nudges, image hover scale, theme-toggle rotation."
       },
       {
-        "name": "duration-lift",
-        "value": "300ms",
-        "purpose": "Card lift, image scale, nav underline scale-x."
+        "name": "dur-drawer",
+        "value": "400ms",
+        "purpose": "Sheet open and close, paired with ease-drawer."
       },
       {
-        "name": "duration-reveal",
-        "value": "700ms",
-        "purpose": "Staggered fade-up entrance (.reveal-fade), delayed per element via --d."
+        "name": "dur-reveal",
+        "value": "450ms",
+        "purpose": "Section entrances only — the one duration allowed past 300ms, because a panel arriving reads as editorial rather than as UI."
       },
       {
         "name": "reduced-motion",
-        "value": "0.01ms",
-        "purpose": "Global collapse under prefers-reduced-motion: reduce. .reveal-fade instead drops to 0.2s, opacity only."
+        "value": "movement removed, feedback kept",
+        "purpose": "Under prefers-reduced-motion: reduce, animations collapse to 0.01ms and one iteration, and transition-property is narrowed to colour, background-color, border-color, outline-color, fill, stroke, opacity and box-shadow at 150ms on --ease-out. Movement snaps; the transitions that explain a state change survive."
       }
     ],
     "breakpoints": [
-      { "name": "sm", "value": "640px" },
-      { "name": "md", "value": "768px" },
-      { "name": "lg", "value": "1024px" },
-      { "name": "xl", "value": "1280px" },
-      { "name": "2xl", "value": "1536px" }
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "2xl",
+        "value": "1536px"
+      },
+      {
+        "name": "notfound-split",
+        "value": "900px",
+        "purpose": "One-off min-[900px] on the 404 route, where the numeral and headline split into 0.95fr / 1.05fr columns."
+      }
     ]
   },
   "components": [
@@ -299,7 +368,7 @@
       "refersTo": "button-primary",
       "description": "Accent-filled editorial CTA. Square, mono, uppercase. Hover deepens the same accent rather than flipping hue.",
       "html": "<button class=\"ds-btn ds-btn-primary\">Send Message</button>",
-      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0.85rem 1.5rem; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; border-radius: 0; cursor: pointer; transition: color 250ms cubic-bezier(0.22,1,0.36,1), background-color 250ms cubic-bezier(0.22,1,0.36,1), border-color 250ms cubic-bezier(0.22,1,0.36,1), transform 250ms cubic-bezier(0.22,1,0.36,1); } .ds-btn-primary { background: var(--color-light-primary, #ff3656); color: var(--color-dark, #18181b); border: 1px solid var(--color-light-primary, #ff3656); } .ds-btn-primary:hover { background: color-mix(in oklab, var(--color-light-primary, #ff3656) 82%, #000); border-color: color-mix(in oklab, var(--color-light-primary, #ff3656) 82%, #000); color: var(--color-light, #e8ebf0); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; border-radius: 4px; } .ds-btn-primary:active { transform: scale(0.95); transition-duration: 80ms; }"
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0.85rem 1.5rem; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; border-radius: 0; cursor: pointer; transition: color var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), background-color var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), border-color var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), transform var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)); } .ds-btn-primary { background: var(--color-light-primary, #ff3656); color: var(--color-dark, #18181b); border: 1px solid var(--color-light-primary, #ff3656); } .ds-btn-primary:hover { background: color-mix(in oklab, var(--color-light-primary, #ff3656) 82%, #000); border-color: color-mix(in oklab, var(--color-light-primary, #ff3656) 82%, #000); color: var(--color-light, #e8ebf0); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; border-radius: 4px; } .ds-btn-primary:active { transform: scale(0.95); transition-duration: 80ms; }"
     },
     {
       "name": "Ghost Button",
@@ -307,7 +376,7 @@
       "refersTo": "button-ghost",
       "description": "Secondary CTA. Transparent with a currentColor hairline; hover tints faintly with the accent so it never competes with a solid primary beside it.",
       "html": "<button class=\"ds-btn ds-btn-ghost\">Download CV</button>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0.85rem 1.5rem; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; border-radius: 0; cursor: pointer; background: transparent; color: currentColor; border: 1px solid currentColor; transition: color 250ms cubic-bezier(0.22,1,0.36,1), background-color 250ms cubic-bezier(0.22,1,0.36,1), border-color 250ms cubic-bezier(0.22,1,0.36,1), transform 250ms cubic-bezier(0.22,1,0.36,1); } .ds-btn-ghost:hover { background: color-mix(in oklab, var(--color-light-primary, #ff3656) 12%, transparent); border-color: var(--color-light-primary, #ff3656); color: var(--color-light-primary, #ff3656); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; border-radius: 4px; } .ds-btn-ghost:active { transform: scale(0.95); transition-duration: 80ms; }"
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0.85rem 1.5rem; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; border-radius: 0; cursor: pointer; background: transparent; color: currentColor; border: 1px solid currentColor; transition: color var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), background-color var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), border-color var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), transform var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)); } .ds-btn-ghost:hover { background: color-mix(in oklab, var(--color-light-primary, #ff3656) 12%, transparent); border-color: var(--color-light-primary, #ff3656); color: var(--color-light-primary, #ff3656); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; border-radius: 4px; } .ds-btn-ghost:active { transform: scale(0.95); transition-duration: 80ms; }"
     },
     {
       "name": "Filter Pill",
@@ -315,7 +384,7 @@
       "refersTo": "filter-pill",
       "description": "Category filter for the works grid. Fully round, mono, with a tabular count trailing the label. Selected state is an accent fill announced via aria-pressed.",
       "html": "<div style=\"display:flex; gap:0.5rem; flex-wrap:wrap\">\n  <button class=\"ds-pill\" aria-pressed=\"true\"><span>All</span><span class=\"ds-pill-count\">20</span></button>\n  <button class=\"ds-pill\" aria-pressed=\"false\"><span>UI/UX</span><span class=\"ds-pill-count\">7</span></button>\n  <button class=\"ds-pill\" aria-pressed=\"false\"><span>Website</span><span class=\"ds-pill-count\">5</span></button>\n</div>",
-      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.9rem; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; background: transparent; color: currentColor; border: 1px solid color-mix(in oklab, currentColor 35%, transparent); border-radius: 9999px; cursor: pointer; white-space: nowrap; transition: background-color 200ms, border-color 200ms, color 200ms, transform 250ms cubic-bezier(0.22,1,0.36,1); } .ds-pill:hover { border-color: color-mix(in oklab, currentColor 65%, transparent); } .ds-pill[aria-pressed=\"true\"] { background: var(--color-light-primary, #ff3656); color: var(--color-dark, #18181b); border-color: var(--color-light-primary, #ff3656); } .ds-pill-count { font-variant-numeric: tabular-nums; opacity: 0.7; } .ds-pill[aria-pressed=\"true\"] .ds-pill-count { opacity: 0.8; } .ds-pill:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; } .ds-pill:active { transform: scale(0.95); transition-duration: 80ms; }"
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.9rem; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; background: transparent; color: currentColor; border: 1px solid color-mix(in oklab, currentColor 35%, transparent); border-radius: 9999px; cursor: pointer; white-space: nowrap; transition: background-color 200ms, border-color 200ms, color 200ms, transform var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)); } .ds-pill:hover { border-color: color-mix(in oklab, currentColor 65%, transparent); } .ds-pill[aria-pressed=\"true\"] { background: var(--color-light-primary, #ff3656); color: var(--color-dark, #18181b); border-color: var(--color-light-primary, #ff3656); } .ds-pill-count { font-variant-numeric: tabular-nums; opacity: 0.7; } .ds-pill[aria-pressed=\"true\"] .ds-pill-count { opacity: 0.8; } .ds-pill:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; } .ds-pill:active { transform: scale(0.95); transition-duration: 80ms; }"
     },
     {
       "name": "Work Card",
@@ -339,7 +408,7 @@
       "refersTo": "input",
       "description": "A ruled line on paper, not a box. Transparent and square; the resting rule fades out while an accent underline scales in from the centre, and the label lifts into the accent alongside it.",
       "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Email</span><span class=\"ds-field-wrap\"><input class=\"ds-input\" type=\"email\" placeholder=\"hello@yourname.com\" /><span class=\"ds-field-rule\" aria-hidden=\"true\"></span></span></label>",
-      "css": ".ds-field { display: flex; flex-direction: column; gap: 0.4rem; width: 260px; } .ds-field-label { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.6; transform-origin: left; transition: color 250ms, opacity 250ms, transform 250ms; } .ds-field:focus-within .ds-field-label { opacity: 1; transform: translateY(-2px); color: var(--color-light-primary, #ff3656); } .ds-field-wrap { position: relative; display: block; } .ds-input { display: block; width: 100%; padding: 0.75rem 0.65rem; font-family: Gilroy, system-ui, sans-serif; font-size: 1rem; color: inherit; background: transparent; border: 0; border-bottom: 1px solid color-mix(in oklab, currentColor 25%, transparent); border-radius: 0; transition: border-color 250ms; } .ds-input::placeholder { color: color-mix(in oklab, currentColor 35%, transparent); } .ds-input:focus { outline: none; border-bottom-color: transparent; } .ds-field-rule { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--color-light-primary, #ff3656); transform: scaleX(0); transition: transform 300ms cubic-bezier(0.22,1,0.36,1); pointer-events: none; } .ds-field:focus-within .ds-field-rule { transform: scaleX(1); }"
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 0.4rem; width: 260px; } .ds-field-label { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.6; transform-origin: left; transition: color var(--dur-slow, 250ms), opacity var(--dur-slow, 250ms), transform var(--dur-slow, 250ms); } .ds-field:focus-within .ds-field-label { opacity: 1; transform: translateY(-2px); color: var(--color-light-primary, #ff3656); } .ds-field-wrap { position: relative; display: block; } .ds-input { display: block; width: 100%; padding: 0.75rem 0.65rem; font-family: Gilroy, system-ui, sans-serif; font-size: 1rem; color: inherit; background: transparent; border: 0; border-bottom: 1px solid color-mix(in oklab, currentColor 25%, transparent); border-radius: 0; transition: border-color var(--dur-slow, 250ms); } .ds-input::placeholder { color: color-mix(in oklab, currentColor 35%, transparent); } .ds-input:focus { outline: none; border-bottom-color: transparent; } .ds-field-rule { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--color-light-primary, #ff3656); transform: scaleX(0); transition: transform 300ms var(--ease-out, cubic-bezier(0.23,1,0.32,1)); pointer-events: none; } .ds-field:focus-within .ds-field-rule { transform: scaleX(1); }"
     },
     {
       "name": "Chapter Navigation",
@@ -347,7 +416,7 @@
       "refersTo": null,
       "description": "Fixed navbar items as numbered chapters. Active state is a 2px accent underline scaling in from the left; the label hides on small screens so numbers alone carry navigation.",
       "html": "<nav class=\"ds-nav\">\n  <a class=\"ds-nav-item ds-nav-item--active\" href=\"#home\"><span class=\"ds-nav-num\">01</span><span>Home</span><span class=\"ds-nav-rule\"></span></a>\n  <a class=\"ds-nav-item\" href=\"#works\"><span class=\"ds-nav-num\">03</span><span>Works</span><span class=\"ds-nav-rule\"></span></a>\n  <a class=\"ds-nav-item\" href=\"#contact\"><span class=\"ds-nav-num\">05</span><span>Contact</span><span class=\"ds-nav-rule\"></span></a>\n</nav>",
-      "css": ".ds-nav { display: flex; align-items: center; gap: 0.75rem; height: 3.5rem; padding: 0 1rem; border-bottom: 1px solid rgba(0,0,0,0.1); } .ds-nav-item { position: relative; display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.75rem; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: inherit; text-decoration: none; } .ds-nav-num { font-variant-numeric: tabular-nums; opacity: 0.85; transition: transform 300ms cubic-bezier(0.22,1,0.36,1); } .ds-nav-item:hover .ds-nav-num { transform: translateY(-1px); } .ds-nav-rule { position: absolute; left: 0.75rem; right: 0.75rem; bottom: -1px; height: 2px; background: var(--color-light-primary, #ff3656); transform: scaleX(0); transform-origin: left; opacity: 0.6; transition: transform 300ms cubic-bezier(0.22,1,0.36,1); } .ds-nav-item:hover .ds-nav-rule { transform: scaleX(1); } .ds-nav-item--active .ds-nav-rule { transform: scaleX(1); opacity: 1; } .ds-nav-item:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; border-radius: 4px; }"
+      "css": ".ds-nav { display: flex; align-items: center; gap: 0.75rem; height: 3.5rem; padding: 0 1rem; border-bottom: 1px solid rgba(0,0,0,0.1); } .ds-nav-item { position: relative; display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.75rem; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: inherit; text-decoration: none; } .ds-nav-num { font-variant-numeric: tabular-nums; opacity: 0.85; transition: transform 300ms var(--ease-out, cubic-bezier(0.23,1,0.32,1)); } .ds-nav-item:hover .ds-nav-num { transform: translateY(-1px); } .ds-nav-rule { position: absolute; left: 0.75rem; right: 0.75rem; bottom: -1px; height: 2px; background: var(--color-light-primary, #ff3656); transform: scaleX(0); transform-origin: left; opacity: 0.6; transition: transform 300ms var(--ease-out, cubic-bezier(0.23,1,0.32,1)); } .ds-nav-item:hover .ds-nav-rule { transform: scaleX(1); } .ds-nav-item--active .ds-nav-rule { transform: scaleX(1); opacity: 1; } .ds-nav-item:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; border-radius: 4px; }"
     },
     {
       "name": "Social Pill",
@@ -355,7 +424,7 @@
       "refersTo": "social-pill",
       "description": "Circular icon-only channel link at the 44px minimum hit target. Hairline border becomes the accent on hover; lifts 2px and depresses on press.",
       "html": "<div style=\"display:flex; gap:0.6rem\">\n  <a class=\"ds-social\" href=\"#\" aria-label=\"LinkedIn\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.3 8.65 21 10.9 21 14v7h-4v-6.2c0-1.5-.03-3.4-2.07-3.4-2.08 0-2.4 1.6-2.4 3.3V21H9z\"/></svg></a>\n  <a class=\"ds-social\" href=\"#\" aria-label=\"Behance\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M7.8 11.1c1-.4 1.6-1.2 1.6-2.4 0-2-1.5-2.9-3.5-2.9H1v12h5.1c2.2 0 4.1-1 4.1-3.4 0-1.5-.7-2.6-2.4-3.3zM3.6 7.8h2.1c.8 0 1.5.2 1.5 1.2 0 .9-.6 1.2-1.4 1.2H3.6zm2.3 8H3.6v-2.9h2.4c1 0 1.7.4 1.7 1.5 0 1.1-.8 1.4-1.8 1.4zM19.3 7.3h-5v1.5h5zM23 13.7c0-2.7-1.6-4.9-4.4-4.9-2.8 0-4.7 2.1-4.7 4.8 0 2.8 1.8 4.8 4.7 4.8 2.2 0 3.8-1 4.3-3.1h-2.3c-.2.7-1 1.1-1.8 1.1-1.4 0-2.2-.8-2.2-2.2H23c0-.2 0-.4 0-.5zm-6.4-1.2c0-1.1.8-1.9 1.9-1.9 1.2 0 1.8.7 1.9 1.9z\"/></svg></a>\n</div>",
-      "css": ".ds-social { display: grid; place-content: center; width: 2.75rem; height: 2.75rem; border-radius: 9999px; border: 1px solid color-mix(in oklab, currentColor 60%, transparent); color: inherit; background: transparent; text-decoration: none; transition: color 250ms cubic-bezier(0.22,1,0.36,1), background-color 250ms cubic-bezier(0.22,1,0.36,1), border-color 250ms cubic-bezier(0.22,1,0.36,1), translate 250ms cubic-bezier(0.22,1,0.36,1), transform 250ms cubic-bezier(0.22,1,0.36,1); } .ds-social:hover { background: currentColor; border-color: currentColor; color: var(--color-light, #e8ebf0); translate: 0 -2px; } .ds-social:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; } .ds-social:active { transform: scale(0.95); transition-duration: 80ms; }"
+      "css": ".ds-social { display: grid; place-content: center; width: 2.75rem; height: 2.75rem; border-radius: 9999px; border: 1px solid color-mix(in oklab, currentColor 60%, transparent); color: inherit; background: transparent; text-decoration: none; transition: color var(--dur-base, 200ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), background-color var(--dur-base, 200ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), border-color var(--dur-base, 200ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), translate var(--dur-base, 200ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), transform var(--dur-base, 200ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)); } .ds-social:hover { background: currentColor; border-color: currentColor; color: var(--color-light, #e8ebf0); translate: 0 -2px; } .ds-social:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; } .ds-social:active { transform: scale(0.95); transition-duration: 80ms; }"
     },
     {
       "name": "Tool Chip",
@@ -363,7 +432,7 @@
       "refersTo": "tool-pill",
       "description": "Square aspect-ratio chip holding a theme-aware tool logo. 8px radius, hairline border that becomes the accent on hover with a 2px lift.",
       "html": "<div class=\"ds-tool\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M12 2 2 6.5l1.6 12L12 22l8.4-3.5L22 6.5zm4.6 6H9.2l.2 2.2h7l-.6 6.2-3.8 1-3.8-1-.3-3h2.2l.15 1.4 1.75.45 1.75-.45.2-2.3H7.5L7 6h9.8z\"/></svg></div>",
-      "css": ".ds-tool { display: grid; place-content: center; aspect-ratio: 1; width: 4.5rem; padding: 0.75rem; border: 1px solid color-mix(in oklab, currentColor 12%, transparent); border-radius: 8px; color: inherit; transition: border-color 300ms cubic-bezier(0.22,1,0.36,1), translate 300ms cubic-bezier(0.22,1,0.36,1), transform 250ms cubic-bezier(0.22,1,0.36,1); } .ds-tool:hover { border-color: var(--color-light-primary, #ff3656); translate: 0 -2px; } .ds-tool:active { transform: scale(0.95); transition-duration: 80ms; }"
+      "css": ".ds-tool { display: grid; place-content: center; aspect-ratio: 1; width: 4.5rem; padding: 0.75rem; border: 1px solid color-mix(in oklab, currentColor 12%, transparent); border-radius: 8px; color: inherit; transition: border-color var(--dur-base, 200ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), translate var(--dur-base, 200ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)), transform var(--dur-slow, 250ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)); } .ds-tool:hover { border-color: var(--color-light-primary, #ff3656); translate: 0 -2px; } .ds-tool:active { transform: scale(0.95); transition-duration: 80ms; }"
     },
     {
       "name": "Meta Pair",
@@ -372,38 +441,52 @@
       "description": "The system's smallest recurring unit: a wide-tracked mono label 0.35rem above its value, with the hairline rule that separates editorial matter. Demonstrates the Attached Label Rule.",
       "html": "<div class=\"ds-meta\">\n  <span class=\"ds-meta-eyebrow\">04 — Biography</span>\n  <span class=\"ds-hairline\"></span>\n  <div class=\"ds-meta-grid\">\n    <div class=\"ds-meta-pair\"><span class=\"ds-meta-key\">Based in</span><span class=\"ds-meta-val\">Bulacan · PH</span></div>\n    <div class=\"ds-meta-pair\"><span class=\"ds-meta-key\">Disciplines</span><span class=\"ds-meta-val\">Web · UI/UX · Motion</span></div>\n    <div class=\"ds-meta-pair\"><span class=\"ds-meta-key\">Available</span><span class=\"ds-meta-val\">2026 Onwards</span></div>\n  </div>\n</div>",
       "css": ".ds-meta { display: flex; flex-direction: column; gap: 1rem; } .ds-meta-eyebrow { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.7; } .ds-hairline { display: block; width: 4rem; height: 1px; background: currentColor; opacity: 0.3; } .ds-meta-grid { display: grid; grid-template-columns: repeat(3, max-content); gap: 1.25rem 3rem; padding: 1.25rem 0; border-top: 1px solid color-mix(in oklab, currentColor 12%, transparent); border-bottom: 1px solid color-mix(in oklab, currentColor 12%, transparent); } .ds-meta-pair { display: flex; flex-direction: column; gap: 0.35rem; } .ds-meta-key { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.55; } .ds-meta-val { font-family: Gilroy, system-ui, sans-serif; font-size: 0.95rem; letter-spacing: -0.005em; }"
+    },
+    {
+      "name": "Pager Arrow",
+      "kind": "button",
+      "refersTo": "nav-arrow",
+      "description": "Translucent circular pager control. Leans the direction it will send you on hover, and fades out rather than disappearing at either end of the pager.",
+      "html": "<div style=\"display:flex;gap:0.75rem\"><button class=\"ds-arrow ds-arrow-prev\" aria-label=\"Previous section\"><svg viewBox=\"0 0 24 24\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M15 18l-6-6 6-6\"/></svg></button><button class=\"ds-arrow ds-arrow-next\" aria-label=\"Next section\"><svg viewBox=\"0 0 24 24\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M9 18l6-6-6-6\"/></svg></button></div>",
+      "css": ".ds-arrow { display: grid; place-content: center; width: 2.75rem; height: 2.75rem; border-radius: 9999px; cursor: pointer; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(0,0,0,0.08); color: var(--color-dark, #18181b); box-shadow: 0 4px 16px -4px rgba(0,0,0,0.15); transition-property: color, background-color, border-color, box-shadow, opacity, transform, translate, scale; transition-duration: var(--dur-base, 200ms); transition-timing-function: var(--ease-out, cubic-bezier(0.23,1,0.32,1)); } @media (hover: hover) and (pointer: fine) { .ds-arrow:hover { background: var(--color-light-primary, #ff3656); border-color: var(--color-light-primary, #ff3656); } .ds-arrow-prev:hover { translate: -3px 0; } .ds-arrow-next:hover { translate: 3px 0; } } .ds-arrow:focus-visible { outline: 2px solid var(--color-light-primary, #ff3656); outline-offset: 3px; border-radius: 9999px; } .ds-arrow:active { scale: 0.95; transition-duration: var(--dur-press, 80ms); } .ds-arrow.is-hidden { opacity: 0; pointer-events: none; }"
     }
   ],
   "narrative": {
     "northStar": "The Printed Issue",
-    "overview": "This is a magazine issue that happens to scroll sideways. Every panel is a spread, every spread is numbered, and the reader moves through it left to right the way a thumb moves through paper. The system already speaks this language natively: chapters are labelled `04 — BIOGRAPHY`, the masthead reads `ISSUE / 2026`, the portrait carries a plate caption (`— PHOTOGRAPHED IN BULACAN` · `FIG. 01`), and hairline rules separate matter the way column rules do in print. None of that is decoration; it is the organizing metaphor made literal.\n\nThe register is precise, technical, and tactile. Precision shows in the labels — IBM Plex Mono at 10px with 0.3em tracking, uppercase, always prefixing a value, never floating on its own. Technical shows in what the surface refuses: no gradients as decoration, no glass, no soft toy-like rounding, no illustration standing in for evidence. Tactile shows in the response — everything pressable depresses to scale(0.95) in 80ms, cards lift 3px and sharpen their border to the accent, the theme toggle overshoots on a spring. The interface behaves like machined controls, and the display type is the one place it raises its voice.\n\nTwo accents carry the whole system, and only one is ever live: Signal Red in light mode, Filament Yellow in dark. They are indicators, not paint. The rest of the palette is two greys and two card surfaces, so the moment the accent appears — a focus ring, an active chapter underline, a hovered card border, a counted stat — it means something. The category badges are the single exception, and they earn it by encoding real information: which of four disciplines a piece belongs to.",
+    "overview": "This is a magazine issue that happens to scroll sideways. Every panel is a spread, every spread is numbered, and the reader moves through it left to right the way a thumb moves through paper. The system already speaks this language natively: chapters are labelled 04 — BIOGRAPHY, the masthead reads ISSUE / 2026, the portrait carries a plate caption (— PHOTOGRAPHED IN BULACAN · FIG. 01), and hairline rules separate matter the way column rules do in print. None of that is decoration; it is the organizing metaphor made literal.\n\nThe register is precise, technical, and tactile. Precision shows in the labels — IBM Plex Mono at 10px with 0.3em tracking, uppercase, always prefixing a value, never floating on its own. Technical shows in what the surface refuses: no gradients as decoration, no glass, no soft toy-like rounding, no illustration standing in for evidence. Tactile shows in the response — everything pressable depresses to scale(0.95) in --dur-press (80ms), cards lift 3px and sharpen their border to the accent, pager arrows lean the direction they will send you. Every one of those responses is gated behind hover-fine or :active, so a phone never inherits a pointer affordance it cannot honour. The interface behaves like machined controls, and the display type is the one place it raises its voice.\n\nTwo accents carry the whole system, and only one is ever live: Signal Red in light mode, Filament Yellow in dark. They are indicators, not paint. The rest of the palette is two greys and two card surfaces, so the moment the accent appears — a focus ring, an active chapter underline, a hovered card border, a counted stat — it means something. The category badges are the single exception, and they earn it by encoding real information: which of four disciplines a piece belongs to.",
     "keyCharacteristics": [
       "Sharp-cornered editorial surfaces; radius is reserved for pills and inputs, never for content plates",
       "Mono labels as instrumentation — uppercase, wide-tracked, always attached to a value",
       "One live accent per theme, spent on state rather than surface",
       "Flat at rest; depth arrives only as a response to hover, focus, or true layering",
       "Numbered chapters and plate captions as a persistent structural device",
-      "Immediate physical feedback on every interactive element"
+      "Immediate physical feedback on every interactive element, gated to real pointers",
+      "Three easing tokens and a six-step duration scale; nothing hand-typed"
     ],
     "rules": [
-      {
-        "name": "The Two Scales Rule",
-        "body": "The accent is either a whole plate or a single control state — never anything between. A full-bleed accent half-spread is correct; a focus ring is correct; an accent-tinted card, banner, callout, or mid-sized decorative block is not.",
-        "section": "colors"
-      },
-      {
-        "name": "The Ink-on-Accent Rule",
-        "body": "An accent plate carries --color-dark text in both themes, and any focus ring inside it inverts to ink — an accent ring on an accent surface is invisible. Mark such plates with data-accent-surface.",
-        "section": "colors"
-      },
       {
         "name": "The One Live Accent Rule",
         "body": "A theme has exactly one accent. Signal Red never appears in dark mode; Filament Yellow never appears in light. Any new colour that is not a category badge is a bug.",
         "section": "colors"
       },
       {
+        "name": "The Two Scales Rule",
+        "body": "The accent is either a whole plate or a single control state — never anything between. A full-bleed accent half-spread is correct; a focus ring is correct; an accent-tinted card, banner, callout, or mid-sized decorative block is not. If a proposed accent area is bigger than a button and smaller than a panel, the answer is a hairline or a tone shift instead.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink-on-Accent Rule",
+        "body": "An accent plate carries --color-dark text in both themes, and any focus ring inside it inverts to ink — an accent ring on an accent surface is invisible. Mark such plates with data-accent-surface and the global rule in main.css handles the inversion.",
+        "section": "colors"
+      },
+      {
         "name": "The Relative Hairline Rule",
         "body": "Dividers, card borders, and rules use currentColor at 6–14% opacity. Never a literal grey, never border-gray-200. A hairline belongs to its text, not to the palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The Opacity Floor Rule",
+        "body": "Text opacity is not a free dial — it is a contrast budget, and the light theme spends it fastest. Ink on the light ground measures 3.77:1 at 0.55 and 4.40:1 at 0.60; both fail AA. A Signal Red plate is tighter still, because the plate is only 5.00:1 from ink to begin with: 0.70 gives 3.26:1 and even 0.85 reaches only 4.30:1.",
         "section": "colors"
       },
       {
@@ -418,7 +501,7 @@
       },
       {
         "name": "The Plain Column Rule",
-        "body": "Body prose stays Gilroy Regular — no italic, no oblique, no all-caps runs. Emphasis inside a paragraph is carried by the accent colour and ExtraBold weight on a short clause, never by a slant.",
+        "body": "Body prose stays Gilroy Regular — no italic, no oblique, no all-caps runs. Emphasis inside a paragraph is carried by the accent colour and ExtraBold weight on a short clause (<em class=\"not-italic\">), never by a slant.",
         "section": "typography"
       },
       {
@@ -428,12 +511,12 @@
       },
       {
         "name": "The Flat-By-Default Rule",
-        "body": "Surfaces are flat at rest. Shadow appears only in response to state (hover, focus, true layering). A resting element carrying a shadow heavier than the contact shadow is over-elevated.",
+        "body": "Surfaces are flat at rest. Shadow appears only in response to state (hover, focus, true layering). A resting element carrying a shadow heavier than the contact shadow above is over-elevated.",
         "section": "elevation"
       },
       {
         "name": "The No Emboss Rule",
-        "body": "No neumorphism, no inset highlight/shadow pairs, no soft-plastic depth. Depth is tone, hairline, and a single ambient shadow — nothing sculpted. .neumorph has been deleted; do not reintroduce it.",
+        "body": "No neumorphism, no inset highlight/shadow pairs, no soft-plastic depth. Depth is tone, hairline, and a single ambient shadow — nothing sculpted.",
         "section": "elevation"
       },
       {
@@ -443,7 +526,7 @@
       },
       {
         "name": "The Four Corners Rule",
-        "body": "Corner brackets ship as a complete set of four or not at all — four L-shaped marks inset from a frame's corners, weight tracking the size of the frame (2px on the About portrait, 3px on the full-viewport boot plate). A thick colored border on a single side of a surface is a different thing entirely, and this system does not use it.",
+        "body": "Corner brackets ship as a complete set of four or not at all. A thick colored border on a single side of a surface is a different thing entirely, and this system does not use it.",
         "section": "shapes"
       }
     ],
@@ -456,7 +539,10 @@
       "Do reference the z-index scale (var(--z-nav) … var(--z-grain)) for anything stacked.",
       "Do declare colour once, in @theme in src/assets/main.css, and reference the token everywhere else.",
       "Do step page padding 1.5rem → 2.5rem → 3.5rem, and keep a mono label 0.35rem from its value.",
-      "Do collapse motion under prefers-reduced-motion: reduce — durations to 0.01ms globally, reveals to a 0.2s opacity-only fade.",
+      "Do answer prefers-reduced-motion: reduce by removing movement, not feedback: looping animations stop, transform/translate/scale/rotate snap, and colour, opacity, border and shadow keep a calm 150ms transition on --ease-out. Those are the transitions that explain a state change rather than perform one.",
+      "Do reach for --ease-out / --ease-in-out / --ease-drawer and the --dur-press → --dur-reveal scale. Both live in @theme; a hand-typed cubic-bezier or a raw 300ms is drift.",
+      "Do gate every hover affordance behind hover-fine: (or a @media (hover: hover) and (pointer: fine) block). On touch, a tap fires a phantom :hover that sticks to whatever was last touched until the next tap elsewhere.",
+      "Do enumerate transition-property explicitly, and include translate and scale alongside transform — Tailwind v4 emits those as standalone CSS properties, so a transform-only list silently drops the effect. Never transition-all; all sweeps in layout properties the moment someone adds one.",
       "Do let tall panels pan their inner [data-pan-scroll] region instead of compressing content to fit the viewport.",
       "Do mark accent-filled plates with data-accent-surface so focus rings inside them invert to ink.",
       "Do use .btn btn-primary / .btn btn-ghost for every CTA — the base class carries the mono/tracking/press contract. Override padding inline; never re-declare the fill.",
@@ -466,15 +552,18 @@
     "donts": [
       "Don't reintroduce .neumorph. It has been deleted; the emboss contradicts the flat doctrine.",
       "Don't put both accents in one theme. Light is Signal Red; dark is Filament Yellow; never both.",
-      "Don't use the accent as a large surface fill. It marks state, not area — the 10%/8% hero radial wash is the only exception.",
+      "Don't use the accent as a large surface fill between the two sanctioned scales. It marks state or it is a whole plate — the only mid-scale exceptions in the codebase are the 404's off-canvas radial wash (14% light / 16% dark, blurred 20px, pushed past the corner) and the boot screen's 25% logo glow. Both are atmosphere behind content, not a tinted container.",
       "Don't round content plates. No rounded-2xl cards, no soft image frames. In this codebase rounded-2xl means \"skeleton placeholder\", nothing else.",
       "Don't write raw hex outside the @theme block, and don't write raw z-index numbers anywhere.",
       "Don't italicize or all-caps body prose. Emphasis is accent colour plus ExtraBold on a short clause.",
       "Don't ship more than one display-scale heading per panel.",
       "Don't use a literal grey (border-gray-200, #e5e7eb) for a divider.",
       "Don't restyle a category badge for emphasis — its colour encodes which discipline a piece belongs to.",
-      "Don't add a third easing family. Reveals and presses use cubic-bezier(0.22, 1, 0.36, 1); scroll and layout use cubic-bezier(0.2, 0.8, 0.2, 1). The overshoot spring cubic-bezier(0.34, 1.56, 0.64, 1) is reserved for momentary single-element confirmations — the theme-toggle icon swap and the submit checkmark pop — and nothing that carries content.",
-      "Don't animate width, height, margin, or top/left for a visual state change. Use scale, translate, or opacity so the change composites instead of forcing layout."
+      "Don't add a fourth easing token. Three exist and they are enough: --ease-out for everything that arrives or responds, --ease-in-out for the few symmetric moves, --ease-drawer for sheet travel. There is deliberately no --ease-in — entering and exiting UI always starts fast, or it stalls on exactly the frame the visitor is watching. Built-in ease / ease-in-out are too weak for deliberate motion; don't fall back to them.",
+      "Don't spend an overshoot on anything that carries content. The one sanctioned bounce is cubic-bezier(0.34, 1.56, 0.64, 1) on the submit checkmark — a once-per-visitor confirmation — plus GSAP back.out(1.1) when a half-dragged sheet loses its tug-of-war. Both are single elements answering a gesture, and both start at scale(0.9) rather than 0, because nothing in the real world appears from nothing.",
+      "Don't put a permanent will-change on page furniture. It buys one transition and pays for it with a compositor layer per node for the whole session. GSAP's force3D already covers elements while they actually move; the only standing hint in the codebase is on .h-scroll-track, which is genuinely transformed every scroll frame.",
+      "Don't run a lerp that writes every frame forever. A lerp approaches its target asymptotically and never arrives, so snap inside an epsilon and skip the write when the element has settled — otherwise a resting UI still costs a full frame of DOM writes.",
+      "Don't animate width, height, margin, or top/left for a visual state change. Use scale, translate, or opacity so the change composites instead of forcing layout. The custom cursor learned this the hard way."
     ]
   }
 }
