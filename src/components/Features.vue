@@ -1,7 +1,6 @@
 <template>
   <Transition name="fade">
     <div
-      v-if="true"
       ref="featuresSection"
       class="relative w-full overflow-hidden app-slide">
       <!-- Scroll-feed -->
@@ -22,7 +21,7 @@
           :class="i % 2 === 1 ? 'md:grid-cols-[7fr_5fr]' : 'md:grid-cols-[5fr_7fr]'">
           <!-- Visual column: accent block -->
           <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="48" class="scrub-el relative hidden md:flex md:flex-col" :class="{ 'md:order-2': i % 2 === 1 }">
-            <div class="ex-art relative w-full aspect-square max-h-[560px] overflow-hidden flex items-end justify-center sm:aspect-4/5 md:aspect-3/4 md:min-h-[480px] md:max-h-[640px] lg:max-h-[720px] dark:bg-dark-primary bg-light-primary">
+            <div data-accent-surface class="ex-art relative w-full aspect-square max-h-[560px] overflow-hidden flex items-end justify-center sm:aspect-4/5 md:aspect-3/4 md:min-h-[480px] md:max-h-[640px] lg:max-h-[720px] dark:bg-dark-primary bg-light-primary">
               <LazyImage :src="item.img[0]" :alt="item.title + ' illustration'" :eager="i === 0" draggable="false" @dragstart.prevent />
             </div>
           </div>

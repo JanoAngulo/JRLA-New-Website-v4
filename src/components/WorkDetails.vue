@@ -1,6 +1,6 @@
 <template>
   <div class="grid justify-center w-full pb-4 sm:pb-10 work-details sm:p-10">
-    <div class="container space-y-1 overflow-hidden rounded-2xl lg:space-y-8 md:space-y-4">
+    <div class="container space-y-1 overflow-hidden lg:space-y-8 md:space-y-4">
       <div class="relative grid gap-1 md:flex lg:gap-8 md:gap-4">
         <div :class="work.color" class="xl:w-[30vw] lg:w-[50vw] w-full h-full text-light sm:p-10 p-4 relative">
           <img v-if="work.imgBackground" class="absolute top-0 left-0 object-cover w-full h-full opacity-50 pointer-events-none mix-blend-soft-light" :src="work.imgBackground" loading="lazy" alt="" aria-hidden="true" role="presentation" />
@@ -9,44 +9,47 @@
               <i class="fa-solid fa-arrow-left transition-transform duration-300 ease-in-out group-hover:-translate-x-[3px]"></i>
               <span>Back to Works</span>
             </button>
-            <h1 class="text-3xl font-bold uppercase">{{ work.title }}</h1>
-            <div class="font-Mono text-sm tracking-wide">
+            <h1 class="font-Gilroy-extra-bold uppercase text-[clamp(1.75rem,4vw,3rem)] leading-[0.95] tracking-[-0.025em]">{{ work.title }}</h1>
+            <div class="font-Mono text-sm">
               <div class="flex justify-between border-b border-white/15 py-1.5">
-                <p class="uppercase opacity-70">Role</p>
+                <p class="uppercase tracking-[0.3em] text-[0.625rem] opacity-70">Role</p>
                 <p>{{ work.role }}</p>
               </div>
               <div class="flex justify-between border-b border-white/15 py-1.5">
-                <p class="uppercase opacity-70">Tools</p>
+                <p class="uppercase tracking-[0.3em] text-[0.625rem] opacity-70">Tools</p>
                 <p>{{ work.tools }}</p>
               </div>
               <div class="flex justify-between border-b border-white/15 py-1.5">
-                <p class="uppercase opacity-70">Year</p>
+                <p class="uppercase tracking-[0.3em] text-[0.625rem] opacity-70">Year</p>
                 <p class="tabular-nums">{{ work.year }}</p>
               </div>
               <div class="flex justify-between border-b border-white/15 py-1.5">
-                <p class="uppercase opacity-70">Type</p>
+                <p class="uppercase tracking-[0.3em] text-[0.625rem] opacity-70">Type</p>
                 <p>{{ work.type }}</p>
               </div>
               <div class="flex justify-between border-b border-white/15 py-1.5">
-                <p class="uppercase opacity-70 text-left">Project Type</p>
+                <p class="uppercase tracking-[0.3em] text-[0.625rem] opacity-70 text-left">Project Type</p>
                 <p class="text-right">{{ work.projectType }}</p>
               </div>
               <div class="flex justify-between py-1.5">
-                <p class="uppercase opacity-70">Status</p>
+                <p class="uppercase tracking-[0.3em] text-[0.625rem] opacity-70">Status</p>
                 <p>{{ work.status }}</p>
               </div>
             </div>
             <button
               v-if="work.link"
               type="button"
-              class="btn btn-primary group w-full rounded-md"
+              class="btn btn-primary group w-full"
               @click="openLink(work.link)">
               <span>{{ work.btnText }}</span>
               <i class="fa-solid fa-arrow-up-right-from-square transition-transform duration-250 ease-in-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
             </button>
           </div>
         </div>
-        <div class="relative w-full h-auto overflow-hidden">
+        <!-- Stacked (mobile) this wrapper has no height source, so an absolutely
+             positioned child collapsed to 0 and the hero preview never rendered.
+             Give it a ratio until the md+ flex row supplies the height. -->
+        <div class="relative w-full aspect-4/3 md:aspect-auto md:h-auto overflow-hidden">
           <img class="absolute top-0 left-0 object-cover w-full h-full" loading="lazy" :src="work.imgSide" :alt="`${work.title} hero preview`" />
         </div>
       </div>

@@ -132,7 +132,7 @@
   .loader-overlay {
     position: fixed;
     inset: 0;
-    z-index: 99999;
+    z-index: var(--z-grain);
     display: grid;
     place-items: center;
     perspective: 1400px;
@@ -140,20 +140,23 @@
     transition: opacity 0.7s ease, transform 0.7s ease;
   }
 
+  /* The boot screen is the first paint the visitor gets — it has to be the real
+     accent pair, not a near-miss. These used to be #ffd93d / #e10600, neither of
+     which is in the palette. */
   .loader-overlay.is-dark {
-    background: radial-gradient(ellipse at center, #1a1a1a 0%, #000 70%);
-    --logo-color: #ffd93d;
-    --accent-color: rgba(255, 217, 61, 0.55);
-    --corner-color: #ffd93d;
-    --glow-color: rgba(255, 217, 61, 0.25);
+    background: radial-gradient(ellipse at center, var(--color-dark) 0%, color-mix(in oklab, var(--color-dark) 55%, #000) 70%);
+    --logo-color: var(--color-dark-primary);
+    --accent-color: color-mix(in oklab, var(--color-dark-primary) 55%, transparent);
+    --corner-color: var(--color-dark-primary);
+    --glow-color: color-mix(in oklab, var(--color-dark-primary) 25%, transparent);
   }
 
   .loader-overlay.is-light {
-    background: radial-gradient(ellipse at center, #ffffff 0%, #f2f2f2 70%);
-    --logo-color: #e10600;
-    --accent-color: rgba(225, 6, 0, 0.55);
-    --corner-color: #e10600;
-    --glow-color: rgba(225, 6, 0, 0.25);
+    background: radial-gradient(ellipse at center, var(--color-light-card) 0%, var(--color-light) 70%);
+    --logo-color: var(--color-light-primary);
+    --accent-color: color-mix(in oklab, var(--color-light-primary) 55%, transparent);
+    --corner-color: var(--color-light-primary);
+    --glow-color: color-mix(in oklab, var(--color-light-primary) 25%, transparent);
   }
 
   .loader-exit {
@@ -161,13 +164,14 @@
     transform: scale(1.1);
   }
 
-  /* ===== Grid ===== */
+  /* ===== Grid =====
+     Dot-grid, not a two-axis line grid: the dot pattern is this system's
+     documented backdrop device (Home / About / Contact all use it), and the
+     line grid read as generic scaffolding. */
   .bg-grid {
     position: absolute;
     inset: -10%;
-    background-image:
-      linear-gradient(var(--accent-color) 1px, transparent 1px),
-      linear-gradient(90deg, var(--accent-color) 1px, transparent 1px);
+    background-image: radial-gradient(var(--accent-color) 1px, transparent 1px);
     background-size: 60px 60px;
     opacity: 0;
     mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
@@ -250,7 +254,7 @@
   /* ===== HUD labels ===== */
   .hud {
     position: absolute;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-family: var(--font-Mono);
     font-size: 10px;
     letter-spacing: 0.22em;
     color: var(--corner-color);
@@ -279,7 +283,7 @@
     position: absolute;
     left: 92px;
     bottom: 140px;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-family: var(--font-Mono);
     font-size: 11px;
     color: var(--corner-color);
     line-height: 1.7;
@@ -296,13 +300,15 @@
   .boot-tag { opacity: 0.6; margin-right: 6px; }
   .boot-ok {
     background: var(--corner-color);
-    color: var(--bg-contrast, #000);
+    color: var(--bg-contrast, var(--color-dark));
     padding: 1px 6px;
     margin-left: 6px;
     font-weight: 700;
   }
-  .loader-overlay.is-dark .boot-ok { color: #000; }
-  .loader-overlay.is-light .boot-ok { color: #fff; }
+  /* Ink on Filament Yellow, paper on Signal Red — same contract as any other
+     accent-filled control. */
+  .loader-overlay.is-dark .boot-ok { color: var(--color-dark); }
+  .loader-overlay.is-light .boot-ok { color: var(--color-light); }
   .caret {
     display: inline-block;
     animation: blink 0.9s steps(2) infinite;
@@ -315,7 +321,7 @@
     right: 92px;
     bottom: 140px;
     width: 260px;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-family: var(--font-Mono);
     font-size: 10px;
     color: var(--corner-color);
     letter-spacing: 0.18em;

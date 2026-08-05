@@ -1,5 +1,5 @@
 <template>
-  <nav id="mainNavbar" class="fixed top-0 left-0 w-full select-none dark:bg-dark/95 bg-light/95 backdrop-blur-md border-b border-black/10 dark:border-white/10" style="z-index: var(--z-nav);">
+  <nav id="mainNavbar" aria-label="Sections" class="fixed top-0 left-0 w-full select-none dark:bg-dark/95 bg-light/95 backdrop-blur-md border-b border-black/10 dark:border-white/10" style="z-index: var(--z-nav);">
     <div class="flex items-center justify-between gap-2 px-3 sm:px-6 lg:px-10 h-14">
       <!-- Brand monogram → home -->
       <button
@@ -28,7 +28,7 @@
           :class="[
             'group relative flex items-center justify-center gap-1.5 px-2 sm:px-3 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 text-[11px] sm:text-xs tracking-[0.2em] uppercase font-Mono transition-[color,transform] duration-300 cursor-pointer active:scale-95',
             activeSlide === item.idx
-              ? 'font-semibold dark:text-dark-primary text-dark'
+              ? 'font-medium dark:text-dark-primary text-light-primary'
               : 'opacity-75 hover:opacity-100 dark:text-light text-dark'
           ]">
           <span class="tabular-nums opacity-85 transition-transform duration-300 group-hover:-translate-y-px">0{{ item.idx + 1 }}</span>
@@ -44,7 +44,7 @@
         @click="cycleTheme"
         :aria-label="themeButtonLabel"
         :title="themeButtonLabel"
-        class="group grid place-content-center w-9 h-9 sm:w-8 sm:h-8 rounded-full border border-black/40 dark:border-white/40 hover:dark:border-dark-primary hover:border-light-primary transition-[color,border-color,transform] duration-300 cursor-pointer hover:scale-105 active:scale-90">
+        class="group grid place-content-center min-w-11 min-h-11 sm:min-w-0 sm:min-h-0 sm:w-8 sm:h-8 rounded-full border border-black/40 dark:border-white/40 hover:dark:border-dark-primary hover:border-light-primary transition-[color,border-color,transform] duration-300 cursor-pointer hover:scale-105 active:scale-90">
         <span
           class="grid transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
           :style="{ transform: `rotate(${themeSpin * 360}deg)` }">
