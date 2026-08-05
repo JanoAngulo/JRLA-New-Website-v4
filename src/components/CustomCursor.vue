@@ -30,11 +30,18 @@
         target: { x: -100, y: -100 },
         hovering: false,
         clicking: false,
-        rafId: null
+        rafId: null,
+        reducedMotion: false
       }
     },
     mounted() {
       if (!window.matchMedia('(pointer: fine)').matches) return
+      // Anyone who has asked the OS for a bigger, higher-contrast or otherwise
+      // customised pointer is asking for THEIR pointer. Replacing it with a 6px dot
+      // overrides an accessibility setting, so on those systems the native cursor
+      // stays and this component sits out entirely.
+      if (window.matchMedia('(forced-colors: active)').matches) return
+      this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       this.supported = true
       document.documentElement.classList.add('has-custom-cursor')
 
@@ -74,11 +81,29 @@
         if (!(el instanceof Element)) return false
         return !!el.closest('a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"], .social-pill, .tag, .btn-primary, .btn-ghost, .coreproc-chip, .focus-item, .nav-arrow')
       },
+      // A lerp approaches its target asymptotically and never actually arrives, so
+      // this used to write `translate` on the ring every single frame for the whole
+      // session — including with the mouse parked, where each frame patched a style
+      // that differed in the sixth decimal. Snap inside an epsilon and skip the
+      // write once settled: identical motion, and a resting cursor costs nothing.
+      // (Same fix the pager's depth ticker already had.)
       loop() {
-        const ease = 0.18
-        this.ring.x += (this.target.x - this.ring.x) * ease
-        this.ring.y += (this.target.y - this.ring.y) * ease
         this.rafId = requestAnimationFrame(this.loop)
+        const dx = this.target.x - this.ring.x
+        const dy = this.target.y - this.ring.y
+        // Sub-pixel: nothing left to show.
+        if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
+          if (this.ring.x !== this.target.x || this.ring.y !== this.target.y) {
+            this.ring.x = this.target.x
+            this.ring.y = this.target.y
+          }
+          return
+        }
+        // Reduced motion keeps the ring — it is a pointer, and hiding it would
+        // remove feedback — but drops the trail. Trailing is the movement.
+        const ease = this.reducedMotion ? 1 : 0.18
+        this.ring.x += dx * ease
+        this.ring.y += dy * ease
       }
     }
   }
@@ -89,6 +114,18 @@
   html.has-custom-cursor,
   html.has-custom-cursor * {
     cursor: none !important;
+  }
+
+  /* …except where the cursor IS the affordance. A text field with no I-beam stops
+     announcing that you can type in it, and the contact form is one of the two
+     things this site exists to produce. The ring keeps trailing over the top; the
+     native caret cursor rides inside it. */
+  html.has-custom-cursor :is(input, textarea, select, [contenteditable]),
+  html.has-custom-cursor :is(input, textarea, select, [contenteditable]) * {
+    cursor: auto !important;
+  }
+  html.has-custom-cursor :is(input[type='text'], input[type='email'], textarea, [contenteditable]) {
+    cursor: text !important;
   }
 
   .cursor-dot,

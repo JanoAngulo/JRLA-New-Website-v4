@@ -28,7 +28,7 @@
             <button
               type="button"
               aria-label="Close dialog"
-              class="absolute z-10 grid w-11 h-11 rounded-full cursor-pointer top-3 right-3 place-content-center bg-light-primary text-dark border border-light-primary dark:bg-dark-primary dark:border-dark-primary transition-[background-color,border-color,transform] duration-200 hover:bg-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:border-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:text-light dark:hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:border-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:text-dark hover:scale-105 active:scale-95"
+              class="absolute z-10 grid w-11 h-11 rounded-full cursor-pointer top-3 right-3 place-content-center bg-light-primary text-dark border border-light-primary dark:bg-dark-primary dark:border-dark-primary transition-[background-color,border-color,transform,scale] duration-200 hover:bg-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:border-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:text-light dark:hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:border-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:text-dark hover-fine:hover:scale-105 active:scale-95"
               @click="$emit('close')">
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -49,7 +49,7 @@
       :inert="!open"
       tabindex="-1"
       :style="sheetStyle"
-      :class="['fixed bottom-0 left-0 w-full overflow-auto md:h-[90dvh] h-[80dvh] dark:bg-dark bg-light', !dragging ? 'transition-transform duration-400 ease-in-out' : '', { 'pointer-events-none': !open && !dragging }]"
+      :class="['fixed bottom-0 left-0 w-full overflow-auto md:h-[90dvh] h-[80dvh] dark:bg-dark bg-light', !dragging && !settling ? 'sheet-slide' : '', { 'pointer-events-none': !open && !dragging }]"
       @keydown="onKeydown"
       @transitionend="onTransitionEnd">
       <div
@@ -83,8 +83,16 @@
     data() {
       return {
         dragging: false,
+        // `settling` keeps the sheet driven by `dragOffset` after the finger
+        // lifts, while the spring runs. Without it the transform would snap back
+        // to the resting rule the instant `dragging` flipped false and the
+        // release animation would never be seen.
+        settling: false,
         startY: 0,
         dragOffset: 0,
+        lastY: null,
+        lastT: null,
+        velocity: 0,
         previouslyFocused: null,
         boundDrag: null,
         boundEnd: null,
@@ -96,7 +104,7 @@
     computed: {
       sheetStyle() {
         const z = { zIndex: 'var(--z-modal)' }
-        if (this.dragging) return { ...z, transform: `translateY(${this.dragOffset}px)` }
+        if (this.dragging || this.settling) return { ...z, transform: `translateY(${this.dragOffset}px)` }
         // Close by the sheet's OWN height (100%), not 100vh — on iOS the dynamic
         // toolbar makes vh drift, which left a background gap under the sheet.
         return { ...z, transform: this.open ? 'translateY(0)' : 'translateY(100%)' }
@@ -218,6 +226,9 @@
       },
       startDrag(e) {
         this.dragging = true
+        this.lastY = null
+        this.lastT = null
+        this.velocity = 0
         this.boundDrag = this.onDrag.bind(this)
         this.boundEnd = this.endDrag.bind(this)
         if (e.type === 'touchstart') {
@@ -226,31 +237,80 @@
           document.addEventListener('touchend', this.boundEnd)
         } else {
           this.startY = e.clientY
+          // Pointer capture keeps the drag alive when the cursor leaves the
+          // handle mid-gesture; without it a fast drag silently stops tracking.
+          if (e.pointerId != null && e.currentTarget?.setPointerCapture) {
+            try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* not fatal */ }
+          }
           document.addEventListener('mousemove', this.boundDrag)
           document.addEventListener('mouseup', this.boundEnd)
         }
       },
       onDrag(e) {
-        if (e.touches) {
-          e.preventDefault()
-          const y = e.touches[0].clientY
-          this.dragOffset = Math.max(0, y - this.startY)
-        } else {
-          this.dragOffset = Math.max(0, e.clientY - this.startY)
+        // Multi-touch guard: once a drag owns the sheet, a second finger landing
+        // mid-gesture must not re-anchor it and make the sheet jump.
+        if (e.touches && e.touches.length > 1) return
+        const y = e.touches ? e.touches[0].clientY : e.clientY
+        if (e.touches) e.preventDefault()
+
+        const raw = y - this.startY
+        // Downward is free travel. Upward past the top is over-drag: allow it,
+        // but with rising resistance, so the boundary feels like friction rather
+        // than an invisible wall.
+        this.dragOffset = raw >= 0 ? raw : -Math.pow(-raw, 0.7) * 0.5
+
+        // Instantaneous velocity in px/ms, sampled between moves — this is what
+        // decides a flick, not the distance travelled.
+        const now = performance.now()
+        if (this.lastY != null && now > this.lastT) {
+          this.velocity = (y - this.lastY) / (now - this.lastT)
         }
+        this.lastY = y
+        this.lastT = now
       },
       endDrag() {
-        // Dismiss only past a real threshold — 12% of the sheet's own height,
-        // floored at 64px. Any movement used to close it, so a 1px twitch while
-        // grabbing the handle threw the case study away.
+        // Two independent ways to dismiss:
+        //  - distance: past 12% of the sheet's own height (floored at 64px), and
+        //  - velocity: a downward flick over 0.11 px/ms, however short.
+        // Distance alone meant a fast, small flick — the way people actually
+        // dismiss sheets on a phone — did nothing and the sheet sprang back.
         const el = this.$refs.dialogEl
         const threshold = Math.max(64, (el?.offsetHeight || 0) * 0.12)
-        if (this.dragOffset > threshold) this.$emit('close')
+        const flicked = this.velocity > 0.11 && this.dragOffset > 8
+        const shouldClose = this.dragOffset > threshold || flicked
+
         this.dragging = false
-        this.dragOffset = 0
         this.cleanupDrag()
+
+        if (shouldClose) {
+          this.dragOffset = 0
+          this.$emit('close')
+          return
+        }
+        // Settling back is the sheet losing a tug-of-war, so it overshoots
+        // slightly instead of easing to a dead stop. GSAP drives it because the
+        // CSS transition is disabled while `dragging` is true and re-enabling it
+        // mid-release would restart from the wrong value.
+        if (el && this.dragOffset !== 0) {
+          const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          this.settling = true
+          gsap.to(this, {
+            dragOffset: 0,
+            duration: reduced ? 0.15 : 0.5,
+            ease: reduced ? 'power2.out' : 'back.out(1.1)',
+            overwrite: true,
+            onComplete: () => { this.settling = false }
+          })
+        } else {
+          this.dragOffset = 0
+        }
       },
       cleanupDrag() {
+        // A close arriving mid-spring must win: leave the tween running and it
+        // would keep writing `dragOffset` while `settling` pins the transform,
+        // freezing the sheet on screen.
+        gsap.killTweensOf(this)
+        this.settling = false
         if (!this.boundDrag) return
         document.removeEventListener('mousemove', this.boundDrag)
         document.removeEventListener('mouseup', this.boundEnd)
@@ -264,20 +324,34 @@
 </script>
 
 <style scoped>
+  /* Sheet open/close. `--ease-drawer` is the iOS-style curve: almost all of the
+     travel happens up front, then it glides into place — the reason a native
+     sheet feels attached to your thumb rather than played back at you.
+     Suppressed while dragging or settling, when GSAP owns the transform. */
+  .sheet-slide {
+    transition: transform var(--dur-drawer) var(--ease-drawer);
+  }
+
+  /* Modal enter/leave. Enumerated instead of `all`, and eased out rather than
+     in-out so the panel is fastest at the moment it appears. It also scales in
+     from 0.96 now: a pure vertical nudge gave the modal no sense of arriving
+     toward the viewer. Origin stays centred — this is a modal, not a popover, so
+     it genuinely belongs to the viewport rather than to a trigger. */
   .slide-fade-enter-active,
   .slide-fade-leave-active {
-    transition: all 0.3s ease-in-out;
+    transition: transform var(--dur-base) var(--ease-out),
+                opacity var(--dur-base) var(--ease-out);
   }
 
   .slide-fade-enter-from,
   .slide-fade-leave-to {
-    transform: translateY(20px);
+    transform: translateY(12px) scale(0.96);
     opacity: 0;
   }
 
   .fade-enter-active,
   .fade-leave-active {
-    transition: opacity 0.3s ease;
+    transition: opacity var(--dur-base) var(--ease-out);
   }
 
   .fade-enter-from,

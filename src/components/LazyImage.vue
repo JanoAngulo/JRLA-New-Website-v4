@@ -91,10 +91,13 @@
        CSS `scale:` property (NOT `transform: scale()`), and this unlayered
        scoped rule outranks Tailwind's `transition-transform`, so `scale` must be
        named here explicitly or the hover would snap instantly. */
-    transition: opacity 0.45s ease,
-                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                scale 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                translate 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Load-in fade stays leisurely (it masks a network event, not an
+       interaction); the hover-driven scale/translate drop to 250ms, because
+       hover is seen dozens of times a visit and 600ms there reads as drag. */
+    transition: opacity 0.45s var(--ease-out),
+                transform var(--dur-slow) var(--ease-out),
+                scale var(--dur-slow) var(--ease-out),
+                translate var(--dur-slow) var(--ease-out);
     z-index: 2;
   }
   .lazy-img-wrap.is-loaded .lazy-img {
