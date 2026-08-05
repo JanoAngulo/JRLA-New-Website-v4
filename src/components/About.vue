@@ -134,10 +134,9 @@
             <div class="reveal-fade flex items-center gap-3 flex-wrap" style="--d:0.12s">
               <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-65">Powered by</p>
               <div class="flex items-center gap-2">
-                <!-- Intrinsic size from each SVG's own viewBox. `h-5 w-auto` still
-                     drives the rendered size; these just let the browser reserve
-                     the right box before the file arrives instead of reflowing the
-                     row when it does. -->
+                <!-- width/height are each SVG's own viewBox, so the browser can
+                     reserve the right box before the file arrives. `h-5 w-auto`
+                     still drives the rendered size. -->
                 <img class="h-5 w-auto opacity-90" src="@/assets/img/features/frontend/vue.svg" alt="Vue.js" width="50" height="44" loading="lazy" decoding="async" />
                 <img class="h-5 w-auto opacity-90" src="@/assets/img/features/frontend/tailwind.svg" alt="Tailwind CSS" width="70" height="43" loading="lazy" decoding="async" />
               </div>
@@ -210,15 +209,14 @@
     },
     methods: {
       animateStats() {
-        // This was the one animation in the app that never asked. Counting digits
-        // is motion — four numbers churning for 1.4s — and it replays on every
-        // entry, so under reduced motion the honest answer is just the number.
+        // Counting digits is motion, and it replays on every entry, so reduced
+        // motion gets the final numbers outright.
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           this.stats = { ...this.statsTargets }
           return
         }
-        // Re-entering mid-count used to leave the previous loop running: two rAF
-        // chains writing the same four values, racing to a result that flickered.
+        // Re-entering mid-count would otherwise leave two rAF chains writing the
+        // same four values, racing to a flickering result.
         if (this._statsRaf) cancelAnimationFrame(this._statsRaf)
 
         const duration = 1400
@@ -274,9 +272,8 @@
     opacity: 1;
   }
 
-  /* Live dot in top-left meta. Static: `.status-dot` further down is already the
-     panel's one pulsing element, and two loops at different tempos (1.6s vs 2s)
-     read as a glitch rather than a rhythm. */
+  /* Deliberately static: `.status-dot` below is already the panel's one pulsing
+     element, and two loops at different tempos read as a glitch. */
   .live-dot {
     width: 7px;
     height: 7px;

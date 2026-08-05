@@ -46,9 +46,9 @@
             </button>
           </div>
         </div>
-        <!-- Stacked (mobile) this wrapper has no height source, so an absolutely
-             positioned child collapsed to 0 and the hero preview never rendered.
-             Give it a ratio until the md+ flex row supplies the height. -->
+        <!-- Stacked on mobile this wrapper has no height source, so an absolutely
+             positioned child collapses to 0 and the hero preview never renders.
+             The ratio supplies a height until the md+ flex row does. -->
         <div class="relative w-full aspect-4/3 md:aspect-auto md:h-auto overflow-hidden">
           <img class="absolute top-0 left-0 object-cover w-full h-full" loading="lazy" :src="work.imgSide" :alt="`${work.title} hero preview`" />
         </div>
@@ -75,25 +75,23 @@
         window.open(link, '_blank')
       }
     },
+    // `async setup` holds <Suspense> on the skeleton until every image has
+    // loaded, so the case study appears complete rather than filling in.
     async setup(props) {
-      // Collect all image URLs you want to wait for
-      const imageUrls = [props.work.imgBackground, props.work.imgSide, props.work.imgContent1, props.work.imgContent2].filter(Boolean) // Remove undefined/null
+      const imageUrls = [props.work.imgBackground, props.work.imgSide, props.work.imgContent1, props.work.imgContent2].filter(Boolean)
 
-      // Helper to load a single image
       function loadImage(src) {
         return new Promise((resolve) => {
           if (!src) return resolve()
           const img = new window.Image()
           img.onload = () => resolve()
-          img.onerror = () => resolve() // Resolve even if error
+          // Resolve on error too — a broken image must not hold the dialog shut.
+          img.onerror = () => resolve()
           img.src = src
         })
       }
 
-      // Wait for all images to load
       await Promise.all(imageUrls.map(loadImage))
-
-      // Now Suspense will resolve and show the component
       return {}
     }
   }

@@ -228,12 +228,10 @@
         this.errors = errors
         return !errors.name && !errors.email && !errors.message
       },
-      // A failed submit used to be silent for anyone not looking at the fields:
-      // the messages rendered, but nothing announced them and focus stayed on the
-      // Send button, three fields away from the problem. Moving focus to the
-      // first offender puts the caret where the fix has to happen and makes the
-      // screen reader read that field's label, state and error in one go (each
-      // message also carries role="alert" for the immediate notice).
+      // Without this, a failed submit leaves focus on the Send button, fields away
+      // from the problem. Moving it to the first offender puts the caret where the
+      // fix happens and makes the screen reader read that field's label, state and
+      // error together (the messages also carry role="alert").
       focusFirstError() {
         const first = ['Name', 'Email', 'Message'].find((id) => this.errors[id.toLowerCase()])
         if (!first) return
@@ -242,6 +240,7 @@
           if (!el) return
           // preventScroll: the panel owns scroll position on desktop, and letting
           // the browser scroll a pinned, clipped track sideways breaks the pager.
+          // (Same reason as the dialog-root focus in Dialog.vue.)
           try {
             el.focus({ preventScroll: true })
           } catch {
@@ -284,8 +283,8 @@
 </script>
 
 <style lang="css" scoped>
-  /* Enumerated, not `all`: this element carries padding, borders and a background
-     that would all animate off the GPU the moment `all` is in play. */
+  /* Enumerated rather than `all`: this element carries padding, borders and a
+     background that would all animate off the GPU under `all`. */
   .slide-fade-enter-active,
   .slide-fade-leave-active {
     transition: transform var(--dur-base) var(--ease-out),
@@ -341,11 +340,9 @@
     .contact-right { transform: none; }
   }
 
-  /* One pulsing dot per panel, not two. `.status-dot` is the availability
-     signal and keeps its pulse — a live indicator that does not move reads as
-     stale. `.form-dot` sits beside static copy ("Avg. response · 24 hours"),
-     which is a fact, not a live state, so it is now a plain dot. Two competing
-     heartbeats in one column just made the panel look busy. */
+  /* Only `.status-dot` pulses — it's the availability signal. `.form-dot` sits
+     beside static copy, so it stays a plain dot; two heartbeats in one column just
+     read as busy. */
   .status-dot {
     animation: pulse-dot 2s ease-in-out infinite;
   }
@@ -354,10 +351,8 @@
     50% { transform: scale(1.4); opacity: 0.45; }
   }
 
-  /* Submit success — checkmark pops in. Sending a message is a once-per-visitor
-     moment, so a little overshoot is earned here; it is the only bouncy curve
-     left in the app. Starts at 0.9, not 0: things do not appear from nothing,
-     and the rotate was removed because nothing else in this system spins. */
+  /* Submit success. Sending a message is a once-per-visitor moment, so the
+     overshoot is earned — this is the only bouncy curve in the app. */
   .check-pop {
     animation: check-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
@@ -366,12 +361,6 @@
     60% { transform: scale(1.12); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
   }
-
-  /* `.count-alert` (an infinite heartbeat past 940 characters) was removed. It
-     retriggered on a per-keystroke state while the visitor was mid-sentence —
-     motion at typing frequency. The colour + opacity shift bound to the same
-     threshold in the template already says "you are near the limit", and says it
-     without moving anything the visitor is trying to read. */
 
   @media (prefers-reduced-motion: reduce) {
     .check-pop {

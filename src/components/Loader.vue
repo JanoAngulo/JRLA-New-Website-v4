@@ -1,8 +1,6 @@
 <template>
-  <!-- The overlay itself is pure decoration — a screen reader announcing
-       "SYS.ONLINE · LAT 14.5995 · INIT KERNEL OK · LOADING 100%" would be reading
-       out a stage set. It is hidden wholesale, and the one fact that matters is
-       announced here instead. -->
+  <!-- The overlay is decoration, so it's aria-hidden wholesale; the one fact
+       that matters is announced here instead. -->
   <p v-if="visible" class="sr-only" role="status">Loading portfolio…</p>
   <transition name="loader-fade">
     <div
@@ -105,30 +103,26 @@
 <script>
   import { useThemeStore } from '../store'
 
-  // Session-scoped, so it clears when the tab closes: a returning visitor on a
-  // new day still gets the intro, a visitor bouncing between panels does not.
+  // Session-scoped, so it clears when the tab closes.
   const SEEN_KEY = 'jrla:boot-seen'
 
-  // ---------------------------------------------------------------- tempo knob
-  // THE ONE NUMBER TO CHANGE if the intro feels too fast or too slow.
+  // Tempo knob — change this to speed up or slow down the whole intro.
   //
-  // Every choreographed duration and delay in the style block below is written
-  // as `calc(var(--boot-tempo) * <base>)`, and the hold is derived from the same
-  // value — so this scales the whole boot screen as a unit and the CSS timing can
-  // never drift out of sync with how long the overlay actually stays up. Ambient
-  // loops (grid pan, shard float, caret blink, ring pulse) are deliberately NOT
-  // scaled: they have no endpoint, so changing their rate alters their character
-  // rather than the pace of the sequence.
+  // Every choreographed duration/delay in the style block is written as
+  // `calc(var(--boot-tempo) * <base>)` and MIN_HOLD is derived from the same
+  // value, so the CSS timing can't drift out of sync with how long the overlay
+  // stays up. Ambient loops (grid pan, shard float, caret blink, ring pulse) are
+  // deliberately not scaled: they have no endpoint, so rescaling them changes
+  // their character rather than the pace of the sequence.
   //
-  //   1.0 = the compressed baseline    1.5 = 50% slower    2.4 ~ the old 2.6s toll
+  //   1.0 = baseline    1.5 = 50% slower
   const BOOT_TEMPO = 1.5
 
-  // What the choreography takes at tempo 1.0: the last elements to land are the
-  // fourth boot row (0.85 + 0.28) and the progress fill (0.25 + 0.9).
+  // Length of the choreography at tempo 1.0. Last to land are the fourth boot
+  // row (0.85 + 0.28) and the progress fill (0.25 + 0.9).
   const BASE_TIMELINE_MS = 1150
-  // Hold until the sequence has actually finished, plus a short beat to read it.
   const MIN_HOLD = Math.round(BASE_TIMELINE_MS * BOOT_TEMPO) + 150
-  // Hard ceiling: a slow network must not turn the intro into a wait.
+  // Ceiling, so a slow network can't turn the intro into a wait.
   const MAX_HOLD = MIN_HOLD + 1000
   // Matches the .loader-overlay opacity/transform transition below.
   const EXIT_MS = 700
@@ -149,40 +143,26 @@
       isDark() {
         return this.themeStore.darkMode
       },
-      // Hands BOOT_TEMPO to the stylesheet, so the CSS choreography and the JS
-      // hold are driven by the same constant rather than two numbers kept in
-      // sync by hand.
+      // Hands BOOT_TEMPO to the stylesheet, so CSS choreography and the JS hold
+      // run off one constant instead of two kept in sync by hand.
       tempo() {
         return BOOT_TEMPO
       }
     },
     mounted() {
-      // The boot screen used to hold the page for a flat 3.3s on EVERY load,
-      // driven by two timers with no relationship to whether anything had
-      // actually loaded. For a portfolio whose visitor is a recruiter skimming
-      // between candidate tabs, that is the most expensive animation in the
-      // product: it spends the entire first impression on a progress theatre.
-      //
-      // Three changes, in order of how much they matter:
-      //  1. It plays ONCE per browser session. A shared link opened twice, or a
-      //     hash link back into the site, no longer re-charges the toll.
-      //  2. It resolves on `window.load` (capped), not on a fixed timer, so it
-      //     covers real work instead of impersonating it.
-      //  3. Reduced-motion skips it outright — it is pure decoration, and there
-      //     is nothing to "gentle down" to.
+      // The intro plays once per browser session, resolves on `window.load`
+      // (capped by MAX_HOLD) rather than a fixed timer, and is skipped outright
+      // under reduced motion — it is pure decoration.
       const done = () => {
         this.visible = false
         document.documentElement.style.overflow = ''
         this.$emit('finished')
       }
 
-      // Reduced motion wins absolutely — that is an accessibility contract, not a
-      // convenience, so nothing below overrides it.
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      // The session gate is bypassed in dev and with `?boot`. sessionStorage
-      // survives reloads (it only clears when the TAB closes), so without this
-      // escape hatch the intro plays once and is then unreachable for the rest of
-      // the day's work — you cannot iterate on an animation you cannot trigger.
+      // The session gate is bypassed in dev and with `?boot`: sessionStorage
+      // survives reloads, so without an escape hatch the intro is unreachable
+      // for the rest of the day once it has played.
       const seen = sessionStorage.getItem(SEEN_KEY) === '1'
       const replay = import.meta.env.DEV || new URLSearchParams(location.search).has('boot')
 
@@ -191,8 +171,8 @@
       sessionStorage.setItem(SEEN_KEY, '1')
       document.documentElement.style.overflow = 'hidden'
 
-      // Hold until the page is actually ready, but never past MAX_HOLD, and
-      // never so briefly that the intro flickers past unread.
+      // Hold until the page is ready, but never past MAX_HOLD nor so briefly
+      // that the intro flickers past unread.
       const startedAt = performance.now()
       const beginExit = () => {
         if (this.exiting) return
@@ -209,8 +189,7 @@
       this.timers.push(setTimeout(beginExit, MAX_HOLD))
     },
     beforeUnmount() {
-      // Nothing should keep ticking after the overlay is gone — an orphaned
-      // timer here would re-emit `finished` and re-show the app shell.
+      // An orphaned timer here would re-emit `finished` and re-show the shell.
       this.timers.forEach(clearTimeout)
       this.timers = []
       document.documentElement.style.overflow = ''
@@ -227,19 +206,12 @@
     place-items: center;
     perspective: 1400px;
     overflow: hidden;
-    /* Exit is the one moment here the visitor is waiting on, so it leads with
-       speed. Duration matches EXIT_MS in the script block. */
+    /* Duration matches EXIT_MS in the script block. */
     transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
   }
 
-  /* The boot screen is the first paint the visitor gets — it has to be the real
-     accent pair, not a near-miss. These used to be #ffd93d / #e10600, neither of
-     which is in the palette. */
-  /* Centre is the page ground, edge falls BELOW it — the vignette sinks, it does
-     not lift. An earlier pass mirrored the light branch here (card-surface at the
-     centre, page at the edge) to remove a raw `#000`, which lightened both stops
-     and washed the screen out, worst of all mid-fade. `--color-dark-deep` is the
-     same intent as that mix, declared once in `@theme` instead. */
+  /* Vignette sinks rather than lifts: centre is the page ground and the edge
+     falls below it. Lightening either stop washes the screen out mid-fade. */
   .loader-overlay.is-dark {
     background: radial-gradient(ellipse at center, var(--color-dark) 0%, var(--color-dark-deep) 70%);
     --logo-color: var(--color-dark-primary);
@@ -260,14 +232,14 @@
     opacity: 0;
     transform: scale(1.1);
   }
-  /* Grain and glow both brighten what they sit over, so they go first and let the
-     ground carry the rest of the fade on its own. */
+  /* Grain and glow both brighten what they sit over, so they leave first and let
+     the ground carry the rest of the fade. */
   .loader-exit .bg-noise {
     opacity: 0;
   }
-  /* `glowPulse` runs with `both`, so its fill keeps writing opacity: 0.5 and would
-     outrank a plain declaration here — the animation has to be cancelled, not
-     overridden. Its final transform is scale(1), so dropping it snaps nothing. */
+  /* `glowPulse` runs with `both`, so its fill keeps writing opacity and outranks
+     a plain declaration — cancel the animation rather than override it. Its final
+     transform is scale(1), so dropping it snaps nothing. */
   .loader-exit .logo-glow {
     animation: none;
     opacity: 0;
@@ -275,9 +247,7 @@
   }
 
   /* ===== Grid =====
-     Dot-grid, not a two-axis line grid: the dot pattern is this system's
-     documented backdrop device (Home / About / Contact all use it), and the
-     line grid read as generic scaffolding. */
+     Dot-grid, matching the backdrop device used on Home / About / Contact. */
   .bg-grid {
     position: absolute;
     inset: -10%;
@@ -291,11 +261,9 @@
   }
 
   /* ===== Noise/grain =====
-     `overlay` lightens whatever is behind it. That was inert while the overlay
-     covered a solid plate and nothing else existed, but the app now renders
-     underneath, so the moment the plate starts to go transparent the grain begins
-     blending with live content — a pale haze over the page for the length of the
-     fade. It leaves ahead of everything else. */
+     `overlay` lightens what's behind it, and the app renders underneath this, so
+     once the plate goes transparent the grain hazes live content. Hence the early
+     exit in `.loader-exit .bg-noise` above. */
   .bg-noise {
     position: absolute;
     inset: 0;
@@ -314,10 +282,9 @@
     place-items: center;
     pointer-events: none;
   }
-  /* Fixed box, scaled — never sized. `ringPulse` used to animate width/height,
-     which relayouts three elements every frame of an infinite loop, during the
-     single most frame-sensitive moment in the session. The box is now the ring's
-     largest intended size and `scale` takes it there on the compositor. */
+  /* Fixed box at the ring's largest size, animated with `scale` — never
+     width/height, which would relayout three elements on every frame of an
+     infinite loop. */
   .pulse-ring {
     position: absolute;
     width: min(900px, 130vmin);
@@ -426,8 +393,8 @@
     margin-left: 6px;
     font-weight: 700;
   }
-  /* Ink on Filament Yellow, paper on Signal Red — same contract as any other
-     accent-filled control. */
+  /* Ink on Filament Yellow, paper on Signal Red — same as any accent-filled
+     control elsewhere. */
   .loader-overlay.is-dark .boot-ok { color: var(--color-dark); }
   .loader-overlay.is-light .boot-ok { color: var(--color-light); }
   .caret {
@@ -457,9 +424,9 @@
     overflow: hidden;
     margin-bottom: 8px;
   }
-  /* Full-width bar scaled from the left, not a width animation — same reason as
-     the rings. `transform-origin` is what makes it read as filling rather than
-     growing from the centre. */
+  /* Full-width bar scaled from the left, not a width animation (see the rings).
+     `transform-origin` is what makes it read as filling rather than growing from
+     the centre. */
   .progress-fill {
     height: 100%;
     width: 100%;
@@ -508,9 +475,7 @@
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
     fill-opacity: 0;
-    /* Whole timeline rescaled ~0.5x. The choreography is unchanged — draw, then
-       fill, staggered across the four shapes — it just no longer assumes it owns
-       the visitor's first 2.8 seconds. */
+    /* Draw, then fill, staggered across the four shapes (delays below). */
     animation:
       draw 0.55s cubic-bezier(0.65, 0, 0.35, 1) both,
       fillIn 0.3s var(--ease-out) both;
@@ -567,15 +532,12 @@
     100% { background-position: 60px 60px, 60px 60px; }
   }
 
-  /* 80px → full box, expressed as a scale of the fixed size above. The ratio is
-     computed against the same min() so the start size is unchanged. */
+  /* 80px → full box, as a scale of the fixed size declared above. */
   @keyframes ringPulse {
     0% { transform: scale(calc(80 / 900)); opacity: 0.6; }
     100% { transform: scale(1); opacity: 0; }
   }
 
-  /* Starts at 0.9, not 0 — nothing in the real world appears from nothing, and
-     the opacity ramp is what carries the arrival anyway. */
   @keyframes shardIn {
     0% { opacity: 0; transform: rotate(45deg) scale(0.9); }
     100% { opacity: 0.8; transform: rotate(45deg) scale(1); }
@@ -663,19 +625,12 @@
       background-size: 40px 40px;
     }
 
-    /* No ring size override here any more. It used to set the RESTING size while
-       the keyframe drove width/height directly; now the element's box IS the ring's
-       full extent and `scale` animates it, so overriding the size here would cap
-       the pulse at 140px instead of letting it reach 130vmin as it always did. */
+    /* Don't override .pulse-ring's size here: its box IS the ring's full extent
+       and `scale` animates it, so a smaller box caps the pulse. */
 
-    /* Four of the eight shards are dropped on small screens, and the four that
-       remain were all authored for a wide canvas: 1–4 live in the top 15–38% band,
-       with 2 and 4 both on the right within 4% of each other. On a tall phone that
-       reads as a clump above the logo and a lot of empty screen below it.
-       Re-scattered down the full height, alternating sides, and kept clear of the
-       three things that occupy the middle and the bottom — the centred logo stage
-       (~40vw wide), the boot log, and the progress bar. Each shard keeps the side
-       it was authored on, so no offset needs unsetting. */
+    /* Half the shards are dropped and the rest re-scattered down the full height,
+       alternating sides and clear of the centred logo stage, boot log and progress
+       bar. Each keeps the side it was authored on, so no offset needs unsetting. */
     .shard-1 { top: 18%; left: 9%; }
     .shard-2 { top: 34%; right: 11%; width: 13px; height: 13px; }
     .shard-3 { top: 58%; left: 6%; }
@@ -692,8 +647,6 @@
     .hud-tr { display: none; }
   }
 
-  /* No reduced-motion block here. The script skips the boot screen outright for
-     `prefers-reduced-motion: reduce` — it is pure decoration with nothing to gentle
-     down to — so the overlay never mounts and rules targeting it were unreachable.
-     See the `reduced` check in mounted(). */
+  /* No reduced-motion block: the overlay never mounts under
+     `prefers-reduced-motion: reduce`. See the `reduced` check in mounted(). */
 </style>

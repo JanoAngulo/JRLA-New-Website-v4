@@ -83,10 +83,9 @@
     data() {
       return {
         dragging: false,
-        // `settling` keeps the sheet driven by `dragOffset` after the finger
-        // lifts, while the spring runs. Without it the transform would snap back
-        // to the resting rule the instant `dragging` flipped false and the
-        // release animation would never be seen.
+        // Keeps the sheet driven by `dragOffset` after the finger lifts, while the
+        // spring runs. Without it the transform snaps back to the resting rule the
+        // instant `dragging` flips false and the release animation is never seen.
         settling: false,
         startY: 0,
         dragOffset: 0,
@@ -105,8 +104,8 @@
       sheetStyle() {
         const z = { zIndex: 'var(--z-modal)' }
         if (this.dragging || this.settling) return { ...z, transform: `translateY(${this.dragOffset}px)` }
-        // Close by the sheet's OWN height (100%), not 100vh — on iOS the dynamic
-        // toolbar makes vh drift, which left a background gap under the sheet.
+        // Close by the sheet's own height (100%), not 100vh: on iOS the dynamic
+        // toolbar makes vh drift, leaving a background gap under the sheet.
         return { ...z, transform: this.open ? 'translateY(0)' : 'translateY(100%)' }
       }
     },
@@ -119,15 +118,15 @@
             const el = this.$refs.dialogEl
             if (el) {
               el.scrollTop = 0
-              // Focus the dialog root (not a descendant) with preventScroll
-              // so screen readers announce the dialog without the browser
+              // Focus the dialog root, not a descendant, and with preventScroll:
+              // screen readers announce the dialog without the browser
               // scroll-jumping to the first focusable button.
               try {
                 el.focus({ preventScroll: true })
               } catch {
                 el.focus()
               }
-              // Belt-and-braces: re-pin to top after focus
+              // Re-pin to top in case focus still moved it.
               el.scrollTop = 0
               this.enableSmooth(el)
             }
@@ -150,8 +149,8 @@
       this.cleanupDrag()
     },
     methods: {
-      // GSAP-driven smooth wheel scroll for the sheet (desktop). Touch stays
-      // native so momentum + drag-to-dismiss keep working. No Lenis needed.
+      // GSAP-driven smooth wheel scroll for the sheet on desktop. Touch stays
+      // native so momentum and drag-to-dismiss keep working.
       enableSmooth(el) {
         if (this.reducedMotion || !el) return
         this.smoothTarget = el.scrollTop
@@ -175,10 +174,10 @@
         gsap.to(el, { scrollTo: { y: this.smoothTarget }, duration: 0.6, ease: 'power3.out', overwrite: true })
       },
       onModalShown() {
-        // iOS: an iframe/image whose src is set as it mounts inside an
+        // iOS: an iframe/image whose src is set while it mounts inside an
         // opacity/transform transition loads but isn't composited until a later
-        // repaint — so it's blank on first open, fine on reopen. Force one repaint
-        // now that the enter transition has settled.
+        // repaint, so it's blank on first open and fine on reopen. Force a repaint
+        // now the enter transition has settled.
         const el = this.$refs.dialogEl
         if (!el) return
         el.style.display = 'none'
@@ -254,12 +253,12 @@
         if (e.touches) e.preventDefault()
 
         const raw = y - this.startY
-        // Downward is free travel. Upward past the top is over-drag: allow it,
-        // but with rising resistance, so the boundary feels like friction rather
-        // than an invisible wall.
+        // Downward is free travel; upward past the top is over-drag, allowed but
+        // with rising resistance so the boundary reads as friction rather than a
+        // wall.
         this.dragOffset = raw >= 0 ? raw : -Math.pow(-raw, 0.7) * 0.5
 
-        // Instantaneous velocity in px/ms, sampled between moves — this is what
+        // Instantaneous velocity in px/ms, sampled between moves. This is what
         // decides a flick, not the distance travelled.
         const now = performance.now()
         if (this.lastY != null && now > this.lastT) {
@@ -269,11 +268,10 @@
         this.lastT = now
       },
       endDrag() {
-        // Two independent ways to dismiss:
-        //  - distance: past 12% of the sheet's own height (floored at 64px), and
-        //  - velocity: a downward flick over 0.11 px/ms, however short.
-        // Distance alone meant a fast, small flick — the way people actually
-        // dismiss sheets on a phone — did nothing and the sheet sprang back.
+        // Two independent ways to dismiss, because distance alone ignores the
+        // short fast flick people actually use on a phone:
+        //  - distance: past 12% of the sheet's own height, floored at 64px
+        //  - velocity: a downward flick over 0.11 px/ms, however short
         const el = this.$refs.dialogEl
         const threshold = Math.max(64, (el?.offsetHeight || 0) * 0.12)
         const flicked = this.velocity > 0.11 && this.dragOffset > 8
@@ -287,10 +285,9 @@
           this.$emit('close')
           return
         }
-        // Settling back is the sheet losing a tug-of-war, so it overshoots
-        // slightly instead of easing to a dead stop. GSAP drives it because the
-        // CSS transition is disabled while `dragging` is true and re-enabling it
-        // mid-release would restart from the wrong value.
+        // Settle back with a slight overshoot rather than easing to a dead stop.
+        // GSAP drives it because the CSS transition is disabled while `dragging`
+        // is true, and re-enabling it mid-release restarts from the wrong value.
         if (el && this.dragOffset !== 0) {
           const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
           this.settling = true
@@ -306,9 +303,9 @@
         }
       },
       cleanupDrag() {
-        // A close arriving mid-spring must win: leave the tween running and it
-        // would keep writing `dragOffset` while `settling` pins the transform,
-        // freezing the sheet on screen.
+        // A close arriving mid-spring has to win. Left running, the tween keeps
+        // writing `dragOffset` while `settling` pins the transform, which freezes
+        // the sheet on screen.
         gsap.killTweensOf(this)
         this.settling = false
         if (!this.boundDrag) return
@@ -324,19 +321,17 @@
 </script>
 
 <style scoped>
-  /* Sheet open/close. `--ease-drawer` is the iOS-style curve: almost all of the
-     travel happens up front, then it glides into place — the reason a native
-     sheet feels attached to your thumb rather than played back at you.
-     Suppressed while dragging or settling, when GSAP owns the transform. */
+  /* Sheet open/close. `--ease-drawer` front-loads almost all the travel, then
+     glides into place. Suppressed while dragging or settling, when GSAP owns the
+     transform. */
   .sheet-slide {
     transition: transform var(--dur-drawer) var(--ease-drawer);
   }
 
-  /* Modal enter/leave. Enumerated instead of `all`, and eased out rather than
-     in-out so the panel is fastest at the moment it appears. It also scales in
-     from 0.96 now: a pure vertical nudge gave the modal no sense of arriving
-     toward the viewer. Origin stays centred — this is a modal, not a popover, so
-     it genuinely belongs to the viewport rather than to a trigger. */
+  /* Modal enter/leave: eased out rather than in-out, so the panel is fastest at
+     the moment it appears, and scaled from 0.96 so it arrives toward the viewer.
+     Origin stays centred — this is a modal, not a popover, so it belongs to the
+     viewport rather than to a trigger. */
   .slide-fade-enter-active,
   .slide-fade-leave-active {
     transition: transform var(--dur-base) var(--ease-out),

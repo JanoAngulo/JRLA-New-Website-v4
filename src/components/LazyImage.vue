@@ -86,14 +86,11 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    /* Include transform + the individual `scale`/`translate`/`rotate` props so
-       hover-scale eases smoothly. Tailwind v4's `scale-*` sets the standalone
-       CSS `scale:` property (NOT `transform: scale()`), and this unlayered
-       scoped rule outranks Tailwind's `transition-transform`, so `scale` must be
-       named here explicitly or the hover would snap instantly. */
-    /* Load-in fade stays leisurely (it masks a network event, not an
-       interaction); the hover-driven scale/translate drop to 250ms, because
-       hover is seen dozens of times a visit and 600ms there reads as drag. */
+    /* `scale` and `translate` must be named alongside `transform`: Tailwind v4's
+       `scale-*` sets the standalone CSS `scale` property, and this unlayered
+       scoped rule outranks Tailwind's `transition-transform`, so without them the
+       hover would snap. The load-in fade stays slower than the hover transitions —
+       it masks a network event rather than an interaction. */
     transition: opacity 0.45s var(--ease-out),
                 transform var(--dur-slow) var(--ease-out),
                 scale var(--dur-slow) var(--ease-out),

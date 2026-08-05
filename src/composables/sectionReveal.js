@@ -1,20 +1,18 @@
 // Section entrance-reveal mixin (Options API).
 //
 // Drives an `entered` flag off the `activeSlide` prop so a panel's entrance
-// animation REPLAYS every time that section becomes active — not just once.
-// Bind the panel root with `:class="{ 'is-revealed': entered }"`; all the
-// reveal CSS is gated on `.is-revealed` (ancestor), so this one flag controls
-// the whole section.
+// replays every time that section becomes active. Bind the panel root with
+// `:class="{ 'is-revealed': entered }"` — all reveal CSS is gated on that
+// ancestor class, so one flag controls the whole section.
 //
-// - Enter (activeSlide === name): reveal (double-rAF so the hidden from-state
-//   paints one frame before the flip, or the transition has nothing to animate).
-// - Leave: reset to hidden after a short delay, once the panel has scrolled
-//   off-screen, so the next entry can replay cleanly.
-// - Fast return (before the reset landed): force a reset+replay.
+// - Enter: reveal via double-rAF, so the hidden from-state paints one frame
+//   before the flip (otherwise the transition has nothing to animate).
+// - Leave: reset to hidden after a delay, once the panel is off-screen.
+// - Fast return, before the reset landed: force a reset + replay.
 //
-// `gateReady`: Home starts already-active while WebView keeps the scroll wrap
-// `visibility:hidden`. Revealing then would fire while hidden (finishes unseen).
-// With gateReady the initial reveal waits for the `ready` prop instead.
+// `gateReady`: Home is already active while WebView still has the scroll wrap
+// at `visibility:hidden`, so its reveal would finish unseen. With gateReady the
+// initial reveal waits for the `ready` prop instead.
 export function sectionReveal(name, { gateReady = false } = {}) {
   return {
     data() {
