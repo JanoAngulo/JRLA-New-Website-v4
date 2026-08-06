@@ -76,6 +76,8 @@
   import nextjs from '@/assets/img/features/frontend/nextjs.svg'
   import lightNextJs from '@/assets/img/features/frontend/light-nextjs.svg'
   import reactjs from '@/assets/img/features/frontend/react.svg'
+  import gsap from '@/assets/img/features/frontend/gsap.svg'
+  import gsapLight from '@/assets/img/features/frontend/gsap-light.svg'
   import claude from '@/assets/img/features/frontend/claude.svg'
 
   // UI/UX
@@ -145,6 +147,7 @@
           const cssSrc = theme === 'dark' ? cssLight : css
           const jsSrc = theme === 'dark' ? jsLight : js
           const nextSrc = theme === 'dark' ? lightNextJs : nextjs
+          const gsapSrc = theme === 'dark' ? gsapLight : gsap
           const wacomSrc = theme === 'dark' ? lightwacom : wacom
 
           this.featureAsset.frontend = [
@@ -160,6 +163,7 @@
             { src: vue, name: 'Vue.js' },
             { src: nextSrc, name: 'Next.js' },
             { src: reactjs, name: 'React' },
+            { src: gsapSrc, name: 'GSAP' },
             { src: claude, name: 'Claude' }
           ]
           this.featureAsset.uiux = [
