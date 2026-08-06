@@ -1,23 +1,27 @@
 <template>
   <div
-    :class="['relative w-full app-slide max-md:overflow-y-auto max-md:overflow-x-hidden md:overflow-hidden', { 'is-revealed': entered }]">
+    :class="['relative w-full app-slide max-md:overflow-y-auto max-md:overflow-x-hidden md:overflow-hidden', { 'is-active': activeSlide === 'home' }]">
     <div class="w-full h-full grid grid-cols-1 grid-rows-[auto_1fr] min-h-full md:grid-cols-[45fr_55fr] md:grid-rows-1">
       <!-- LEFT: accent block -->
-      <section data-accent-surface class="relative overflow-hidden max-md:overflow-visible text-dark hero-left dark:bg-dark-primary bg-light-primary">
+      <section data-accent-surface class="relative overflow-hidden max-md:overflow-visible text-dark dark:bg-dark-primary bg-light-primary">
+        <!-- The split itself, drawn. Half designer / half developer is the claim;
+             the seam is where the two halves meet, so it gets a hairline. -->
+        <div class="seam bg-current/20" aria-hidden="true" data-reveal="draw" data-reveal-at="0.1"></div>
+
         <div class="relative flex flex-col justify-between h-full p-6 md:p-10 lg:p-14 max-md:py-12 max-md:gap-8 max-md:min-h-full">
-          <div class="flex items-center gap-3 text-xs tracking-[0.3em] uppercase font-Mono fade-up" style="--d:0.06s">
+          <div class="flex items-center gap-3 text-xs tracking-[0.3em] uppercase font-Mono" data-reveal="fade" data-reveal-at="0.06">
             <span class="status-dot w-2 h-2 rounded-full bg-current opacity-90"></span>
             <span>Available · 2026</span>
           </div>
 
           <div class="flex flex-col gap-3">
-            <p class="text-xs sm:text-sm tracking-[0.4em] uppercase font-Mono opacity-90 fade-up" style="--d:0.1s">Portfolio of</p>
+            <p class="text-xs sm:text-sm tracking-[0.4em] uppercase font-Mono opacity-90" data-reveal="fade" data-reveal-at="0.1">Portfolio of</p>
             <h1 class="text-[clamp(3.25rem,18vw,5.5rem)] md:text-[clamp(2.75rem,8.5vw,7rem)] tracking-[-0.035em] leading-[0.9] wrap-break-word font-Gilroy-extra-bold uppercase">
-              <span class="reveal-line leading-[0.95]"><span class="hnl-inner" style="--d:0.12s">John</span></span>
-              <span class="reveal-line leading-[0.95]"><span class="hnl-inner" style="--d:0.18s">Russel</span></span>
-              <span class="reveal-line leading-[0.95]"><span class="hnl-inner [-webkit-text-fill-color:transparent] [-webkit-text-stroke:1.5px_var(--color-dark)] opacity-85" style="--d:0.24s">Angulo</span></span>
+              <span class="reveal-line leading-[0.95]"><span class="hnl-inner" data-reveal="line" data-reveal-at="0.12">John</span></span>
+              <span class="reveal-line leading-[0.95]"><span class="hnl-inner" data-reveal="line" data-reveal-at="0.18">Russel</span></span>
+              <span class="reveal-line leading-[0.95]"><span class="hnl-inner [-webkit-text-fill-color:transparent] [-webkit-text-stroke:1.5px_var(--color-dark)] opacity-85" data-reveal="line" data-reveal-at="0.24">Angulo</span></span>
             </h1>
-            <div class="flex items-baseline gap-2 mt-4 text-base font-Gilroy sm:text-lg md:text-xl fade-up" style="--d:0.3s">
+            <div class="flex items-baseline gap-2 mt-4 text-base font-Gilroy sm:text-lg md:text-xl" data-reveal="fade" data-reveal-at="0.3">
               <span class="opacity-70" aria-hidden="true">→</span>
               <!-- The typing effect is decoration — announced, it would read one
                    letter at a time forever. Assistive tech gets the four roles as
@@ -27,7 +31,7 @@
             </div>
           </div>
 
-          <div class="flex items-end justify-between text-[10px] sm:text-xs tracking-[0.25em] uppercase font-Mono opacity-90 fade-up" style="--d:0.34s">
+          <div class="flex items-end justify-between text-[10px] sm:text-xs tracking-[0.25em] uppercase font-Mono opacity-90" data-reveal="fade" data-reveal-at="0.34">
             <span>Bulacan · PH</span>
             <span>Est. 2021</span>
           </div>
@@ -35,38 +39,38 @@
       </section>
 
       <!-- RIGHT: content / wordmark -->
-      <section class="relative overflow-hidden max-md:overflow-visible hero-right dark:bg-dark bg-light dark:text-light text-dark">
+      <section class="relative overflow-hidden max-md:overflow-visible dark:bg-dark bg-light dark:text-light text-dark" data-reveal="slide" data-reveal-at="0.06">
         <!-- Dot-grid backdrop -->
         <div class="dot-grid bg-size-[24px_24px]" aria-hidden="true"></div>
 
         <!-- Vertical wordmark -->
         <div class="absolute top-0 right-0 flex items-center h-full pr-3 pointer-events-none select-none md:pr-6" aria-hidden="true">
-          <span class="font-Gilroy-extra-bold dark:text-light/5 text-dark/5 text-[clamp(8rem,28vw,22rem)] tracking-[-0.01em] leading-[0.8] [writing-mode:vertical-rl] rotate-180">JRLA</span>
+          <span data-reveal="drift" data-reveal-at="0.34" class="font-Gilroy-extra-bold dark:text-light/5 text-dark/5 text-[clamp(8rem,28vw,22rem)] tracking-[-0.01em] leading-[0.8] [writing-mode:vertical-rl] rotate-180">JRLA</span>
         </div>
 
         <div class="relative flex flex-col justify-between h-full p-6 md:p-10 lg:p-14 max-md:gap-10 max-md:min-h-full">
-          <div class="reveal-fade flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 text-xs tracking-[0.3em] uppercase font-Mono" style="--d:0.08s;--o:0.7">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 text-xs tracking-[0.3em] uppercase font-Mono" data-reveal="fade" data-reveal-at="0.08" data-reveal-o="0.7">
             <span>01 — Home</span>
             <span class="hidden sm:inline">v.04</span>
           </div>
 
-          <div class="max-w-md">
-            <h2 class="text-[clamp(1.35rem,6vw,1.85rem)] md:text-[clamp(1.5rem,2.6vw,2.25rem)] tracking-[-0.025em] font-Gilroy-extra-bold uppercase leading-[0.92]">
-              <span class="reveal-line leading-[1.05]"><span class="as-inner" style="--d:0.16s">Half designer.</span></span>
-              <span class="reveal-line leading-[1.05]"><span class="as-inner" style="--d:0.22s">Half developer.</span></span>
-              <span class="reveal-line leading-[1.05]"><span class="as-inner text-light-primary dark:text-dark-primary" style="--d:0.28s">Fully shipping.</span></span>
+          <div class="max-w-lg @container flex flex-col gap-[clamp(1.25rem,3.2vw,2rem)]">
+            <h2 class="text-[clamp(1.6rem,3.9vw,2.25rem)] tracking-[-0.032em] font-Gilroy-extra-bold uppercase leading-[0.9]">
+              <span class="reveal-line"><span class="as-inner" data-reveal="line" data-reveal-at="0.16">Half designer.</span></span>
+              <span class="reveal-line"><span class="as-inner" data-reveal="line" data-reveal-at="0.22">Half developer.</span></span>
+              <span class="reveal-line"><span class="as-inner text-light-primary dark:text-dark-primary" data-reveal="line" data-reveal-at="0.28">Fully shipping.</span></span>
             </h2>
 
-            <div class="mt-4 md:mt-6 border-t border-current/15 font-Mono fade-up" style="--d:0.32s">
-              <div class="flex justify-between items-baseline gap-4 py-2 md:py-[0.6rem] border-b border-current/15 text-[0.7rem]">
-                <span class="tracking-[0.3em] uppercase opacity-65 shrink-0">Practice</span>
-                <span class="tracking-[0.02em] text-right opacity-95">Front-end · UI/UX</span>
+            <dl class="grid grid-cols-1 @md:grid-cols-2 border-y border-current/15 font-Mono" data-reveal="fade" data-reveal-at="0.32">
+              <div class="flex flex-col gap-[0.45rem] py-[0.8rem] @md:pr-6">
+                <dt class="text-[0.65rem] tracking-[0.3em] uppercase opacity-60">Practice</dt>
+                <dd class="text-[0.8125rem] leading-[1.35] tracking-[0.01em] opacity-95">Front-end · UI/UX</dd>
               </div>
-              <div class="flex justify-between items-baseline gap-4 py-2 md:py-[0.6rem] border-b border-current/15 text-[0.7rem]">
-                <span class="tracking-[0.3em] uppercase opacity-65 shrink-0">Scope</span>
-                <span class="tracking-[0.02em] text-right opacity-95">Web · Mobile · Motion · Vector</span>
+              <div class="flex flex-col gap-[0.45rem] py-[0.8rem] border-t border-current/15 @md:border-t-0 @md:border-l @md:pl-6">
+                <dt class="text-[0.65rem] tracking-[0.3em] uppercase opacity-60">Scope</dt>
+                <dd class="text-[0.8125rem] leading-[1.35] tracking-[0.01em] opacity-95">Web · Mobile · Motion · Vector</dd>
               </div>
-            </div>
+            </dl>
           </div>
 
           <div class="flex items-end justify-between gap-6">
@@ -97,18 +101,23 @@
 </template>
 
 <script>
-  import { sectionReveal } from '../composables/sectionReveal'
+  import { panelEntrance } from '../composables/panelEntrance'
 
   export default {
     name: 'Home',
-    // Entrance replays whenever Home becomes active. The initial reveal waits for
-    // WebView's `ready` — the wrap is visibility:hidden until then.
-    mixins: [sectionReveal('home', { gateReady: true })],
+    // Entrance replays whenever Home is arrived at. `settledSlide` is the cue on
+    // a return; on first load it also has to clear the boot overlay, and 260ms
+    // of the overlay's 700ms fade buys a mostly-clear screen without leaving a
+    // blank one.
+    mixins: [panelEntrance('home', { gateReady: true, readyDelay: 260 })],
     props: {
       activeSlide: String,
+      settledSlide: String,
       windowWidth: Number,
       desktopHeight: Number,
       mobileHeight: Number,
+      // Not "the pager is measured" — that happens behind the boot overlay.
+      // This is "the overlay is leaving", i.e. the entrance can be seen.
       ready: { type: Boolean, default: false }
     },
     data() {
@@ -181,78 +190,49 @@
 </script>
 
 <style lang="css" scoped>
-  /* Entrance reveals, gated on `.is-revealed` (set by the sectionReveal mixin on
-     every entry). Because it replays on each return to Home rather than playing
-     once, it has to stay inside a UI motion budget: durations are --dur-reveal
-     and the inline `--d` delay ladder tops out at 0.34s. */
-  .hero-left {
-    transform: translateX(-3%);
-    opacity: 0;
-    transition: transform var(--dur-reveal) var(--ease-out),
-                opacity var(--dur-reveal) var(--ease-out);
+  /* The entrance lives in panelEntrance.js — every element's from-state is
+     written by GSAP, so nothing here hides anything. What is left is the
+     structure those tweens need.
+
+     The accent half is absent on purpose: it does NOT animate. It is the fixed
+     ground the entrance happens against, so only its contents carry
+     `data-reveal`. The content half slides outward from the seam rather than
+     inward from the screen edge — it opens away from a surface that was already
+     standing. */
+
+  /* Seam hairline along the split. CSS owns which axis it draws on, because that
+     flips at the breakpoint: stacked layouts meet on a horizontal edge, the
+     45/55 split on a vertical one. GSAP only drives the 0→1. Defaulting to 1
+     means no-JS leaves the seam drawn rather than invisible. */
+  .seam {
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    transform: scaleX(var(--reveal-draw, 1));
+    transform-origin: left;
   }
-  .hero-right {
-    transform: translateX(3%);
-    opacity: 0;
-    transition: transform var(--dur-reveal) var(--ease-out) 0.08s,
-                opacity var(--dur-reveal) var(--ease-out) 0.08s;
-  }
-  .is-revealed .hero-left,
-  .is-revealed .hero-right {
-    transform: translateX(0);
-    opacity: 1;
+  @media (min-width: 48rem) {
+    .seam {
+      inset: 0 0 0 auto;
+      width: 1px;
+      height: auto;
+      transform: scaleY(var(--reveal-draw, 1));
+      transform-origin: top;
+    }
   }
 
-  /* Fade-up — staggered via --d */
-  .fade-up {
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity var(--dur-reveal) var(--ease-out),
-                transform var(--dur-reveal) var(--ease-out);
-    transition-delay: var(--d, 0s);
-  }
-  .is-revealed .fade-up {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Hero name line-reveal */
-  .hnl-inner {
-    display: inline-block;
-    transform: translateY(105%);
-    transition: transform var(--dur-reveal) var(--ease-out);
-    transition-delay: var(--d, 0s);
-  }
-  .is-revealed .hnl-inner {
-    transform: translateY(0);
-  }
-
-  /* Statement line-reveal */
+  /* Line-reveal inners: inline-block so the mask above them has something with a
+     box to translate. The travel itself is GSAP's. */
+  .hnl-inner,
   .as-inner {
     display: inline-block;
-    transform: translateY(105%);
-    transition: transform var(--dur-reveal) var(--ease-out);
-    transition-delay: var(--d, 0s);
-  }
-  .is-revealed .as-inner {
-    transform: translateY(0);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .hero-left,
-    .hero-right,
-    .fade-up,
-    .hnl-inner,
-    .as-inner {
-      transition-duration: 0.2s;
-      transition-delay: 0s;
-    }
-    .hero-left,
-    .hero-right { transform: none; }
-  }
-
-  /* Status dot pulse */
-  .status-dot {
+  /* Status dot pulse. Gated on the panel being on screen — otherwise the loop
+     runs for the whole session behind other panels. Tied to `is-active` rather
+     than to the entrance: whether a loop should run is a question about
+     visibility, not about whether an animation has played. */
+  .is-active .status-dot {
     animation: pulse 2s ease-in-out infinite;
   }
   @keyframes pulse {
@@ -260,12 +240,20 @@
     50% { transform: scale(1.4); opacity: 0.4; }
   }
 
-  /* Typing caret blink */
-  .caret {
+  /* Typing caret blink — same gate; the typing loop already stops off screen. */
+  .is-active .caret {
     animation: caret-blink 1s steps(1) infinite;
   }
   @keyframes caret-blink {
     0%, 50% { opacity: 1; }
     51%, 100% { opacity: 0; }
+  }
+
+  /* Last on purpose: these have to out-order the `.is-active`-gated loops
+     above, which carry the same specificity. Both run forever, so a
+     reduced-motion visitor gets the steady state instead. */
+  @media (prefers-reduced-motion: reduce) {
+    .is-active .status-dot,
+    .is-active .caret { animation: none; }
   }
 </style>

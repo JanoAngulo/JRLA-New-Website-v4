@@ -20,8 +20,9 @@ const MOBILE_QUERY = '(max-width: 767px)'
  * @param {HTMLElement} opts.wrap  - pinned viewport-height container (desktop)
  * @param {HTMLElement} opts.track - flex row / column of `.h-panel` elements
  * @param {(idx:number)=>void} opts.onActive - fires when the active panel changes
+ * @param {(idx:number)=>void} opts.onSettle - fires once travel actually stops
  */
-export function createHorizontalScroll({ wrap, track, onActive }) {
+export function createHorizontalScroll({ wrap, track, onActive, onSettle }) {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const panels = Array.from(track.children)
   const count = panels.length
@@ -35,6 +36,7 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
   let vScroll = null // mobile scroll listener
   let navTarget = null // progress (0..1) locked while a programmatic nav runs
   let current = -1
+  let settleTimer = null
   const panState = [] // { el, prevOverflow } for restoring native overflow
 
   // Horizontal layout in scroll pixels, recomputed on every refresh so a
@@ -60,6 +62,22 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
       current = idx
       onActive?.(idx)
     }
+  }
+
+  // `active` resolves half a viewport before travel stops — too early to start a
+  // panel's entrance, which would then play out while the panel is still moving
+  // and land already finished. Settle is the real arrival, and it is defined as
+  // quiet rather than as any one event: 200ms with no scroll change covers a
+  // snap landing, a free rest outside the snap dead-zone, a programmatic nav and
+  // the mobile scroll with one mechanism. Snap's own 120ms delay is shorter than
+  // the window, so its travel restarts the clock before a false settle fires.
+  const SETTLE_QUIET = 200
+  const scheduleSettle = () => {
+    clearTimeout(settleTimer)
+    settleTimer = setTimeout(() => {
+      settleTimer = null
+      if (current >= 0) onSettle?.(current)
+    }, SETTLE_QUIET)
   }
 
   /* ---------------------------------------------------------------- helpers */
@@ -191,6 +209,7 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
         // resolves the active section, off raw scroll progress.
         const px = self.progress * total
         const half = window.innerHeight / 2
+        scheduleSettle()
         for (let i = 0; i < count - 1; i++) {
           if (px < panEnds[i] + half) return setActive(i)
         }
@@ -262,6 +281,7 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
         else break
       }
       setActive(best)
+      scheduleSettle()
     }
 
     let raf = null
@@ -284,6 +304,8 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
   }
 
   const teardown = () => {
+    clearTimeout(settleTimer)
+    settleTimer = null
     stopDepth()
     st?.kill()
     st = null
@@ -349,6 +371,11 @@ export function createHorizontalScroll({ wrap, track, onActive }) {
 
   build()
   ScrollTrigger.refresh()
+  // ScrollTrigger calls onUpdate when progress *changes*, and a fresh load sits
+  // at 0 — so nothing would ever announce the first panel's arrival and its
+  // entrance would wait forever. Seed the active index and start the clock.
+  setActive(current < 0 ? 0 : current)
+  scheduleSettle()
 
   return { goTo, refresh, remeasure, destroy }
 }
