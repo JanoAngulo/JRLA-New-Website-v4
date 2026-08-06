@@ -1,10 +1,10 @@
 <template>
   <div
     ref="worksSection"
-    :class="['relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide md:flex md:flex-col', { 'is-revealed': entered }]">
+    :class="['relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide md:flex md:flex-col', { 'is-active': activeSlide === 'works' }]">
     <!-- Sticky top header -->
     <div class="relative z-5 px-5 pt-5 md:px-8 md:pt-6 lg:px-12 lg:pt-8 bg-light dark:bg-dark md:shrink-0">
-      <div class="works-header-meta flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
+      <div class="works-header-meta flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12" data-reveal="fade" data-reveal-y="-8" data-reveal-at="0.04">
         <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">03 — Selected Works</p>
         <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ filteredWorks.length }} / {{ works2.length }} Projects</p>
       </div>
@@ -16,8 +16,9 @@
           :key="f.id"
           @click="setFilter(f.id)"
           :aria-pressed="activeFilter === f.id"
-          :style="{ '--pd': (i * 0.05) + 's' }"
-          class="filter-pill filter-pill-anim group inline-flex items-center gap-[0.4rem] sm:gap-2 px-3 sm:px-[0.9rem] py-[0.55rem] sm:py-[0.6rem] font-Mono text-[0.65rem] sm:text-[0.7rem] tracking-[0.18em] sm:tracking-[0.22em] uppercase bg-transparent border rounded-full cursor-pointer transition-[background,border-color,color] duration-200 whitespace-nowrap shrink-0 snap-start"
+          data-reveal="fade"
+          :data-reveal-at="0.1 + i * 0.05"
+          class="filter-pill group inline-flex items-center gap-[0.4rem] sm:gap-2 px-3 sm:px-[0.9rem] py-[0.55rem] sm:py-[0.6rem] font-Mono text-[0.65rem] sm:text-[0.7rem] tracking-[0.18em] sm:tracking-[0.22em] uppercase bg-transparent border rounded-full cursor-pointer transition-[background,border-color,color] duration-200 whitespace-nowrap shrink-0 snap-start"
           :class="activeFilter === f.id ? 'bg-light-primary text-dark border-light-primary dark:bg-dark-primary dark:border-dark-primary' : 'border-current/35 hover:border-current/65'">
           <span>{{ f.label }}</span>
           <span class="font-Mono tabular-nums text-[0.7rem] opacity-70 group-aria-pressed:opacity-80">{{ f.count }}</span>
@@ -218,7 +219,7 @@
   import LazyImage from './LazyImage.vue'
   import { useThemeStore } from '../store'
   import { defineAsyncComponent } from 'vue'
-  import { sectionReveal } from '../composables/sectionReveal'
+  import { panelEntrance } from '../composables/panelEntrance'
   import { createScrollScrub } from '../composables/useScrollScrub'
 
   // How long the grid dims before the filtered set swaps in. Must match the
@@ -294,7 +295,7 @@
   export default {
     name: 'Works',
     emits: ['close', 'remeasure'],
-    mixins: [sectionReveal('works')],
+    mixins: [panelEntrance('works', { media: '(min-width: 768px)' })],
     components: {
       AppDialog,
       WorkDetails: defineAsyncComponent(() => import('./WorkDetails.vue')),
@@ -303,6 +304,7 @@
     },
     props: {
       activeSlide: String,
+      settledSlide: String,
       windowWidth: Number,
       desktopHeight: Number,
       mobileHeight: Number
@@ -497,34 +499,11 @@
 </script>
 
 <style lang="css" scoped>
-  /* Header + filter entrance, gated on the panel root's `.is-revealed`
-     (sectionReveal mixin) so they replay on every section entry. Desktop only:
-     on mobile the section is active-gated later than the cards' scroll-scrub, so
-     gating the header here would let a card fade in while the filters are still
-     hidden. Mobile shows them statically. */
-  @media (min-width: 768px) {
-    .works-header-meta {
-      opacity: 0;
-      transform: translateY(-8px);
-      transition: opacity var(--dur-reveal) var(--ease-out) 0.04s,
-                  transform var(--dur-reveal) var(--ease-out) 0.04s;
-    }
-    .is-revealed .works-header-meta {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .filter-pill-anim {
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity var(--dur-reveal) var(--ease-out),
-                  transform var(--dur-reveal) var(--ease-out);
-      transition-delay: calc(0.1s + var(--pd, 0s));
-    }
-    .is-revealed .filter-pill-anim {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  /* Header and filter entrance live in panelEntrance.js, built only at
+     (min-width: 768px). On mobile the section goes active later than its cards'
+     scroll-scrub, so an entrance here would hold the header hidden while a card
+     was already fading in below it — the mixin's `media` option skips the build
+     entirely there, and with no CSS from-state the header is simply present. */
 
   /* Skeleton -> case-study cross-fade (see the <Suspense> block above). */
   .content-swap-enter-active,
@@ -565,8 +544,6 @@
     opacity: 0;
   }
   @media (prefers-reduced-motion: reduce) {
-    .works-header-meta,
-    .filter-pill-anim { transition-duration: 0.2s; transition-delay: 0s; transform: none; }
     /* useScrollScrub reveals scrub targets statically under reduced motion. */
     .reveal { opacity: 1; }
   }

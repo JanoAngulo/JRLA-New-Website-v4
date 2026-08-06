@@ -56,7 +56,8 @@
             :windowWidth="windowWidth"
             :desktopHeight="desktopHeight"
             :mobileHeight="mobileHeight"
-            :ready="ready"
+            :ready="bootRevealing"
+            :settledSlide="settledSlide"
             :activeSlide="slideInView">
           </home>
         </section>
@@ -79,6 +80,7 @@
             :windowWidth="windowWidth"
             :desktopHeight="desktopHeight"
             :mobileHeight="mobileHeight"
+            :settledSlide="settledSlide"
             :activeSlide="slideInView"
             @remeasure="onWorksRemeasure">
           </works>
@@ -88,6 +90,7 @@
             <span class="sd-num">04</span><span class="sd-name">About</span>
           </div>
           <about
+            :settledSlide="settledSlide"
             :activeSlide="slideInView"
             :windowWidth="windowWidth"
             :desktopHeight="desktopHeight"
@@ -103,6 +106,7 @@
             :windowWidth="windowWidth"
             :desktopHeight="desktopHeight"
             :mobileHeight="mobileHeight"
+            :settledSlide="settledSlide"
             :activeSlide="slideInView">
           </contact>
         </section>
@@ -115,6 +119,7 @@
 
 <script>
   import { createHorizontalScroll } from '../composables/useHorizontalScroll'
+  import { bootState } from '../composables/bootState'
   import Home from './Home.vue'
   import Navbar from './Navbar.vue'
   import About from './About.vue'
@@ -133,10 +138,18 @@
         windowWidth: 0,
         activeIndex: 0,
         slideInView: 'home',
+        // `slideInView` resolves half a viewport before travel stops, which is
+        // the right cue for nav state and the wrong one for an entrance. This is
+        // the arrival — see onSettle in useHorizontalScroll.
+        settledSlide: '',
         scroller: null,
         resizeRaf: null,
         remeasureRaf: null,
         ready: false,
+        // `ready` un-hides the track behind the boot overlay so layout settles
+        // early; that is deliberately NOT the cue for Home's entrance, which
+        // would then play and finish under an opaque overlay. This is.
+        bootRevealing: bootState.revealing,
         deepLinking: false,
         booted: false,
         pendingDeepLink: null
@@ -160,6 +173,9 @@
       // focus, pointer and AT reach. Not needed on mobile, where all are visible.
       panelInert(idx) {
         return this.isDesktop && idx !== this.activeIndex
+      },
+      onBootReveal() {
+        this.bootRevealing = true
       },
       // Fired by App once the boot overlay has gone. Re-fits the pager (it
       // measured itself while <html> was scroll-locked) and releases the
@@ -214,9 +230,15 @@
       next() {
         this.goTo(this.activeIndex + 1)
       },
+      onSettle(idx) {
+        this.settledSlide = SECTIONS[idx] || ''
+      },
       onActive(idx) {
         this.activeIndex = idx
         this.slideInView = SECTIONS[idx] || ''
+        // Anything that was settled no longer is; the panel being left has to
+        // see this change to rewind its entrance.
+        if (this.settledSlide !== SECTIONS[idx]) this.settledSlide = ''
         const nextHash = this.indexToHash(idx)
         if (this.$route?.hash !== nextHash) {
           this.$router.replace({ path: '/', hash: nextHash }).catch(() => {})
@@ -312,7 +334,8 @@
         this.scroller = createHorizontalScroll({
           wrap: this.$refs.wrap,
           track: this.$refs.track,
-          onActive: this.onActive
+          onActive: this.onActive,
+          onSettle: this.onSettle
         })
         // Start at Home, reveal, then smooth-scroll across to the deep-linked
         // section rather than jumping to it.
@@ -348,12 +371,14 @@
       window.addEventListener('resize', this.onResize)
       window.addEventListener('keydown', this.onKeydown)
       window.addEventListener('jrla:booted', this.onBooted, { once: true })
+      window.addEventListener('jrla:boot-reveal', this.onBootReveal, { once: true })
       this.$refs.wrap?.addEventListener('scroll', this.onWrapScroll, { passive: true })
     },
     beforeUnmount() {
       window.removeEventListener('resize', this.onResize)
       window.removeEventListener('keydown', this.onKeydown)
       window.removeEventListener('jrla:booted', this.onBooted)
+      window.removeEventListener('jrla:boot-reveal', this.onBootReveal)
       this.$refs.wrap?.removeEventListener('scroll', this.onWrapScroll)
       if (this.resizeRaf) cancelAnimationFrame(this.resizeRaf)
       if (this.remeasureRaf) cancelAnimationFrame(this.remeasureRaf)

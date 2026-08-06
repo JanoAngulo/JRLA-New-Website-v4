@@ -296,33 +296,13 @@
     @apply block overflow-hidden;
   }
 
-  /* Generic staggered fade-up, gated on an ancestor `.is-revealed` (set on each
-     panel root by the sectionReveal mixin), so it replays on every re-entry.
-     Stagger with an inline `--d` delay. Works on block or inline-block.
+  /* `.reveal-fade` lived here and is gone: panel entrances are GSAP timelines
+     now (src/composables/panelEntrance.js), so the from-state is written at
+     runtime by `data-reveal="fade"` rather than by a class that hid the element
+     in CSS. The old way meant a JS failure left the page permanently blank; this
+     way the markup's natural state is the visible one.
 
-     No `will-change`: these elements are permanent page furniture, so a standing
-     hint would hold a compositor layer per node all session for one transition. */
-  .reveal-fade {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity var(--dur-reveal) var(--ease-out),
-                transform var(--dur-reveal) var(--ease-out);
-    transition-delay: var(--d, 0s);
-  }
-  /* `--o` = revealed opacity (default 1). Use it instead of a Tailwind `opacity-*`
-     utility, which sits in a later layer and would beat the hidden state. */
-  .is-revealed .reveal-fade {
-    opacity: var(--o, 1);
-    transform: none;
-  }
-  /* Reduced motion keeps the fade but drops the travel and the stagger. Duration
-     comes from the global rule above. */
-  @media (prefers-reduced-motion: reduce) {
-    .reveal-fade {
-      transition-delay: 0s;
-      transform: none;
-    }
-  }
+     `.reveal-line` above stays — it is an overflow mask, not an animation. */
 
 }
 

@@ -1,49 +1,49 @@
 <template>
   <div
     ref="contactSection"
-    :class="['relative w-full md:overflow-hidden overflow-y-auto app-slide', { 'is-revealed': entered }]">
+    :class="['relative w-full md:overflow-hidden overflow-y-auto app-slide', { 'is-active': activeSlide === 'contact' }]">
     <div class="grid grid-cols-1 grid-rows-[auto_auto] min-h-full w-full md:grid-cols-[40fr_60fr] md:grid-rows-1 md:h-full">
       <!-- LEFT: accent block w/ pull-quote + contact card -->
       <section data-accent-surface class="contact-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden min-h-0 h-auto max-md:overflow-visible">
         <div class="relative flex flex-col justify-between p-6 md:p-10 lg:p-14 gap-8 h-full">
           <!-- Top eyebrow -->
-          <div class="reveal-fade flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase" style="--d:0.06s">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.06">
             <span>05 — Contact</span>
             <span class="hidden sm:inline opacity-90">Reach Out</span>
           </div>
 
           <!-- Pull-quote -->
           <div class="flex flex-col gap-5">
-            <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-90">— Open Brief</p>
+            <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-90" data-reveal="fade" data-reveal-at="0.08">— Open Brief</p>
             <h2 class="text-[clamp(2.25rem,4.8vw,4.25rem)] tracking-[-0.035em] font-Gilroy-extra-bold uppercase leading-[0.9]">
-              <span class="reveal-line leading-none"><span class="ch-inner" style="--d:0.1s">Let's build</span></span>
-              <span class="reveal-line leading-none"><span class="ch-inner" style="--d:0.16s">something</span></span>
-              <span class="reveal-line leading-none"><span class="ch-inner [-webkit-text-fill-color:transparent] [-webkit-text-stroke:1.5px_var(--color-dark)] opacity-85" style="--d:0.22s">together.</span></span>
+              <span class="reveal-line leading-none"><span class="ch-inner" data-reveal="line" data-reveal-at="0.1">Let's build</span></span>
+              <span class="reveal-line leading-none"><span class="ch-inner" data-reveal="line" data-reveal-at="0.16">something</span></span>
+              <span class="reveal-line leading-none"><span class="ch-inner [-webkit-text-fill-color:transparent] [-webkit-text-stroke:1.5px_var(--color-dark)] opacity-85" data-reveal="line" data-reveal-at="0.22">together.</span></span>
             </h2>
-            <div class="h-px w-16 bg-dark/40"></div>
+            <div class="rule-draw h-px w-16 bg-dark/40" data-reveal="draw" data-reveal-at="0.24"></div>
             <p class="font-Gilroy text-base sm:text-lg leading-relaxed max-w-md opacity-90">
-              <span class="reveal-fade inline-block" style="--d:0.12s">Got an idea worth chasing? </span><span class="reveal-fade inline-block" style="--d:0.18s">Whether it's a fresh design, a website that stands out, or a half-baked concept — </span><span class="reveal-fade inline-block" style="--d:0.2s">drop a note and let's turn it into something real.</span>
+              <span class="inline-block" data-reveal="fade" data-reveal-at="0.12">Got an idea worth chasing? </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.18">Whether it's a fresh design, a website that stands out, or a half-baked concept — </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.2">drop a note and let's turn it into something real.</span>
             </p>
           </div>
 
           <!-- Contact card + socials -->
           <div class="flex flex-col gap-4">
-            <div class="border-t border-dark/20">
-              <div class="reveal-fade flex justify-between items-baseline py-[0.65rem] border-b border-dark/20 gap-4" style="--d:0.14s">
+            <div class="border-t border-dark/20" data-reveal="fade" data-reveal-y="0" data-reveal-at="0.12">
+              <div class="flex justify-between items-baseline py-[0.65rem] border-b border-dark/20 gap-4" data-reveal="fade" data-reveal-at="0.14">
                 <span class="font-Mono text-[0.7rem] tracking-[0.3em] uppercase opacity-90 shrink-0">Email</span>
                 <a href="mailto:Angulo.johnrussel.l.7814@gmail.com" class="font-Gilroy text-sm tracking-[-0.005em] text-right break-words underline decoration-1 underline-offset-[3px] transition-[text-decoration-thickness] duration-200 hover:decoration-2">angulo.johnrussel.l.7814@gmail.com</a>
               </div>
-              <div class="reveal-fade flex justify-between items-baseline py-[0.65rem] border-b border-dark/20 gap-4" style="--d:0.18s">
+              <div class="flex justify-between items-baseline py-[0.65rem] border-b border-dark/20 gap-4" data-reveal="fade" data-reveal-at="0.18">
                 <span class="font-Mono text-[0.7rem] tracking-[0.3em] uppercase opacity-90 shrink-0">Based</span>
                 <span class="font-Gilroy text-sm tracking-[-0.005em] text-right break-words">Bulacan · PH</span>
               </div>
-              <div class="reveal-fade flex justify-between items-baseline py-[0.65rem] border-b border-dark/20 gap-4" style="--d:0.22s">
+              <div class="flex justify-between items-baseline py-[0.65rem] border-b border-dark/20 gap-4" data-reveal="fade" data-reveal-at="0.22">
                 <span class="font-Mono text-[0.7rem] tracking-[0.3em] uppercase opacity-90 shrink-0">Status</span>
                 <span class="font-Gilroy text-sm tracking-[-0.005em] text-right break-words flex items-center gap-2"><span class="status-dot w-[0.45rem] h-[0.45rem] rounded-full bg-dark/85"></span> Available 2026</span>
               </div>
             </div>
 
-            <div class="reveal-fade flex items-center gap-3 pt-2" style="--d:0.26s">
+            <div class="flex items-center gap-3 pt-2" data-reveal="fade" data-reveal-at="0.26">
               <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-90">Find Me</p>
               <div class="flex gap-2 no-swipe">
                 <a target="_blank" rel="noopener" aria-label="LinkedIn" href="https://www.linkedin.com/in/jrla1219/" class="social-pill border-dark/60 text-dark hover:bg-dark hover:text-light-primary hover-fine:hover:-translate-y-0.5 dark:hover:text-dark-primary">
@@ -62,25 +62,25 @@
       </section>
 
       <!-- RIGHT: form -->
-      <section class="contact-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto">
+      <section class="contact-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto" data-reveal="slide" data-reveal-x="3" data-reveal-at="0.06">
         <!-- Subtle dot-grid backdrop -->
         <div class="dot-grid bg-size-[22px_22px]" aria-hidden="true"></div>
 
         <div class="relative flex flex-col p-6 md:p-10 lg:p-14 gap-6 md:h-full">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.1" data-reveal-o="0.7">
             <span>Drop a Line</span>
             <span class="hidden sm:inline">Form / 01</span>
           </div>
 
           <div class="space-y-3">
-            <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-65">— Send a Message</p>
+            <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-65" data-reveal="fade" data-reveal-at="0.14">— Send a Message</p>
             <h3 class="font-Gilroy-extra-bold uppercase leading-[0.95] text-[clamp(1.5rem,2.4vw,2rem)] tracking-[-0.02em]">
-              <span class="reveal-line leading-none"><span class="cfh-inner" style="--d:0.16s">Tell me <em class="not-italic dark:text-dark-primary text-light-primary">what's</em> on your mind</span></span>
+              <span class="reveal-line leading-none"><span class="cfh-inner" data-reveal="line" data-reveal-at="0.18">Tell me <em class="not-italic dark:text-dark-primary text-light-primary">what's</em> on your mind</span></span>
             </h3>
-            <div class="hairline"></div>
+            <div class="hairline rule-draw" data-reveal="draw" data-reveal-at="0.22"></div>
           </div>
 
-          <form @submit.prevent="onSubmit" class="pt-5 flex flex-col gap-5 flex-1" novalidate>
+          <form @submit.prevent="onSubmit" class="pt-5 flex flex-col gap-5 flex-1" novalidate data-reveal="fade" data-reveal-at="0.26">
             <div class="grid gap-5 md:grid-cols-2">
               <div class="group/field flex flex-col gap-[0.4rem]">
                 <label for="Name" class="font-Mono text-[0.7rem] tracking-[0.3em] uppercase opacity-65 origin-left transition-[color,opacity,transform,translate] duration-250 group-focus-within/field:opacity-100 group-focus-within/field:-translate-y-0.5 group-focus-within/field:text-light-primary dark:group-focus-within/field:text-dark-primary">Name</label>
@@ -153,7 +153,7 @@
               </button>
             </div>
 
-            <div class="mt-5 pt-4 border-t border-current/12 flex flex-col">
+            <div class="mt-5 pt-4 border-t border-current/12 flex flex-col" data-reveal="fade" data-reveal-at="0.3">
               <div class="flex justify-between items-baseline py-[0.55rem] gap-4 border-b border-dashed border-current/10 last:border-b-0">
                 <span class="font-Mono text-[0.62rem] tracking-[0.28em] uppercase opacity-65 shrink-0">Best for</span>
                 <span class="font-Gilroy text-[0.85rem] tracking-[-0.005em] text-right opacity-90">Web · Mobile · UI/UX · Brand</span>
@@ -176,16 +176,17 @@
 
 <script>
   import Botpoison from '@botpoison/browser'
-  import { sectionReveal } from '../composables/sectionReveal'
+  import { panelEntrance } from '../composables/panelEntrance'
 
   const FORMSPARK_ACTION_URL = 'https://submit-form.com/dQ4bHCKeB'
   const BOTPOISON_KEY = 'pk_847c92ad-fbd6-4a5e-a078-3ba1270f4002'
 
   export default {
     name: 'Contact',
-    mixins: [sectionReveal('contact')],
+    mixins: [panelEntrance('contact')],
     props: {
       activeSlide: String,
+      settledSlide: String,
       windowWidth: Number,
       desktopHeight: Number,
       mobileHeight: Number
@@ -296,54 +297,31 @@
     opacity: 0;
   }
 
-  /* Entrance reveals — gated on `.is-revealed`, set by the sectionReveal mixin on
-     every entry (see src/composables/sectionReveal.js). */
-  .contact-left {
-    transform: translateX(-3%);
-    opacity: 0;
-    transition: transform var(--dur-reveal) var(--ease-out),
-                opacity var(--dur-reveal) var(--ease-out);
-  }
-  .contact-right {
-    transform: translateX(3%);
-    opacity: 0;
-    transition: transform var(--dur-reveal) var(--ease-out) 0.08s,
-                opacity var(--dur-reveal) var(--ease-out) 0.08s;
-  }
-  .is-revealed .contact-left,
-  .is-revealed .contact-right {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  /* The entrance lives in panelEntrance.js — GSAP writes every from-state, so
+     nothing here hides anything. These two only keep the mask the line-reveals
+     translate inside; their delays are `data-reveal-at` in the markup now.
 
-  /* Headline line-reveal */
+     The accent half does not slide: it is the fixed ground the entrance happens
+     against, and only its contents carry `data-reveal`. */
   .ch-inner,
   .cfh-inner {
     display: inline-block;
-    transform: translateY(105%);
-    transition: transform var(--dur-reveal) var(--ease-out);
-    transition-delay: var(--d, 0s);
   }
-  .is-revealed .ch-inner,
-  .is-revealed .cfh-inner {
-    transform: translateY(0);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .contact-left,
-    .contact-right,
-    .ch-inner,
-    .cfh-inner {
-      transition-duration: 0.2s;
-      transition-delay: 0s;
-    }
-    .contact-left,
-    .contact-right { transform: none; }
+
+  /* A standalone rule draws rather than appears — the same gesture as Home's
+     seam, and the reason `draw` hands CSS a 0→1 instead of a named property.
+     Defaulting the var to 1 leaves the rule drawn without JS. */
+  .rule-draw {
+    transform: scaleX(var(--reveal-draw, 1));
+    transform-origin: left;
   }
 
   /* Only `.status-dot` pulses — it's the availability signal. `.form-dot` sits
      beside static copy, so it stays a plain dot; two heartbeats in one column just
      read as busy. */
-  .status-dot {
+  /* Gated on the panel being on screen: an ungated loop animates for the whole
+     session behind other panels. */
+  .is-active .status-dot {
     animation: pulse-dot 2s ease-in-out infinite;
   }
   @keyframes pulse-dot {

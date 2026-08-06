@@ -102,6 +102,7 @@
 
 <script>
   import { useThemeStore } from '../store'
+  import { markBootRevealing } from '../composables/bootState'
 
   // Session-scoped, so it clears when the tab closes.
   const SEEN_KEY = 'jrla:boot-seen'
@@ -154,6 +155,9 @@
       // (capped by MAX_HOLD) rather than a fixed timer, and is skipped outright
       // under reduced motion — it is pure decoration.
       const done = () => {
+        // Backstop for the skip paths below, which never call beginExit. The
+        // latch makes the normal path's second call a no-op.
+        markBootRevealing()
         this.visible = false
         document.documentElement.style.overflow = ''
         this.$emit('finished')
@@ -177,6 +181,9 @@
       const beginExit = () => {
         if (this.exiting) return
         this.exiting = true
+        // Release the panels underneath now, not at `done`. Their entrance is
+        // meant to play through this fade — see bootState.
+        markBootRevealing()
         this.timers.push(setTimeout(done, EXIT_MS))
       }
       const settle = () => {

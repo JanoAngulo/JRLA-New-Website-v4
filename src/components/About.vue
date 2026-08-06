@@ -1,12 +1,12 @@
 <template>
   <div
     ref="aboutSection"
-    :class="['relative w-full overflow-x-hidden md:overflow-hidden overflow-y-auto app-slide', { 'is-revealed': entered }]">
+    :class="['relative w-full overflow-x-hidden md:overflow-hidden overflow-y-auto app-slide', { 'is-active': activeSlide === 'about' }]">
     <div class="grid grid-cols-1 grid-rows-[420px_auto] min-h-full w-full md:grid-cols-[40fr_60fr] md:grid-rows-1 md:h-full">
       <!-- LEFT: portrait on accent block -->
       <section data-accent-surface class="about-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden">
         <!-- Corner meta labels -->
-        <div class="absolute top-0 inset-x-0 z-10 flex items-start justify-between px-5 md:px-8 pt-5 md:pt-8 font-Mono text-[10px] tracking-[0.3em] uppercase">
+        <div class="absolute top-0 inset-x-0 z-10 flex items-start justify-between px-5 md:px-8 pt-5 md:pt-8 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.12" data-reveal-y="-8">
           <span class="flex items-center gap-2">
             <span class="live-dot"></span>
             Portrait
@@ -15,7 +15,7 @@
         </div>
 
         <!-- Portrait — framed by accent block -->
-        <div class="group absolute inset-x-4 inset-y-12 md:inset-x-8 md:inset-y-18 lg:inset-x-10 lg:inset-y-20 overflow-hidden z-2">
+        <div class="portrait-plate group absolute inset-x-4 inset-y-12 md:inset-x-8 md:inset-y-18 lg:inset-x-10 lg:inset-y-20 overflow-hidden z-2" data-reveal="draw" data-reveal-at="0.06">
           <span class="absolute z-3 pointer-events-none w-5 h-5 md:w-7 md:h-7 top-1.5 left-1.5 md:top-2.5 md:left-2.5 border-t-2 border-l-2 border-current"></span>
           <span class="absolute z-3 pointer-events-none w-5 h-5 md:w-7 md:h-7 top-1.5 right-1.5 md:top-2.5 md:right-2.5 border-t-2 border-r-2 border-current"></span>
           <span class="absolute z-3 pointer-events-none w-5 h-5 md:w-7 md:h-7 bottom-1.5 left-1.5 md:bottom-2.5 md:left-2.5 border-b-2 border-l-2 border-current"></span>
@@ -29,20 +29,20 @@
         </div>
 
         <!-- Bottom caption -->
-        <div class="absolute bottom-0 inset-x-0 z-10 flex items-end justify-between px-5 md:px-8 pb-5 md:pb-8 font-Mono text-[10px] tracking-[0.3em] uppercase">
+        <div class="absolute bottom-0 inset-x-0 z-10 flex items-end justify-between px-5 md:px-8 pb-5 md:pb-8 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.16">
           <span>— Photographed in Bulacan</span>
           <span class="hidden sm:inline opacity-90">FIG. 01</span>
         </div>
       </section>
 
       <!-- RIGHT: biography -->
-      <section data-pan-scroll class="about-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto">
+      <section data-pan-scroll class="about-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto" data-reveal="slide" data-reveal-x="3" data-reveal-at="0.06">
         <!-- Subtle dot-grid backdrop -->
         <div class="dot-grid bg-size-[22px_22px]" aria-hidden="true"></div>
 
         <div class="relative flex flex-col md:justify-between p-6 md:p-10 lg:p-14 gap-6 md:h-full min-w-0">
           <!-- Top eyebrow -->
-          <div class="reveal-fade flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase" style="--d:0.06s;--o:0.7">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.06" data-reveal-o="0.7">
             <span>04 — Biography</span>
             <span class="hidden sm:inline">Issue / 2026</span>
           </div>
@@ -50,34 +50,34 @@
           <!-- Headline + body -->
           <div class="space-y-5">
             <h2 class="text-[clamp(1.5rem,8vw,2.25rem)] md:text-[clamp(1.75rem,3.6vw,3.25rem)] tracking-[-0.025em] font-Gilroy-extra-bold uppercase leading-[0.92]">
-              <span class="heading-line"><span class="hl-inner">Designing Seamless</span></span>
-              <span class="heading-line"><span class="hl-inner">Journeys, <em class="not-italic dark:text-dark-primary text-light-primary">One</em></span></span>
-              <span class="heading-line"><span class="hl-inner"><em class="not-italic dark:text-dark-primary text-light-primary">Pixel</em> At A Time.</span></span>
+              <span class="heading-line"><span class="hl-inner" data-reveal="line" data-reveal-at="0.08">Designing Seamless</span></span>
+              <span class="heading-line"><span class="hl-inner" data-reveal="line" data-reveal-at="0.14">Journeys, <em class="not-italic dark:text-dark-primary text-light-primary">One</em></span></span>
+              <span class="heading-line"><span class="hl-inner" data-reveal="line" data-reveal-at="0.2"><em class="not-italic dark:text-dark-primary text-light-primary">Pixel</em> At A Time.</span></span>
             </h2>
-            <div class="hairline"></div>
+            <div class="hairline rule-draw" data-reveal="draw" data-reveal-at="0.24"></div>
             <p class="font-Gilroy text-[0.95rem] md:text-lg leading-relaxed opacity-90 max-w-2xl text-pretty">
-              <span class="reveal-fade inline-block" style="--d:0.14s">I'm Jano — a UI/UX designer and front-end developer from Bulacan </span><span class="reveal-fade inline-block" style="--d:0.18s">with <span class="dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">3+ years</span> building interfaces </span><span class="reveal-fade inline-block" style="--d:0.22s">that feel <em class="not-italic dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">considered</em>.</span>
+              <span class="inline-block" data-reveal="fade" data-reveal-at="0.14">I'm Jano — a UI/UX designer and front-end developer from Bulacan </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.18">with <span class="dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">3+ years</span> building interfaces </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.22">that feel <em class="not-italic dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">considered</em>.</span>
             </p>
           </div>
 
           <!-- Stats counter -->
           <div class="grid grid-cols-2 items-start gap-x-5 gap-y-4 max-[380px]:gap-2 border-y border-current/12 py-4 md:flex md:flex-wrap md:items-center md:gap-4 md:border-0">
-            <div class="reveal-fade flex flex-col gap-1 min-w-0 md:min-w-[70px]" style="--d:0.1s">
+            <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]" data-reveal="fade" data-reveal-at="0.1">
               <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.years }}<span class="text-[0.7em] ml-0.5">+</span></p>
               <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-65">Years exp.</p>
             </div>
             <div class="hidden md:block w-px h-7 bg-current opacity-[0.18]"></div>
-            <div class="reveal-fade flex flex-col gap-1 min-w-0 md:min-w-[70px]" style="--d:0.14s">
+            <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]" data-reveal="fade" data-reveal-at="0.14">
               <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.technologies }}<span class="text-[0.7em] ml-0.5">+</span></p>
               <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-65">Technologies</p>
             </div>
             <div class="hidden md:block w-px h-7 bg-current opacity-[0.18]"></div>
-            <div class="reveal-fade flex flex-col gap-1 min-w-0 md:min-w-[70px]" style="--d:0.18s">
+            <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]" data-reveal="fade" data-reveal-at="0.18">
               <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.tools }}<span class="text-[0.7em] ml-0.5">+</span></p>
               <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-65">Creative Tools</p>
             </div>
             <div class="hidden md:block w-px h-7 bg-current opacity-[0.18]"></div>
-            <div class="reveal-fade flex flex-col gap-1 min-w-0 md:min-w-[70px]" style="--d:0.22s">
+            <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]" data-reveal="fade" data-reveal-at="0.22">
               <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.disciplines }}</p>
               <p class="font-Mono text-[0.58rem] md:text-[0.6rem] tracking-[0.22em] md:tracking-[0.28em] uppercase opacity-65">Disciplines</p>
             </div>
@@ -85,15 +85,15 @@
 
           <!-- Meta facts grid -->
           <div class="grid grid-cols-2 max-[380px]:grid-cols-1 gap-x-5 gap-y-[0.9rem] md:gap-x-8 md:gap-y-5 lg:grid-cols-[repeat(3,max-content)] lg:justify-start lg:gap-x-12 border-y border-current/12 py-4 md:py-5">
-            <div class="reveal-fade flex flex-col gap-[0.35rem]" style="--d:0.12s">
+            <div class="flex flex-col gap-[0.35rem]" data-reveal="fade" data-reveal-at="0.12">
               <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-65">Based in</p>
               <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em]">Bulacan · PH</p>
             </div>
-            <div class="reveal-fade flex flex-col gap-[0.35rem]" style="--d:0.16s">
+            <div class="flex flex-col gap-[0.35rem]" data-reveal="fade" data-reveal-at="0.16">
               <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-65">Disciplines</p>
               <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em]">Web · UI/UX · Motion</p>
             </div>
-            <div class="reveal-fade flex flex-col gap-[0.35rem]" style="--d:0.2s">
+            <div class="flex flex-col gap-[0.35rem]" data-reveal="fade" data-reveal-at="0.2">
               <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-65">Available</p>
               <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em] flex items-center gap-2"><span class="status-dot"></span> 2026 Onwards</p>
             </div>
@@ -114,6 +114,7 @@
                 <span>React</span><span class="dot">●</span>
                 <span>Next.js</span><span class="dot">●</span>
                 <span>Tailwind</span><span class="dot">●</span>
+                <span>GSAP</span><span class="dot">●</span>
                 <span>SASS</span><span class="dot">●</span>
                 <span>Laravel</span><span class="dot">●</span>
                 <span>Git</span><span class="dot">●</span>
@@ -131,7 +132,7 @@
 
           <!-- Powered by + CTAs -->
           <div class="flex flex-col gap-5 pt-2">
-            <div class="reveal-fade flex items-center gap-3 flex-wrap" style="--d:0.12s">
+            <div class="flex items-center gap-3 flex-wrap" data-reveal="fade" data-reveal-at="0.12">
               <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-65">Powered by</p>
               <div class="flex items-center gap-2">
                 <!-- width/height are each SVG's own viewBox, so the browser can
@@ -139,6 +140,8 @@
                      still drives the rendered size. -->
                 <img class="h-5 w-auto opacity-90" src="@/assets/img/features/frontend/vue.svg" alt="Vue.js" width="50" height="44" loading="lazy" decoding="async" />
                 <img class="h-5 w-auto opacity-90" src="@/assets/img/features/frontend/tailwind.svg" alt="Tailwind CSS" width="70" height="43" loading="lazy" decoding="async" />
+                <!-- GSAP ships two fills, so it swaps with the theme like the Features grid does. -->
+                <img class="h-5 w-auto opacity-90" :src="gsapSrc" alt="GSAP" width="82" height="30" loading="lazy" decoding="async" />
               </div>
             </div>
 
@@ -167,17 +170,20 @@
   const Resume = '/downloads/Angulo-John-Russel-CV.pdf'
   import portraitDark from '@/assets/img/pictures/converted/dark-paper-effect.webp'
   import portraitLight from '@/assets/img/pictures/converted/light-paper-effect.webp'
+  import gsap from '@/assets/img/features/frontend/gsap.svg'
+  import gsapLight from '@/assets/img/features/frontend/gsap-light.svg'
   import { useThemeStore } from '../store'
   import LazyImage from './LazyImage.vue'
 
-  import { sectionReveal } from '../composables/sectionReveal'
+  import { panelEntrance } from '../composables/panelEntrance'
 
   export default {
     name: 'About',
     components: { LazyImage },
-    mixins: [sectionReveal('about')],
+    mixins: [panelEntrance('about')],
     props: {
       activeSlide: String,
+      settledSlide: String,
       windowWidth: Number,
       desktopHeight: Number,
       mobileHeight: Number
@@ -187,12 +193,15 @@
       return {
         Resume,
         stats: { years: 0, technologies: 0, tools: 0, disciplines: 0 },
-        statsTargets: { years: 3, technologies: 13, tools: 10, disciplines: 4 }
+        statsTargets: { years: 3, technologies: 14, tools: 10, disciplines: 4 }
       }
     },
     computed: {
       portraitSrc() {
         return useThemeStore().darkMode ? portraitDark : portraitLight
+      },
+      gsapSrc() {
+        return useThemeStore().darkMode ? gsapLight : gsap
       }
     },
     watch: {
@@ -248,28 +257,17 @@
 </script>
 
 <style lang="css" scoped>
-  /* Entrance reveals — gated on `.is-revealed`, set by the sectionReveal mixin on
-     every entry (see src/composables/sectionReveal.js). */
+  /* The entrance lives in panelEntrance.js; these two only keep the containment
+     the layout needs. `.about-right` carries `data-reveal="slide"`; the accent
+     half deliberately does not — it is the fixed ground the entrance happens
+     against, present from the first frame. */
   .about-left {
     min-width: 0;
     overflow: hidden;
-    transform: translateX(-3%);
-    opacity: 0;
-    transition: transform var(--dur-reveal) var(--ease-out),
-                opacity var(--dur-reveal) var(--ease-out);
   }
   .about-right {
     min-width: 0;
     overflow-x: hidden;
-    transform: translateX(3%);
-    opacity: 0;
-    transition: transform var(--dur-reveal) var(--ease-out) 0.08s,
-                opacity var(--dur-reveal) var(--ease-out) 0.08s;
-  }
-  .is-revealed .about-left,
-  .is-revealed .about-right {
-    transform: translateX(0);
-    opacity: 1;
   }
 
   /* Deliberately static: `.status-dot` below is already the panel's one pulsing
@@ -282,34 +280,35 @@
   }
 
 
-  /* Headline reveal animation */
+  /* Headline mask. The per-line delays used to live in these nth-child rules;
+     they are `data-reveal-at` on the lines themselves now, next to the words. */
   .heading-line {
     display: block;
     overflow: hidden;
   }
   .hl-inner {
     display: inline-block;
-    transform: translateY(105%);
-    transition: transform var(--dur-reveal) var(--ease-out);
-  }
-  .heading-line:nth-child(1) .hl-inner { transition-delay: 0.08s; }
-  .heading-line:nth-child(2) .hl-inner { transition-delay: 0.14s; }
-  .heading-line:nth-child(3) .hl-inner { transition-delay: 0.2s; }
-  .is-revealed .hl-inner {
-    transform: translateY(0);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .about-left,
-    .about-right,
-    .hl-inner {
-      transition-duration: 0.2s;
-      transition-delay: 0s;
-    }
-    .about-left,
-    .about-right { transform: none; }
   }
 
-  .status-dot {
+  /* A standalone rule draws rather than appears — the same gesture as Home's
+     seam. Defaulting the var to 1 leaves it drawn without JS. */
+  .rule-draw {
+    transform: scaleX(var(--reveal-draw, 1));
+    transform-origin: left;
+  }
+
+  /* The portrait is a plate being exposed, not a box fading in: it wipes down
+     from its own top edge, corner brackets included, because they sit inside
+     the clip. A fade would have made it one more panel element; this makes it
+     the subject. Clip is bounded to this one element, and `draw` is what lets
+     CSS pick the gesture — GSAP only supplies the 0→1. */
+  .portrait-plate {
+    clip-path: inset(0 0 calc((1 - var(--reveal-draw, 1)) * 100%) 0);
+  }
+
+  /* Gated on the panel being on screen: an ungated loop animates for the whole
+     session behind other panels. */
+  .is-active .status-dot {
     width: 0.45rem;
     height: 0.45rem;
     border-radius: 9999px;
