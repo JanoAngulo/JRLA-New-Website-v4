@@ -5,7 +5,7 @@
     <!-- Scroll-feed -->
     <div
       data-pan-scroll
-      class="relative w-full overflow-y-auto pb-6 dark:text-light text-dark h-full">
+      class="relative w-full overflow-y-auto pb-12 md:pb-20 dark:text-light text-dark h-full">
       <header class="px-6 pt-6 md:px-10 md:pt-10 lg:px-14 lg:pt-14">
         <div data-scrub data-scrub-entry data-scrub-y="20" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
           <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">02 — Practice</p>
