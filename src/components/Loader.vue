@@ -104,9 +104,6 @@
   import { useThemeStore } from '../store'
   import { markBootRevealing } from '../composables/bootState'
 
-  // Session-scoped, so it clears when the tab closes.
-  const SEEN_KEY = 'jrla:boot-seen'
-
   // Tempo knob — change this to speed up or slow down the whole intro.
   //
   // Every choreographed duration/delay in the style block is written as
@@ -151,9 +148,9 @@
       }
     },
     mounted() {
-      // The intro plays once per browser session, resolves on `window.load`
-      // (capped by MAX_HOLD) rather than a fixed timer, and is skipped outright
-      // under reduced motion — it is pure decoration.
+      // The intro plays on every page load, resolves on `window.load` (capped by
+      // MAX_HOLD) rather than a fixed timer, and is skipped outright under
+      // reduced motion — it is pure decoration.
       const done = () => {
         // Backstop for the skip paths below, which never call beginExit. The
         // latch makes the normal path's second call a no-op.
@@ -163,16 +160,11 @@
         this.$emit('finished')
       }
 
+      // No once-per-session gate: the intro is meant to be seen on every load,
+      // reload included. Reduced motion is the only thing that skips it.
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      // The session gate is bypassed in dev and with `?boot`: sessionStorage
-      // survives reloads, so without an escape hatch the intro is unreachable
-      // for the rest of the day once it has played.
-      const seen = sessionStorage.getItem(SEEN_KEY) === '1'
-      const replay = import.meta.env.DEV || new URLSearchParams(location.search).has('boot')
+      if (reduced) return done()
 
-      if (reduced || (seen && !replay)) return done()
-
-      sessionStorage.setItem(SEEN_KEY, '1')
       document.documentElement.style.overflow = 'hidden'
 
       // Hold until the page is ready, but never past MAX_HOLD nor so briefly
