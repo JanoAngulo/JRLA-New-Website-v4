@@ -39,7 +39,7 @@
       </section>
 
       <!-- RIGHT: content / wordmark -->
-      <section class="relative overflow-hidden max-md:overflow-visible dark:bg-dark bg-light dark:text-light text-dark" data-reveal="slide" data-reveal-at="0.06">
+      <section class="relative overflow-hidden max-md:overflow-visible dark:bg-dark bg-light dark:text-light text-dark">
         <!-- Dot-grid backdrop -->
         <div class="dot-grid bg-size-[24px_24px]" aria-hidden="true"></div>
 
@@ -75,20 +75,27 @@
 
           <div class="flex items-end justify-between gap-6">
             <div class="flex flex-col gap-3">
-              <p class="text-xs tracking-[0.3em] uppercase opacity-65 font-Gilroy">Find me</p>
+              <!-- `data-reveal-o` because the label rests at 65%: without it the
+                   tween would land on full opacity and quietly restyle it. -->
+              <p class="text-xs tracking-[0.3em] uppercase opacity-65 font-Gilroy" data-reveal="fade" data-reveal-at="0.34" data-reveal-o="0.65">Find me</p>
+              <!-- The pills reveal one at a time rather than as a block: three
+                   discrete objects read as a row arriving, and 30ms apart is
+                   close enough that it still lands as one gesture. -->
               <div class="flex gap-3 no-swipe">
-                <a target="_blank" rel="noopener" aria-label="LinkedIn" href="https://www.linkedin.com/in/jrla1219/" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5">
+                <a target="_blank" rel="noopener" aria-label="LinkedIn" href="https://www.linkedin.com/in/jrla1219/" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5" data-reveal="fade" data-reveal-at="0.37" data-reveal-y="12">
                   <i class="fa-brands fa-linkedin-in group-hover:text-light dark:group-hover:text-dark"></i>
                 </a>
-                <a target="_blank" rel="noopener" aria-label="Facebook" href="https://www.facebook.com/Jano1219" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5">
+                <a target="_blank" rel="noopener" aria-label="Facebook" href="https://www.facebook.com/Jano1219" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5" data-reveal="fade" data-reveal-at="0.40" data-reveal-y="12">
                   <i class="fa-brands fa-facebook-f group-hover:text-light dark:group-hover:text-dark"></i>
                 </a>
-                <a target="_blank" rel="noopener" aria-label="Behance" href="https://www.behance.net/JRLA" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5">
+                <a target="_blank" rel="noopener" aria-label="Behance" href="https://www.behance.net/JRLA" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5" data-reveal="fade" data-reveal-at="0.43" data-reveal-y="12">
                   <i class="fa-brands fa-behance group-hover:text-light dark:group-hover:text-dark"></i>
                 </a>
               </div>
             </div>
-            <div class="flex flex-col items-end text-right">
+            <!-- Reveals as one block, not per line: it is a single instruction,
+                 and its lines already carry their own resting opacity. -->
+            <div class="flex flex-col items-end text-right" data-reveal="fade" data-reveal-at="0.37">
               <p class="text-xs tracking-[0.3em] uppercase opacity-65 font-Gilroy">Navigate <span class="md:hidden">↓</span><span class="hidden md:inline">→</span></p>
               <p class="hidden mt-1 text-xs opacity-65 font-Gilroy md:block">scroll or ← → keys</p>
               <p class="mt-1 text-xs opacity-65 font-Gilroy md:hidden">swipe ↑ or ↓</p>
@@ -194,11 +201,11 @@
      written by GSAP, so nothing here hides anything. What is left is the
      structure those tweens need.
 
-     The accent half is absent on purpose: it does NOT animate. It is the fixed
-     ground the entrance happens against, so only its contents carry
-     `data-reveal`. The content half slides outward from the seam rather than
-     inward from the screen edge — it opens away from a surface that was already
-     standing. */
+     Neither half moves as a block. Both are fixed ground; only their contents
+     carry `data-reveal`. The content half used to slide outward from the seam,
+     but a whole-panel xPercent drags the edge between the two halves across the
+     accent surface, which reads as the accent block sliding — the one thing it
+     is not supposed to do. */
 
   /* Seam hairline along the split. CSS owns which axis it draws on, because that
      flips at the breakpoint: stacked layouts meet on a horizontal edge, the
