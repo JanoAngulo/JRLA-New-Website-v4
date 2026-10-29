@@ -47,13 +47,10 @@ import lydiasDSPart1 from '@/assets/img/works/content/lydias-ds-part1.webp'
 import lydiasDSPart2 from '@/assets/img/works/content/lydias-ds-part2.webp'
 import lydiasDSPart3 from '@/assets/img/works/content/lydias-ds-part3.webp'
 
-// CoreProc Revamp
-import coreProcRevamp from '@/assets/img/works/content/coreproc-brand-guideline-sheet.webp'
-import coreProcRevampSquare from '@/assets/img/works/squares/square-coreproc-revamp.webp'
-import coreProcRevampSide from '@/assets/img/works/content/coreproc-cover-photo-dark.webp'
-
-import coreProcRevamp1 from '@/assets/img/works/content/coreproc-brand-style-guide-part1.webp'
-import coreProcRevamp2 from '@/assets/img/works/content/coreproc-brand-style-guide-part2.webp'
+// CoreProc Website 2.0
+import squareCoreProcWebsite from '@/assets/img/works/squares/square-coreproc-website.webp'
+import sideCoreProcWebsite from '@/assets/img/works/content/coreproc-website-side-img.webp'
+import coreProcWebsite1 from '@/assets/img/works/content/coreproc-website-part1.webp'
 
 // Kappartner
 import squarekappartner from '@/assets/img/works/squares/square-kappartner.webp'
@@ -303,17 +300,17 @@ export default {
         category: 'design',
         color: 'bg-[#111124]',
         border: 'border-[#b1e24e]',
-        thumbnail: coreProcRevampSquare,
+        thumbnail: squareCoreProcWebsite,
         title: `CoreProc, Inc. Brand`,
-        role: 'Brand Design',
-        tools: 'Claude',
+        role: 'Design & Develop',
+        tools: 'Vue, Three.js & GSAP',
         year: '2026',
-        type: 'Web and Mobile',
-        projectType: 'Brand Guidelines',
+        type: 'Website',
+        projectType: 'Brand Website',
         status: 'Live Website',
-        imgSide: coreProcRevampSide,
-        imgContent1: coreProcRevamp1,
-        imgContent2: coreProcRevamp2,
+        imgSide: sideCoreProcWebsite,
+        imgContent1: coreProcWebsite1,
+        imgContent2: '',
         imgBackground: '',
         btnText: 'View Live Website',
         link: 'https://coreproc.com'
