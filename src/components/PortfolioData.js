@@ -73,6 +73,12 @@ import sideMarlboro from '@/assets/img/works/content/marlboro-side.webp'
 import contentMarlboro from '@/assets/img/works/content/marlboro-content.webp'
 import bgMarlboro from '@/assets/img/works/content/marlboro-bg.webp'
 
+// Masters Flying School
+import squareMastersFlyingSchool from '@/assets/img/works/squares/square-masters-flying-school.webp'
+import sideMastersFlyingSchool from '@/assets/img/works/content/masters-flying-school-side-img.webp'
+import mastersFlyingSchool1 from '@/assets/img/works/content/masters-flying-school-part1.webp'
+import mastersFlyingSchool2 from '@/assets/img/works/content/masters-flying-school-part2.webp'
+
 // Features
 import frontend from '@/assets/img/features/avatars/frontend.png'
 import uiux from '@/assets/img/features/avatars/uiux.png'
@@ -222,6 +228,28 @@ export default {
         imgBackground: bgVibeteams,
         btnText: 'View Website',
         link: 'https://vibeteams.ai/'
+      },
+
+      {
+        work: 'uiux',
+        id: 'Masters-Flying-School',
+        category: 'design',
+        color: 'bg-[#161514]',
+        border: 'border-[#C8102E]',
+        thumbnail: squareMastersFlyingSchool,
+        title: `Masters Flying School`,
+        role: 'Design & Develop',
+        tools: 'Nuxt & Tailwind',
+        year: '2026',
+        type: 'Website',
+        projectType: 'Redesign Pitch',
+        status: 'Live Preview',
+        imgSide: sideMastersFlyingSchool,
+        imgContent1: mastersFlyingSchool1,
+        imgContent2: mastersFlyingSchool2,
+        imgBackground: '',
+        btnText: 'View Website',
+        link: 'https://masters-flying-school.vercel.app'
       },
 
       {
