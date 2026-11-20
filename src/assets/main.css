@@ -173,13 +173,16 @@
   }
 
   /* Anchors never match :disabled, so this only affects real buttons. */
-  .btn:disabled {
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
     @apply opacity-55 cursor-not-allowed;
   }
-  .btn-primary:disabled:hover {
+  .btn-primary:disabled:hover,
+  .btn-primary[aria-disabled="true"]:hover {
     @apply bg-light-primary border-light-primary text-dark dark:bg-dark-primary dark:border-dark-primary dark:text-dark;
   }
-  .btn-ghost:disabled:hover {
+  .btn-ghost:disabled:hover,
+  .btn-ghost[aria-disabled="true"]:hover {
     @apply bg-transparent border-current text-current;
   }
 
@@ -401,7 +404,7 @@ html {
     font-weight: 700;
   }
   .section-divider .sd-name {
-    opacity: 0.6;
+    opacity: 0.65;
   }
   .section-divider .sd-name::before {
     content: '·';

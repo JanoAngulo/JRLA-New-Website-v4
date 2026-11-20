@@ -5,12 +5,13 @@
     <div
       class="cursor-dot"
       aria-hidden="true"
+      :class="{ 'on-accent': onAccent }"
       :style="{ translate: `${dot.x}px ${dot.y}px` }"
     ></div>
     <div
       class="cursor-ring"
       aria-hidden="true"
-      :class="{ 'is-hover': hovering, 'is-click': clicking }"
+      :class="{ 'is-hover': hovering, 'is-click': clicking, 'on-accent': onAccent }"
       :style="{ translate: `${ring.x}px ${ring.y}px` }"
     ></div>
   </template>
@@ -26,6 +27,8 @@
         ring: { x: -100, y: -100 },
         target: { x: -100, y: -100 },
         hovering: false,
+        // Over an accent plate the cursor turns ink: paper on Filament Yellow is 1.28:1.
+        onAccent: false,
         clicking: false,
         rafId: null,
         reducedMotion: false
@@ -67,6 +70,7 @@
       onUp() { this.clicking = false },
       onOver(e) {
         if (this.isInteractive(e.target)) this.hovering = true
+        this.onAccent = e.target instanceof Element && !!e.target.closest('[data-accent-surface]')
       },
       onOut(e) {
         if (this.isInteractive(e.target)) this.hovering = false
@@ -160,6 +164,20 @@
   html.dark .cursor-ring.is-hover {
     background: color-mix(in oklab, var(--color-light) 18%, transparent);
     border-color: var(--color-light);
+  }
+
+  /* Ink on the accent plates in both themes, matching the Ink-on-Accent Rule. */
+  .cursor-dot.on-accent,
+  html.dark .cursor-dot.on-accent {
+    background: var(--color-dark);
+  }
+  .cursor-ring.on-accent,
+  html.dark .cursor-ring.on-accent {
+    border-color: var(--color-dark);
+  }
+  .cursor-ring.on-accent.is-hover,
+  html.dark .cursor-ring.on-accent.is-hover {
+    background: color-mix(in oklab, var(--color-dark) 18%, transparent);
   }
 
   .cursor-ring.is-click {

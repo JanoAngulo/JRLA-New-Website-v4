@@ -91,7 +91,10 @@
             </div>
           </div>
 
-          <div class="marquee" aria-hidden="true">
+          <!-- The ticker loops past 5s, so WCAG 2.2.2 needs a pause that works for keyboard
+               and touch, not only mouse hover. Reduced motion stops it outright, so the button hides. -->
+          <div class="marquee-row">
+          <div class="marquee" :class="{ 'is-paused': marqueePaused }" aria-hidden="true">
             <div class="marquee-track">
               <span v-for="n in 2" :key="n" class="marquee-group">
                 <span class="role">Front-End Developer</span><span class="dot">●</span>
@@ -103,6 +106,15 @@
                 </template>
               </span>
             </div>
+          </div>
+            <button
+              type="button"
+              class="shrink-0 grid place-content-center w-11 h-11 rounded-full border border-current/50 cursor-pointer text-[0.7rem] transition-[color,background-color,border-color] duration-200 hover:border-light-primary hover:text-light-primary dark:hover:border-dark-primary dark:hover:text-dark-primary motion-reduce:hidden"
+              :aria-pressed="marqueePaused"
+              aria-label="Pause scrolling skills list"
+              @click="marqueePaused = !marqueePaused">
+              <i :class="marqueePaused ? 'fa-solid fa-play' : 'fa-solid fa-pause'" aria-hidden="true"></i>
+            </button>
           </div>
 
           <div class="flex flex-col gap-5 pt-2">
@@ -168,7 +180,8 @@
         // Mirrors the Features toolkit grids; the stat counters count these lists.
         technologies: ['HTML', 'CSS', 'JavaScript', 'Sass', 'Tailwind CSS', 'Bootstrap', 'Vue', 'React', 'Next.js', 'GSAP', 'Laravel', 'WordPress', 'Git', 'Docker'],
         tools: ['Figma', 'Adobe XD', 'Illustrator', 'Photoshop', 'Premiere Pro', 'After Effects', 'Media Encoder', 'Wacom', 'Claude'],
-        stats: { years: 0, technologies: 0, tools: 0, disciplines: 0 }
+        stats: { years: 0, technologies: 0, tools: 0, disciplines: 0 },
+        marqueePaused: false
       }
     },
     computed: {
@@ -271,7 +284,8 @@
     height: 0.45rem;
     border-radius: 9999px;
     background: var(--color-light-primary);
-    animation: pulse-dot 2s ease-in-out infinite;
+    /* Two beats on entry, then still (WCAG 2.2.2). */
+    animation: pulse-dot 2s ease-in-out 2;
   }
   :is(.dark) .status-dot {
     background: var(--color-dark-primary);
@@ -281,16 +295,22 @@
     50% { transform: scale(1.4); opacity: 0.5; }
   }
 
-  .marquee {
-    position: relative;
-    width: 100%;
-    max-width: 100%;
+  /* The rules live on the row so they run under the pause button too. */
+  .marquee-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     min-width: 0;
-    overflow: hidden;
+    flex-shrink: 0;
     border-top: 1px solid color-mix(in oklab, currentcolor 10%, transparent);
     border-bottom: 1px solid color-mix(in oklab, currentcolor 10%, transparent);
+  }
+  .marquee {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
     padding: 1rem 0;
-    flex-shrink: 0;
     line-height: 1;
     mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
     -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
@@ -301,7 +321,8 @@
     width: max-content;
     animation: marquee 55s linear infinite;
   }
-  .marquee:hover .marquee-track {
+  .marquee:hover .marquee-track,
+  .marquee.is-paused .marquee-track {
     animation-play-state: paused;
   }
   .marquee-group .role {
