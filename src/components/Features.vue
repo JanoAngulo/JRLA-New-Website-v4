@@ -79,6 +79,8 @@
   import gsap from '@/assets/img/features/frontend/gsap.svg'
   import gsapLight from '@/assets/img/features/frontend/gsap-light.svg'
   import claude from '@/assets/img/features/frontend/claude.svg'
+  import wordpress from '@/assets/img/features/frontend/wordpress.svg'
+  import wordpressLight from '@/assets/img/features/frontend/wordpress-light.svg'
 
   // UI/UX
   import figma from '@/assets/img/features/uiux/figma.svg'
@@ -149,6 +151,7 @@
           const nextSrc = theme === 'dark' ? lightNextJs : nextjs
           const gsapSrc = theme === 'dark' ? gsapLight : gsap
           const wacomSrc = theme === 'dark' ? lightwacom : wacom
+          const wordpressSrc = theme === 'dark' ? wordpressLight : wordpress
 
           this.featureAsset.frontend = [
             { src: htmlSrc, name: 'HTML5' },
@@ -158,6 +161,7 @@
             { src: tailwind, name: 'Tailwind CSS' },
             { src: bootstrap, name: 'Bootstrap' },
             { src: laravel, name: 'Laravel' },
+            { src: wordpressSrc, name: 'WordPress' },
             { src: git, name: 'Git' },
             { src: docker, name: 'Docker' },
             { src: vue, name: 'Vue.js' },

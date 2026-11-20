@@ -245,6 +245,8 @@
   import lightNextJs from '@/assets/img/features/frontend/light-nextjs.svg'
   import reactjs from '@/assets/img/features/frontend/react.svg'
   import claude from '@/assets/img/features/frontend/claude.svg'
+  import wordpress from '@/assets/img/features/frontend/wordpress.svg'
+  import wordpressLight from '@/assets/img/features/frontend/wordpress-light.svg'
   import figma from '@/assets/img/features/uiux/figma.svg'
   import xd from '@/assets/img/features/uiux/xd.svg'
   import illustrator from '@/assets/img/features/uiux/illustrator.svg'
@@ -266,6 +268,8 @@
     [tailwind, 'Tailwind CSS'],
     [bootstrap, 'Bootstrap'],
     [laravel, 'Laravel'],
+    [wordpress, 'WordPress'],
+    [wordpressLight, 'WordPress'],
     [git, 'Git'],
     [docker, 'Docker'],
     [vue, 'Vue.js'],
@@ -289,6 +293,7 @@
     [css, cssLight],
     [js, jsLight],
     [nextjs, lightNextJs],
+    [wordpress, wordpressLight],
     [wacom, lightwacom]
   ])
 
