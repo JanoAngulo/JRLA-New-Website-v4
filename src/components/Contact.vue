@@ -4,8 +4,8 @@
     :class="['relative w-full md:overflow-hidden overflow-y-auto app-slide', { 'is-active': activeSlide === 'contact' }]">
     <div class="grid grid-cols-1 grid-rows-[auto_auto] min-h-full w-full md:grid-cols-[40fr_60fr] md:grid-rows-1 md:h-full">
       <!-- Left: accent block with pull-quote and contact card -->
-      <section data-accent-surface class="contact-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden min-h-0 h-auto max-md:overflow-visible">
-        <div class="relative flex flex-col justify-between p-6 md:p-10 lg:p-14 gap-8 h-full">
+      <section data-accent-surface class="contact-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-x-hidden md:overflow-y-auto min-h-0 h-auto max-md:overflow-visible">
+        <div class="relative flex flex-col justify-between p-6 md:p-10 lg:p-[clamp(2.5rem,6vh,3.5rem)] gap-[clamp(1.25rem,3.5vh,2rem)] min-h-full">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.06">
             <span>05 / Contact</span>
             <span class="hidden sm:inline opacity-90">Reach Out</span>
@@ -13,7 +13,7 @@
 
           <div class="flex flex-col gap-5">
             <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-90" data-reveal="fade" data-reveal-at="0.08">/ Open Brief</p>
-            <h2 class="text-[clamp(2.25rem,4.8vw,4.25rem)] tracking-[-0.035em] font-Gilroy-extra-bold uppercase leading-[0.9]">
+            <h2 class="text-[clamp(2.25rem,min(4.8vw,8.5vh),4.25rem)] tracking-[-0.035em] font-Gilroy-extra-bold uppercase leading-[0.9]">
               <span class="reveal-line leading-none"><span class="ch-inner" data-reveal="line" data-reveal-at="0.1">Let's build</span></span>
               <span class="reveal-line leading-none"><span class="ch-inner" data-reveal="line" data-reveal-at="0.16">something</span></span>
               <span class="reveal-line leading-none"><span class="ch-inner [-webkit-text-fill-color:transparent] [-webkit-text-stroke:1.5px_var(--color-dark)] opacity-85" data-reveal="line" data-reveal-at="0.22">together.</span></span>
@@ -48,13 +48,13 @@
               <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-90">Find Me</p>
               <div class="flex gap-2 no-swipe">
                 <a target="_blank" rel="noopener" aria-label="LinkedIn" href="https://www.linkedin.com/in/jrla1219/" class="social-pill border-dark/60 text-dark hover:bg-dark hover:text-light-primary hover-fine:hover:-translate-y-0.5 dark:hover:text-dark-primary">
-                  <i class="fa-brands fa-linkedin-in"></i>
+                  <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
                 </a>
                 <a target="_blank" rel="noopener" aria-label="Facebook" href="https://www.facebook.com/Jano1219" class="social-pill border-dark/60 text-dark hover:bg-dark hover:text-light-primary hover-fine:hover:-translate-y-0.5 dark:hover:text-dark-primary">
-                  <i class="fa-brands fa-facebook-f"></i>
+                  <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
                 </a>
                 <a target="_blank" rel="noopener" aria-label="Behance" href="https://www.behance.net/JRLA" class="social-pill border-dark/60 text-dark hover:bg-dark hover:text-light-primary hover-fine:hover:-translate-y-0.5 dark:hover:text-dark-primary">
-                  <i class="fa-brands fa-behance"></i>
+                  <i class="fa-brands fa-behance" aria-hidden="true"></i>
                 </a>
               </div>
             </div>
@@ -85,7 +85,7 @@
               <div class="group/field flex flex-col gap-[0.4rem]">
                 <label for="Name" class="font-Mono text-[0.7rem] tracking-[0.3em] uppercase opacity-65 origin-left transition-[color,opacity,transform,translate] duration-250 group-focus-within/field:opacity-100 group-focus-within/field:-translate-y-0.5 group-focus-within/field:text-light-primary dark:group-focus-within/field:text-dark-primary">Name</label>
                 <div class="relative">
-                  <input type="text" id="Name" name="Name" v-model="name" @input="errors.name = ''" class="font-Gilroy text-base w-full px-[0.65rem] py-3 bg-transparent border-0 border-b border-current/25 rounded-none resize-none text-inherit transition-colors duration-250 placeholder:text-current/65 focus:border-b-transparent dark:focus:border-b-transparent [&:focus:not(:focus-visible)]:outline-none [&:invalid:not(:placeholder-shown)]:border-b-danger dark:[&:invalid:not(:placeholder-shown)]:border-b-danger-dark" :class="errors.name ? 'border-b-danger dark:border-b-danger-dark' : ''" placeholder="Your name" autocomplete="name" aria-required="true" :aria-invalid="!!errors.name" :aria-describedby="errors.name ? 'Name-error' : undefined" required />
+                  <input type="text" id="Name" name="Name" v-model="name" @input="errors.name = ''" class="font-Gilroy text-base w-full px-[0.65rem] py-3 bg-transparent border-0 border-b border-current/50 rounded-none resize-none text-inherit transition-colors duration-250 placeholder:text-current/65 focus:border-b-transparent dark:focus:border-b-transparent [&:focus:not(:focus-visible)]:outline-none [&:invalid:not(:placeholder-shown)]:border-b-danger dark:[&:invalid:not(:placeholder-shown)]:border-b-danger-dark" :class="errors.name ? 'border-b-danger dark:border-b-danger-dark' : ''" placeholder="Your name" autocomplete="name" aria-required="true" :aria-invalid="!!errors.name" :aria-describedby="errors.name ? 'Name-error' : undefined" required />
                   <span aria-hidden="true" class="field-underline pointer-events-none absolute left-0 bottom-0 h-0.5 w-full origin-center scale-x-0 bg-light-primary dark:bg-dark-primary transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-focus-within/field:scale-x-100"></span>
                 </div>
                 <Transition name="slide-fade">
@@ -97,7 +97,7 @@
               <div class="group/field flex flex-col gap-[0.4rem]">
                 <label for="Email" class="font-Mono text-[0.7rem] tracking-[0.3em] uppercase opacity-65 origin-left transition-[color,opacity,transform,translate] duration-250 group-focus-within/field:opacity-100 group-focus-within/field:-translate-y-0.5 group-focus-within/field:text-light-primary dark:group-focus-within/field:text-dark-primary">Email</label>
                 <div class="relative">
-                  <input type="email" id="Email" name="Email" v-model="email" @input="errors.email = ''" class="font-Gilroy text-base w-full px-[0.65rem] py-3 bg-transparent border-0 border-b border-current/25 rounded-none resize-none text-inherit transition-colors duration-250 placeholder:text-current/65 focus:border-b-transparent dark:focus:border-b-transparent [&:focus:not(:focus-visible)]:outline-none [&:invalid:not(:placeholder-shown)]:border-b-danger dark:[&:invalid:not(:placeholder-shown)]:border-b-danger-dark" :class="errors.email ? 'border-b-danger dark:border-b-danger-dark' : ''" placeholder="hello@yourname.com" autocomplete="email" aria-required="true" :aria-invalid="!!errors.email" :aria-describedby="errors.email ? 'Email-error' : undefined" required />
+                  <input type="email" id="Email" name="Email" v-model="email" @input="errors.email = ''" class="font-Gilroy text-base w-full px-[0.65rem] py-3 bg-transparent border-0 border-b border-current/50 rounded-none resize-none text-inherit transition-colors duration-250 placeholder:text-current/65 focus:border-b-transparent dark:focus:border-b-transparent [&:focus:not(:focus-visible)]:outline-none [&:invalid:not(:placeholder-shown)]:border-b-danger dark:[&:invalid:not(:placeholder-shown)]:border-b-danger-dark" :class="errors.email ? 'border-b-danger dark:border-b-danger-dark' : ''" placeholder="hello@yourname.com" autocomplete="email" aria-required="true" :aria-invalid="!!errors.email" :aria-describedby="errors.email ? 'Email-error' : undefined" required />
                   <span aria-hidden="true" class="field-underline pointer-events-none absolute left-0 bottom-0 h-0.5 w-full origin-center scale-x-0 bg-light-primary dark:bg-dark-primary transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-focus-within/field:scale-x-100"></span>
                 </div>
                 <Transition name="slide-fade">
@@ -114,7 +114,7 @@
                 <span id="Message-count" class="font-Mono text-[0.65rem] tracking-[0.18em] transition-[color,opacity,transform,translate] duration-200 origin-right" :class="message.length > 800 ? 'opacity-100 text-light-primary dark:text-dark-primary' : 'opacity-65'">{{ message.length }} / 1000</span>
               </div>
               <div class="relative">
-                <textarea id="Message" name="Message" v-model="message" @input="errors.message = ''" class="font-Gilroy text-base w-full px-[0.65rem] py-3 bg-transparent border-0 border-b border-current/25 rounded-none resize-none text-inherit transition-colors duration-250 placeholder:text-current/65 focus:border-b-transparent dark:focus:border-b-transparent [&:focus:not(:focus-visible)]:outline-none [&:invalid:not(:placeholder-shown)]:border-b-danger dark:[&:invalid:not(:placeholder-shown)]:border-b-danger-dark leading-[1.55] min-h-36 block" :class="errors.message ? 'border-b-danger dark:border-b-danger-dark' : ''" rows="7" maxlength="1000" placeholder="Project brief, idea, or just say hi…" aria-required="true" :aria-invalid="!!errors.message" :aria-describedby="errors.message ? 'Message-error Message-count' : 'Message-count'" required></textarea>
+                <textarea id="Message" name="Message" v-model="message" @input="errors.message = ''" class="font-Gilroy text-base w-full px-[0.65rem] py-3 bg-transparent border-0 border-b border-current/50 rounded-none resize-none text-inherit transition-colors duration-250 placeholder:text-current/65 focus:border-b-transparent dark:focus:border-b-transparent [&:focus:not(:focus-visible)]:outline-none [&:invalid:not(:placeholder-shown)]:border-b-danger dark:[&:invalid:not(:placeholder-shown)]:border-b-danger-dark leading-[1.55] min-h-36 block" :class="errors.message ? 'border-b-danger dark:border-b-danger-dark' : ''" rows="7" maxlength="1000" placeholder="Project brief, idea, or just say hi…" aria-required="true" :aria-invalid="!!errors.message" :aria-describedby="errors.message ? 'Message-error Message-count' : 'Message-count'" required></textarea>
                 <span aria-hidden="true" class="field-underline pointer-events-none absolute left-0 bottom-1.5 h-0.5 w-full origin-center scale-x-0 bg-light-primary dark:bg-dark-primary transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-focus-within/field:scale-x-100"></span>
               </div>
               <Transition name="slide-fade">
@@ -125,26 +125,31 @@
             </div>
 
             <Transition name="slide-fade">
-              <div v-if="isSuccess" class="flex items-center gap-3 px-[1.1rem] py-[0.95rem] font-Mono text-xs tracking-[0.18em] uppercase border-l bg-[color-mix(in_oklab,var(--color-success)_12%,transparent)] text-success-text border-l-success dark:bg-[color-mix(in_oklab,var(--color-success-dark)_14%,transparent)] dark:text-success-text-dark dark:border-l-success-dark" role="status">
+              <div v-if="isSuccess" class="flex items-center gap-3 px-[1.1rem] py-[0.95rem] font-Mono text-xs tracking-[0.18em] uppercase border-l bg-[color-mix(in_oklab,var(--color-success)_12%,transparent)] text-success-text border-l-success dark:bg-[color-mix(in_oklab,var(--color-success-dark)_14%,transparent)] dark:text-success-text-dark dark:border-l-success-dark">
                 <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                 <span>Message received. I'll get back to you soon.</span>
                 <button type="button" class="ml-auto grid place-content-center min-w-11 min-h-11 -my-2 cursor-pointer opacity-70 transition-opacity duration-200 bg-transparent border-0 text-inherit rounded-[4px] hover:opacity-100" @click="isSuccess = false" aria-label="Dismiss confirmation"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
               </div>
             </Transition>
             <Transition name="slide-fade">
-              <div v-if="isError" class="flex items-center gap-3 px-[1.1rem] py-[0.95rem] font-Mono text-xs tracking-[0.18em] uppercase border-l bg-[color-mix(in_oklab,var(--color-danger)_12%,transparent)] text-danger-text border-l-danger dark:bg-[color-mix(in_oklab,var(--color-danger-dark)_14%,transparent)] dark:text-danger-text-dark dark:border-l-danger-dark" role="alert">
+              <div v-if="isError" class="flex items-center gap-3 px-[1.1rem] py-[0.95rem] font-Mono text-xs tracking-[0.18em] uppercase border-l bg-[color-mix(in_oklab,var(--color-danger)_12%,transparent)] text-danger-text border-l-danger dark:bg-[color-mix(in_oklab,var(--color-danger-dark)_14%,transparent)] dark:text-danger-text-dark dark:border-l-danger-dark">
                 <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
                 <span>Something broke on the way. Try again or email me directly.</span>
                 <button type="button" class="ml-auto grid place-content-center min-w-11 min-h-11 -my-2 cursor-pointer opacity-70 transition-opacity duration-200 bg-transparent border-0 text-inherit rounded-sm hover:opacity-100" @click="isError = false" aria-label="Dismiss error"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
               </div>
             </Transition>
+            <!-- Mounted from the start, so screen readers hear the text change; a live region
+                 inserted with its text already inside is often skipped. sr-only is absolute,
+                 so it takes no flex gap. -->
+            <p class="sr-only" role="status">{{ liveMessage }}</p>
 
             <div class="flex items-center justify-between gap-4 pt-2 flex-wrap">
               <div class="flex items-center gap-[0.55rem] font-Mono text-[0.65rem] tracking-[0.22em] uppercase opacity-70">
                 <span class="form-dot w-[7px] h-[7px] rounded-full bg-light-primary dark:bg-dark-primary"></span>
                 <span>Replies within a day</span>
               </div>
-              <button type="submit" :disabled="loading" :aria-busy="loading" class="btn btn-primary group px-[1.6rem]">
+              <!-- aria-disabled, not disabled: disabling the focused button drops keyboard focus to <body>. -->
+              <button type="submit" :aria-disabled="loading ? 'true' : undefined" :aria-busy="loading" class="btn btn-primary group px-[1.6rem]">
                 <span>{{ loading ? 'Sending' : justSent ? 'Sent' : 'Send Message' }}</span>
                 <i v-if="loading" class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
                 <i v-else-if="justSent" class="check-pop fa-solid fa-circle-check" aria-hidden="true"></i>
@@ -200,6 +205,7 @@
         message: '',
         isSuccess: false,
         isError: false,
+        liveMessage: '',
         errors: { name: '', email: '', message: '' }
       }
     },
@@ -236,17 +242,27 @@
         this.$nextTick(() => {
           const el = document.getElementById(first)
           if (!el) return
-          // preventScroll: a browser scroll of the pinned, clipped track breaks the pager.
-          try {
-            el.focus({ preventScroll: true })
-          } catch {
-            el.focus()
+          // Desktop: preventScroll, because a browser scroll of the pinned, clipped track
+          // breaks the pager. Mobile stacks the panels on a native page scroll, where the
+          // field must be scrolled into view or it opens the keyboard off screen.
+          if (window.matchMedia('(min-width: 768px)').matches) {
+            try {
+              el.focus({ preventScroll: true })
+            } catch {
+              el.focus()
+            }
+            return
           }
+          el.focus()
+          el.scrollIntoView({ block: 'center' })
         })
       },
       async onSubmit() {
+        // The button is aria-disabled, not disabled, so a second press still lands here.
+        if (this.loading) return
         this.isSuccess = false
         this.isError = false
+        this.liveMessage = ''
         if (!this.validate()) return this.focusFirstError()
         this.loading = true
         try {
@@ -258,6 +274,7 @@
           })
           if (response.ok) {
             this.isSuccess = true
+            this.liveMessage = "Message sent. I'll get back to you soon."
             this.justSent = true
             this.name = ''
             this.email = ''
@@ -271,6 +288,7 @@
         } catch (e) {
           this.isError = true
         } finally {
+          if (this.isError) this.liveMessage = 'Message not sent. Try again or email me directly.'
           this.loading = false
         }
       }
@@ -306,7 +324,7 @@
   /* Only .status-dot pulses; .form-dot stays static so the column has one heartbeat.
      Gated on .is-active so the loop doesn't run behind other panels. */
   .is-active .status-dot {
-    animation: pulse-dot 2s ease-in-out infinite;
+    animation: pulse-dot 2s ease-in-out 2;
   }
   @keyframes pulse-dot {
     0%, 100% { transform: scale(1); opacity: 1; }
