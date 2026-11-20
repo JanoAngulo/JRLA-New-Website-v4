@@ -214,7 +214,7 @@ components:
 
 **Creative North Star: "The Printed Issue"**
 
-This is a magazine issue that happens to scroll sideways. Every panel is a spread, every spread is numbered, and the reader moves through it left to right the way a thumb moves through paper. The system already speaks this language natively: chapters are labelled `04 — BIOGRAPHY`, the masthead reads `ISSUE / 2026`, the portrait carries a plate caption (`— PHOTOGRAPHED IN BULACAN` · `FIG. 01`), and hairline rules separate matter the way column rules do in print. None of that is decoration; it is the organizing metaphor made literal.
+This is a magazine issue that happens to scroll sideways. Every panel is a spread, every spread is numbered, and the reader moves through it left to right the way a thumb moves through paper. The system already speaks this language natively: chapters are labelled `04 / BIOGRAPHY`, the masthead reads `ISSUE / 2026`, the portrait carries a plate caption (`/ PHOTOGRAPHED IN BULACAN` · `FIG. 01`), and hairline rules separate matter the way column rules do in print. None of that is decoration; it is the organizing metaphor made literal.
 
 The register is **precise, technical, and tactile**. Precision shows in the labels — IBM Plex Mono at 10px with 0.3em tracking, uppercase, always prefixing a value, never floating on its own. Technical shows in what the surface refuses: no gradients as decoration, no glass, no soft toy-like rounding, no illustration standing in for evidence. Tactile shows in the response — everything pressable depresses to `scale(0.95)` in `--dur-press` (80ms), cards lift 3px and sharpen their border to the accent, pager arrows lean the direction they will send you. Every one of those responses is gated behind `hover-fine` or `:active`, so a phone never inherits a pointer affordance it cannot honour. The interface behaves like machined controls, and the display type is the one place it raises its voice.
 
@@ -257,7 +257,7 @@ Category badges. Each of the four disciplines gets a light and dark pair, contra
 - **Vector** — burnt orange (`#7c2d12` on `#fed7aa`, dark: `#f29d2a` on `#431407`)
 - **Video** — oxblood (`rgb(127,29,29)` on `rgb(254,226,226)`, dark: `rgb(254,202,202)` on `rgb(76,5,25)`)
 
-**Case-study hero colours** are the one place a colour enters from data rather than from the palette. Each UI/UX entry in [PortfolioData.js](src/components/PortfolioData.js) carries a `color` class — `bg-[#660000]`, `bg-[#1E0025]`, `bg-[#018441]`, `bg-[#111124]`, `bg-[#00aeb3]`, `bg-[#0c0c0b]` — which fills the left plate of that project's case study under `text-light`, with `border-white/15` hairlines and an optional `mix-blend-soft-light` background image at 50%. That is the *client's* colour, quoted; it never leaves a `WorkDetails` hero and never becomes a system token.
+**Case-study hero colours** are the one place a colour enters from data rather than from the palette. Each UI/UX entry in [PortfolioData.js](src/components/PortfolioData.js) carries a `color` class — `bg-[#660000]`, `bg-[#1E0025]`, `bg-[#018441]`, `bg-[#111124]`, `bg-[#00aeb3]`, `bg-[#0c0c0b]` — which fills the left plate of that project's case study under `text-light`, with `border-white/15` hairlines and an optional `mix-blend-soft-light` background image at 50%. That is the *client's* colour, quoted; it never leaves a `WorkDetails` hero and never becomes a system token. The quote gives way to contrast. Light text must reach 4.5:1 on the plate, so Lydia's green is set one step deeper (`#017538`, 4.88:1, not the brand `#018441` at 4.01:1). A plate too bright for light text carries `textColor: 'text-dark'` in its data entry instead (Kappartner `#00aeb3`: ink at 6.50:1). Hero hairlines are `border-current/15`, so they follow whichever text colour the plate takes.
 
 ### Named Rules
 
@@ -299,7 +299,9 @@ Below the floor, hierarchy is carried by **type** — mono, uppercase, wide trac
 
 ### Named Rules
 
-**The Attached Label Rule.** Mono exists to name a value: `ROLE`, `YEAR`, `TOOLS`, `BASED IN`, `AVAILABLE`, `04 — BIOGRAPHY`. A mono string with nothing beneath or beside it is mono used as decoration — rewrite it as body copy or delete it.
+**The Attached Label Rule.** Mono exists to name a value: `ROLE`, `YEAR`, `TOOLS`, `BASED IN`, `AVAILABLE`, `04 / BIOGRAPHY`. A mono string with nothing beneath or beside it is mono used as decoration — rewrite it as body copy or delete it.
+
+**The Slash Rule.** Chapter labels and plate captions use a slash: `04 / BIOGRAPHY`, `/ OPEN BRIEF`, `/ PHOTOGRAPHED IN BULACAN`. This matches the masthead (`ISSUE / 2026`, `FORM / 01`). A middle dot (`·`) joins items in a list (`Bulacan · PH`). Rendered text never uses an em dash, in labels or in prose (decided 2026-11-20).
 
 **The Loud-Once Rule.** GilroyExtraBold is for type meant to be felt across the room. One display-scale element per panel, maximum. Everything else steps down to headline or below.
 
@@ -334,13 +336,13 @@ Below the floor, hierarchy is carried by **type** — mono, uppercase, wide trac
 
 ## Elevation & Depth
 
-**Flat at rest.** Surfaces are distinguished by tone (`--color-light-card` / `--color-dark-card` against the page), by relative hairlines, and by the dot-grid backdrop at 5% opacity under a vertical mask. Shadow is not a surface property here — it is a state response. A card sits flush until it is hovered or focused, and then it lifts 3px, tightens its border to the accent, and gains a deeper ambient shadow.
+**Flat at rest.** Surfaces are distinguished by tone (`--color-light-card` / `--color-dark-card` against the page), by relative hairlines, and by the dot-grid backdrop at 5% opacity under a vertical mask. The dot grid is the layout sheet a spread is pasted up on. It appears only on the working half of a split (Home, About and Contact right sides), never on an accent plate, so it marks which half holds the reading copy. Shadow is not a surface property here — it is a state response. A card sits flush until it is hovered or focused, and then it lifts 3px, tightens its border to the accent, and gains a deeper ambient shadow.
 
 `.neumorph` and its dark/hover variants have been **deleted** from the codebase. The six-layer emboss belonged to an earlier visual world and contradicted this one; nothing referenced it. Do not reintroduce it.
 
 ### Shadow Vocabulary
 
-Two utilities in [main.css](src/assets/main.css) carry the whole system:
+Two utilities in [main.css](src/assets/main.css) carry the whole system. Their values live once, as `--shadow-rest` and `--shadow-lifted` on `:root` (redefined under `.dark`). A compound shadow, such as a focus ring plus the lift, references the variable (`shadow-[0_0_0_2px_var(--color-light-primary),var(--shadow-lifted)]`) and never re-types the numbers.
 
 - **`.surface-rest`** (`0 1px 2px rgba(0,0,0,0.04), 0 8px 20px -8px rgba(0,0,0,0.08)`; dark: `0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -10px rgba(0,0,0,0.5)`): Barely-there contact shadow. Reads as a sheet lying on the page, not floating above it. This is the resting state of every card.
 - **`.surface-lifted`** (`0 2px 4px rgba(0,0,0,0.06), 0 16px 32px -10px rgba(0,0,0,0.14)`; dark adds a faint accent edge at 8%): Hover, focus-visible, and modal surfaces, paired with `translateY(-3px)` where the element moves.
@@ -364,7 +366,7 @@ Two utilities in [main.css](src/assets/main.css) carry the whole system:
 
 **Inputs are square.** They carry `rounded-none` and no box at all — the only thing drawing a field is the rule under it. An earlier revision gave them a `6px` radius; that is gone, and a rounded input now reads as foreign here.
 
-The old `.card` / `.card-left` / `.card-right` helpers (`rounded-xl`) have been **deleted** — nothing used them, and rounded content plates contradict the rule above. All 40 remaining `rounded-2xl` uses, both `rounded-3xl` corners, and the single `bg-gray-300` in the codebase live inside `SkeletonLoader` — a pre-existing placeholder component that predates this world and is visible for under a second behind `<Suspense>`. It is a known holdout, not a licence: nothing new inherits its radius or its literal grey.
+The old `.card` / `.card-left` / `.card-right` helpers (`rounded-xl`) have been **deleted** — nothing used them, and rounded content plates contradict the rule above. `SkeletonLoader` was the last holdout (40 `rounded-2xl` plates, `rounded-3xl` corners, a literal `bg-gray-300`). It is now square, with a `bg-current/10` tone, like every other placeholder. Only its text-line bars stay `rounded-full`.
 
 Borders are hairline-thin (`1px`) at 6–14% `currentColor`. Image frames use fixed ratios — `4/3` for work thumbnails — and clip with `overflow-hidden` rather than rounding.
 
@@ -448,7 +450,7 @@ One component, two personalities, chosen by `variant`:
 - **Meta ledger:** six mono key/value rows separated by `border-white/15` hairlines, keys at `0.625rem` / `0.3em` tracking / 70% opacity, values plain, `tabular-nums` on the year. The last row drops its rule.
 - **Back control:** a mono uppercase text button preceded by a `1.5rem` hairline that *grows to `2.25rem`* on hover while the gap opens from `0.6rem` to `0.85rem`. The rule extending is the affordance; there is no box.
 - **Body:** full-width screens stacked at their natural ratio, `space-y-1 md:space-y-4 lg:space-y-8`.
-- **Skeleton:** while `<Suspense>` waits, `SkeletonLoader` holds the geometry (see §Shapes for its status as a holdout), cross-fading to the real content on `mode="out-in"` — opacity only, since the two layouts share no structure.
+- **Skeleton:** while `<Suspense>` waits, `SkeletonLoader` holds the geometry in square `currentColor`-tone plates, cross-fading to the real content on `mode="out-in"` — opacity only, since the two layouts share no structure.
 
 ### Image loader
 
@@ -499,7 +501,7 @@ The parts nobody draws still ship with the design. All themed in [main.css](src/
 - **Don't** reintroduce `.neumorph`. It has been deleted; the emboss contradicts the flat doctrine.
 - **Don't** put both accents in one theme. Light is Signal Red; dark is Filament Yellow; never both.
 - **Don't** use the accent as a large surface fill between the two sanctioned scales. It marks state or it is a whole plate — the only mid-scale exceptions in the codebase are the 404's off-canvas radial wash (`14%` light / `16%` dark, blurred `20px`, pushed past the corner) and the boot screen's `25%` logo glow. Both are atmosphere behind content, not a tinted container.
-- **Don't** round content plates. No `rounded-2xl` cards, no soft image frames. In this codebase `rounded-2xl` means "skeleton placeholder", nothing else.
+- **Don't** round content plates. No `rounded-2xl` cards, no soft image frames.
 - **Don't** write raw hex outside the `@theme` block, and don't write raw `z-index` numbers anywhere.
 - **Don't** italicize or all-caps body prose. Emphasis is accent colour plus ExtraBold on a short clause.
 - **Don't** ship more than one display-scale heading per panel.

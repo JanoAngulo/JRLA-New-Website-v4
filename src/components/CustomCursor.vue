@@ -1,10 +1,7 @@
 <template>
   <template v-if="supported">
-    <!-- Position uses the standalone `translate` property, not `transform`. The
-         individual properties compose in a fixed order (translate → rotate →
-         scale → transform), so `transform: translate()` would apply inside
-         `scale` and multiply the position by the scale factor, throwing the ring
-         across the screen on hover. -->
+    <!-- Standalone `translate`, not `transform`: inside `scale`, the position
+         would be multiplied by the hover scale factor. -->
     <div
       class="cursor-dot"
       aria-hidden="true"
@@ -36,9 +33,7 @@
     },
     mounted() {
       if (!window.matchMedia('(pointer: fine)').matches) return
-      // Someone who has asked the OS for a bigger or higher-contrast pointer wants
-      // that pointer; replacing it with a 6px dot overrides an accessibility
-      // setting, so this component sits out entirely there.
+      // Don't override an OS high-contrast pointer.
       if (window.matchMedia('(forced-colors: active)').matches) return
       this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       this.supported = true
@@ -80,14 +75,11 @@
         if (!(el instanceof Element)) return false
         return !!el.closest('a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"], .social-pill, .tag, .btn-primary, .btn-ghost, .coreproc-chip, .focus-item, .nav-arrow')
       },
-      // A lerp never actually arrives, so without the epsilon check below this
-      // writes `translate` on the ring every frame forever — including with the
-      // mouse parked, patching a style that differs in the sixth decimal.
       loop() {
         this.rafId = requestAnimationFrame(this.loop)
         const dx = this.target.x - this.ring.x
         const dy = this.target.y - this.ring.y
-        // Sub-pixel: nothing left to show, so stop writing.
+        // A lerp never arrives; snap when sub-pixel so a parked mouse stops writing styles.
         if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
           if (this.ring.x !== this.target.x || this.ring.y !== this.target.y) {
             this.ring.x = this.target.x
@@ -95,8 +87,7 @@
           }
           return
         }
-        // Reduced motion keeps the ring (it's a pointer) but drops the trail,
-        // which is the part that moves.
+        // Reduced motion keeps the ring but drops the trail.
         const ease = this.reducedMotion ? 1 : 0.18
         this.ring.x += dx * ease
         this.ring.y += dy * ease
@@ -112,9 +103,7 @@
     cursor: none !important;
   }
 
-  /* …except where the cursor is the affordance: a text field with no I-beam stops
-     announcing that you can type in it. The ring keeps trailing over the top and
-     the native caret cursor rides inside it. */
+  /* Text fields keep the native I-beam, which signals they're editable. */
   html.has-custom-cursor :is(input, textarea, select, [contenteditable]),
   html.has-custom-cursor :is(input, textarea, select, [contenteditable]) * {
     cursor: auto !important;
@@ -144,11 +133,7 @@
     background: var(--color-light);
   }
 
-  /* The ring resizes via the standalone `scale` property, never width/height/margin
-     — those are layout properties, and animating them on an element that already
-     repaints every pointer frame forces layout each tick. The box stays 36px and
-     scales about its own centre, so the margin offset stays valid. Pairs with
-     `translate` for position; see the template note. */
+  /* Resize via `scale`, not width/height, to avoid layout on every pointer frame. */
   .cursor-ring {
     width: 36px;
     height: 36px;

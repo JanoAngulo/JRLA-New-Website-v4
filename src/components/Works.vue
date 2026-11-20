@@ -2,14 +2,12 @@
   <div
     ref="worksSection"
     :class="['relative w-full md:overflow-hidden overflow-y-auto dark:text-light text-dark app-slide md:flex md:flex-col', { 'is-active': activeSlide === 'works' }]">
-    <!-- Sticky top header -->
     <div class="relative z-5 px-5 pt-5 md:px-8 md:pt-6 lg:px-12 lg:pt-8 bg-light dark:bg-dark md:shrink-0">
       <div class="works-header-meta flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12" data-reveal="fade" data-reveal-y="-8" data-reveal-at="0.04">
-        <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">03 — Selected Works</p>
+        <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">03 / Selected Works</p>
         <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ filteredWorks.length }} / {{ works2.length }} Projects</p>
       </div>
 
-      <!-- Filter pills -->
       <div class="no-swipe relative flex gap-[0.4rem] sm:gap-2 pt-4 pb-5 overflow-x-auto snap-x snap-proximity [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] [mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] sm:[mask-image:none] sm:[-webkit-mask-image:none]">
         <button
           v-for="(f, i) in filters"
@@ -26,15 +24,8 @@
       </div>
     </div>
 
-    <!-- Grid of works. `.works-grid` fades as one surface across a filter change;
-         it has to be the container rather than each card, because the cards' own
-         opacity is written inline by GSAP every frame and would overwrite a
-         per-card transition.
-
-         The pan region's height comes from `md:flex-1 md:min-h-0`, so it tracks
-         the header however the filter row wraps. `min-h-0` is load-bearing:
-         without it a flex child won't shrink below its content and never
-         scrolls. -->
+    <!-- The filter fade sits on .works-grid, not the cards: GSAP writes card opacity inline.
+         md:min-h-0 is load-bearing; without it the flex child never shrinks or scrolls. -->
     <div data-pan-scroll class="pt-6 px-5 pb-12 md:pt-8 md:px-8 md:pb-12 md:flex-1 md:min-h-0 lg:px-12 lg:pb-16 md:overflow-y-auto">
       <div class="works-grid grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7" :class="{ 'is-swapping': swapping }">
         <div
@@ -48,21 +39,19 @@
           class="reveal">
         <button
           type="button"
-          class="work-card group relative flex flex-col text-left overflow-hidden w-full h-full p-0 [font:inherit] text-inherit cursor-pointer bg-light-card dark:bg-dark-card border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.06)] transition-[border-color,translate,box-shadow] duration-300 ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_-8px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_8px_24px_-10px_rgba(0,0,0,0.5)] hover:border-light-primary hover-fine:hover:-translate-y-[3px] hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:hover:border-dark-primary dark:hover:shadow-[0_2px_4px_rgba(0,0,0,0.5),0_16px_36px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,202,38,0.08)] focus-visible:outline-none focus-visible:border-light-primary focus-visible:-translate-y-[3px] focus-visible:shadow-[0_0_0_2px_var(--color-light-primary),0_16px_32px_-10px_rgba(0,0,0,0.14)] dark:focus-visible:border-dark-primary dark:focus-visible:shadow-[0_0_0_2px_var(--color-dark-primary),0_16px_36px_-12px_rgba(0,0,0,0.7)]"
+          class="work-card group relative flex flex-col text-left overflow-hidden w-full h-full p-0 [font:inherit] text-inherit cursor-pointer bg-light-card dark:bg-dark-card border border-current/6 transition-[border-color,translate,box-shadow] duration-300 ease-out surface-rest hover-fine:hover:border-light-primary hover-fine:hover:-translate-y-[3px] hover-fine:hover:shadow-(--shadow-lifted) dark:hover-fine:hover:border-dark-primary focus-visible:outline-none focus-visible:border-light-primary focus-visible:-translate-y-[3px] focus-visible:shadow-[0_0_0_2px_var(--color-light-primary),var(--shadow-lifted)] dark:focus-visible:border-dark-primary dark:focus-visible:shadow-[0_0_0_2px_var(--color-dark-primary),var(--shadow-lifted)]"
           :aria-label="`Open ${item.title} project details`"
           @click="openWork(item)">
-          <!-- Image area -->
           <div class="work-card-img relative aspect-[4/3] overflow-hidden bg-current/5" :class="{ 'work-card-img--contain': item.work === 'uiux' }">
             <LazyImage :src="item.thumbnail" :alt="item.title + ' thumbnail'" :eager="i < 3" />
             <div class="absolute inset-0 z-3 flex items-center justify-center bg-dark/[0.78] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
               <span class="inline-flex items-center gap-2 px-[1.2rem] py-[0.7rem] font-Mono text-xs tracking-[0.25em] uppercase text-light border border-light">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                <i class="fa-solid fa-expand" aria-hidden="true"></i>
                 View Project
               </span>
             </div>
           </div>
 
-          <!-- Meta -->
           <div class="px-[1.1rem] pt-4 pb-5 flex flex-col gap-2 border-t border-current/10">
             <div class="flex items-center justify-between gap-3 mb-1">
               <span class="font-Mono text-[0.7rem] tracking-[0.3em] opacity-75">{{ String(i + 1).padStart(2, '0') }}</span>
@@ -82,16 +71,13 @@
         </div>
       </div>
 
-      <!-- Empty state -->
       <div v-if="filteredWorks.length === 0" class="py-16 px-8 text-center">
         <p class="font-Mono text-xs tracking-[0.3em] uppercase opacity-65">No projects in this filter yet.</p>
       </div>
     </div>
 
     <app-dialog variant="sheet" :open="isOffcanvasOpen" :aria-label="content.title || 'Project details'" @close="closeOffCanvas" @after-leave="resetUiuxContent">
-      <!-- The skeleton and the real case study share no geometry, so `mode="out-in"`
-           cross-fades them on opacity alone — moving two unrelated layouts would
-           describe a transformation that isn't happening. -->
+      <!-- Skeleton and case study share no geometry, so they cross-fade on opacity only. -->
       <Suspense v-if="isUiUx">
         <template #default>
           <Transition name="content-swap" mode="out-in" appear>
@@ -105,19 +91,16 @@
         </template>
       </Suspense>
       <div v-else class="flex flex-col gap-7 pb-12 text-dark dark:text-light">
-        <!-- Header -->
         <div class="flex flex-col gap-2">
-          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">— Project · {{ workTypeLabel(content.type) }}</p>
+          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">/ Project · {{ workTypeLabel(content.type) }}</p>
           <h2 class="text-[clamp(1.75rem,4vw,3rem)] tracking-[-0.025em] leading-[0.95] mt-1 font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
           <div class="hairline mt-3"></div>
         </div>
 
-        <!-- Preview area -->
         <div v-if="content.link" class="relative w-full">
           <iframe :src="content.link" :title="content.title" frameborder="0" class="block w-full aspect-[9/16] min-h-[70vh] md:aspect-[16/10] md:min-h-0 bg-white border border-current/12" loading="lazy"></iframe>
         </div>
 
-        <!-- Meta grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-current/12">
           <div v-if="content.role" class="flex flex-col gap-[0.4rem] py-4 border-b border-current/12 sm:max-lg:[&:nth-child(even)]:border-l sm:max-lg:[&:nth-child(even)]:pl-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-4">
             <span class="font-Mono text-[0.625rem] tracking-[0.3em] uppercase opacity-65">Role</span>
@@ -137,13 +120,11 @@
           </div>
         </div>
 
-        <!-- Description -->
         <div class="flex flex-col gap-3">
-          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65">— About</p>
+          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65">/ About</p>
           <p class="font-Gilroy text-base sm:text-lg leading-relaxed opacity-90 whitespace-pre-wrap">{{ content.description }}</p>
         </div>
 
-        <!-- Toolkit -->
         <div v-if="content.tools && content.tools.length" class="flex flex-col gap-[0.85rem]">
           <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65">Toolkit · {{ content.tools.length }}</p>
           <div class="grid grid-cols-[repeat(auto-fill,minmax(64px,1fr))] gap-[0.65rem]">
@@ -153,7 +134,6 @@
           </div>
         </div>
 
-        <!-- CTA -->
         <div v-if="content.link" class="flex flex-col gap-3 pt-3 sm:flex-row">
           <button type="button" class="btn btn-primary group" @click="openLink(content.link)">
             <span>{{ content.btnText || 'Visit Live' }}</span>
@@ -169,7 +149,6 @@
 
     <app-dialog variant="modal" :open="isModalOpen" :aria-label="content.title || 'Project'" @close="isModalOpen = false">
       <div class="flex flex-col gap-5 text-dark dark:text-light min-w-[min(80vw,720px)]">
-        <!-- Media -->
         <iframe
           v-if="content.type === 'video'"
           :src="content.link"
@@ -189,17 +168,14 @@
           </button>
         </div>
 
-        <!-- Header -->
         <div class="flex flex-col gap-[0.4rem]">
-          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">— {{ workTypeLabel(content.type) }}</p>
+          <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-70">/ {{ workTypeLabel(content.type) }}</p>
           <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] tracking-[-0.025em] leading-none font-Gilroy-extra-bold uppercase">{{ content.title }}</h2>
           <div class="hairline mt-3"></div>
         </div>
 
-        <!-- Description -->
         <p class="font-Gilroy text-base leading-relaxed opacity-90 whitespace-pre-wrap">{{ content.description }}</p>
 
-        <!-- Tools -->
         <div v-if="content.tools && content.tools.length" class="flex flex-col gap-[0.65rem]">
           <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65">Toolkit</p>
           <div class="grid grid-cols-[repeat(auto-fill,minmax(56px,1fr))] gap-[0.55rem] max-w-[360px]">
@@ -223,12 +199,10 @@
   import { panelEntrance } from '../composables/panelEntrance'
   import { createScrollScrub } from '../composables/useScrollScrub'
 
-  // How long the grid dims before the filtered set swaps in. Must match the
-  // `.works-grid` transition-duration below.
+  // Must match the .works-grid transition-duration below.
   const SWAP_FADE_MS = 120
 
-  // Same imports as PortfolioData, so tool references can be mapped back to
-  // display names (the URLs may be hashed or inlined as data URIs).
+  // Same imports as PortfolioData, to map hashed or inlined tool URLs back to names.
   import html from '@/assets/img/features/frontend/html.svg'
   import htmlLight from '@/assets/img/features/frontend/html-light.svg'
   import css from '@/assets/img/features/frontend/css.svg'
@@ -319,7 +293,6 @@
       return {
         works2: portfolioData.portfolio.myWorks2,
         activeFilter: 'all',
-        // True only while the grid is dimmed between filter sets (SWAP_FADE_MS).
         swapping: false,
         isModalOpen: false,
         isOffcanvasOpen: false,
@@ -365,21 +338,17 @@
       }
     },
     watch: {
-      // Filtering re-renders the cards, so the scrub targets are stale and the
-      // grid's scrollHeight — the pause-and-pan length — has changed. Re-collect
-      // against the new DOM, then ask WebView to remeasure.
+      // New cards mean stale scrub targets and a new pan length: re-collect, then remeasure.
       activeFilter() {
         this.$nextTick(() => {
           this._scrub?.refresh()
           this.$emit('remeasure')
-          // Give the re-revealed cards one frame to take their opening values, so
-          // the grid fades in over the new set rather than a flash of the old one.
+          // One frame for new cards to take their opening values before the grid fades back.
           requestAnimationFrame(() => { this.swapping = false })
         })
       }
     },
     mounted() {
-      // Scroll-linked card reveals — see useScrollScrub.
       this.$nextTick(() => {
         this._scrub = createScrollScrub(this.$refs.worksSection)
         this._scrub.start()
@@ -389,10 +358,8 @@
       this._scrub?.destroy()
     },
     methods: {
-      // Filter changes go through here rather than assigning `activeFilter`
-      // inline, so the grid can dim before the DOM swaps under it. The rAF gets
-      // the dim class on screen for a frame first; without it the fade-out and
-      // the swap land in the same paint and nothing is bridged.
+      // Dims the grid before the swap; the rAF paints the dim first so fade and swap
+      // don't land in the same frame.
       setFilter(id) {
         if (id === this.activeFilter) return
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -505,13 +472,7 @@
 </script>
 
 <style lang="css" scoped>
-  /* Header and filter entrance live in panelEntrance.js, built only at
-     (min-width: 768px). On mobile the section goes active later than its cards'
-     scroll-scrub, so an entrance here would hold the header hidden while a card
-     was already fading in below it — the mixin's `media` option skips the build
-     entirely there, and with no CSS from-state the header is simply present. */
-
-  /* Skeleton -> case-study cross-fade (see the <Suspense> block above). */
+  /* Skeleton → case-study cross-fade. */
   .content-swap-enter-active,
   .content-swap-leave-active {
     transition: opacity var(--dur-base) var(--ease-out);
@@ -521,15 +482,12 @@
     opacity: 0;
   }
 
-  /* Filter swap: the grid dims as one surface, the set changes behind it, then it
-     comes back, so it reads as one substitution. Duration must match
-     SWAP_FADE_MS in the script. */
+  /* Duration must match SWAP_FADE_MS in the script. */
   .works-grid {
     transition: opacity 120ms var(--ease-out);
   }
   .works-grid.is-swapping {
-    /* Not 0: keeping a trace of the old set reads as the same grid re-filtered
-       rather than a page load. */
+    /* Not 0, so it reads as a re-filter rather than a page load. */
     opacity: 0.25;
   }
   @media (prefers-reduced-motion: reduce) {
@@ -540,22 +498,17 @@
     }
   }
 
-  /* Card reveals are scroll-linked (see useScrollScrub): opacity/Y are written
-     inline every frame, so a CSS transition here would lag the scrub. This
-     from-state only prevents a flash before JS engages.
-
-     No `will-change` either — it would promote a permanent compositor layer per
-     card, and GSAP's force3D already covers them while they move. */
+  /* No transition (it would lag the scrub) and no will-change (a layer per card).
+     This from-state only prevents a flash before JS engages. */
   .reveal {
     opacity: 0;
   }
   @media (prefers-reduced-motion: reduce) {
-    /* useScrollScrub reveals scrub targets statically under reduced motion. */
+    /* useScrollScrub reveals statically here. */
     .reveal { opacity: 1; }
   }
 
-  /* The thumbnail lives inside the LazyImage child, so it needs a descendant /
-     :deep selector rather than utilities on the parent. */
+  /* Descendant / :deep selectors: the img lives inside the LazyImage child. */
   .work-card-img img {
     width: 100%;
     height: 100%;
@@ -566,8 +519,7 @@
     object-fit: contain;
     object-position: center bottom;
   }
-  /* Gated on a real pointer: on touch, tapping a card fires a phantom :hover that
-     sticks after navigation, leaving the card zoomed. */
+  /* Fine pointers only: on touch a sticky phantom :hover leaves the card zoomed. */
   @media (hover: hover) and (pointer: fine) {
     .work-card:hover .work-card-img img {
       transform: scale(1.04);
