@@ -1,7 +1,6 @@
 <template>
   <a href="#main-content" class="skip-link">Skip to content</a>
 
-  <!-- Prev / Next arrows (desktop) -->
   <div
     class="fixed items-center hidden w-full pointer-events-none lg:grid top-14 start-0 app-slide"
     :style="{ zIndex: 'var(--z-nav)' }">
@@ -11,7 +10,8 @@
         @click="prev"
         aria-label="Previous section"
         class="nav-arrow nav-arrow-prev focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
-        :class="{ 'is-hidden': activeIndex === 0 }">
+        :class="{ 'is-hidden': activeIndex === 0 }"
+        :disabled="activeIndex === 0">
         <i class="fa-solid fa-chevron-left"></i>
       </button>
       <button
@@ -19,13 +19,13 @@
         @click="next"
         aria-label="Next section"
         class="nav-arrow nav-arrow-next focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
-        :class="{ 'is-hidden': activeIndex === lastIndex }">
+        :class="{ 'is-hidden': activeIndex === lastIndex }"
+        :disabled="activeIndex === lastIndex">
         <i class="fa-solid fa-chevron-right"></i>
       </button>
     </div>
   </div>
 
-  <!-- Prev / Next arrows (mobile — vertical, so up/down) -->
   <div
     class="fixed bottom-4 end-4 flex flex-col gap-2 pointer-events-none lg:hidden"
     :style="{ zIndex: 'var(--z-nav)' }">
@@ -34,7 +34,8 @@
       @click="prev"
       aria-label="Previous section"
       class="nav-arrow nav-arrow-up focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
-      :class="{ 'is-hidden': activeIndex === 0 }">
+      :class="{ 'is-hidden': activeIndex === 0 }"
+        :disabled="activeIndex === 0">
       <i class="fa-solid fa-chevron-up"></i>
     </button>
     <button
@@ -42,7 +43,8 @@
       @click="next"
       aria-label="Next section"
       class="nav-arrow nav-arrow-down focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
-      :class="{ 'is-hidden': activeIndex === lastIndex }">
+      :class="{ 'is-hidden': activeIndex === lastIndex }"
+        :disabled="activeIndex === lastIndex">
       <i class="fa-solid fa-chevron-down"></i>
     </button>
   </div>
@@ -58,7 +60,8 @@
             :mobileHeight="mobileHeight"
             :ready="bootRevealing"
             :settledSlide="settledSlide"
-            :activeSlide="slideInView">
+            :activeSlide="slideInView"
+            @go="goTo">
           </home>
         </section>
         <section class="h-panel" :inert="panelInert(1)">
@@ -138,17 +141,13 @@
         windowWidth: 0,
         activeIndex: 0,
         slideInView: 'home',
-        // `slideInView` resolves half a viewport before travel stops, which is
-        // the right cue for nav state and the wrong one for an entrance. This is
-        // the arrival — see onSettle in useHorizontalScroll.
+        // Set when travel stops; `slideInView` fires half a viewport early, too soon for entrances.
         settledSlide: '',
         scroller: null,
         resizeRaf: null,
         remeasureRaf: null,
         ready: false,
-        // `ready` un-hides the track behind the boot overlay so layout settles
-        // early; that is deliberately NOT the cue for Home's entrance, which
-        // would then play and finish under an opaque overlay. This is.
+        // Home's entrance cue; `ready` fires while the overlay is still opaque.
         bootRevealing: bootState.revealing,
         deepLinking: false,
         booted: false,
@@ -159,27 +158,21 @@
       lastIndex() {
         return SECTIONS.length - 1
       },
-      // Matches MOBILE_QUERY in useHorizontalScroll: above this the pager is
-      // horizontal and only one panel is visible; below it panels are stacked.
+      // Must match MOBILE_QUERY in useHorizontalScroll.
       isDesktop() {
         return this.windowWidth >= 768
       }
     },
     methods: {
-      // Desktop keeps every panel mounted in a clipped track and moves it with a
-      // transform, so off-screen panels stay in the tab order. Worse, focusing an
-      // off-screen node makes the browser scroll the clipped wrap, which GSAP
-      // never resets — a permanent layout offset. `inert` removes them from
-      // focus, pointer and AT reach. Not needed on mobile, where all are visible.
+      // Off-screen desktop panels stay in the tab order, and focusing one scrolls
+      // the clipped wrap, which GSAP never resets. `inert` takes them out of reach.
       panelInert(idx) {
         return this.isDesktop && idx !== this.activeIndex
       },
       onBootReveal() {
         this.bootRevealing = true
       },
-      // Fired by App once the boot overlay has gone. Re-fits the pager (it
-      // measured itself while <html> was scroll-locked) and releases the
-      // deep-link scroll that could not run against a locked document.
+      // Re-fit after the overlay's scroll lock lifts and run the deferred deep-link scroll.
       onBooted() {
         this.booted = true
         const pending = this.pendingDeepLink
@@ -187,9 +180,7 @@
         if (!this.deepLinking) this.scroller?.refresh(this.activeIndex)
         if (pending) pending()
       },
-      // Backstop for the same problem: if anything still manages to focus inside
-      // the clipped wrap (browsers restoring focus, extensions) it scrolls the
-      // wrap. GSAP owns the track's x, so any scroll here is corruption.
+      // GSAP owns the track's x, so any native scroll of the wrap is corruption.
       onWrapScroll() {
         const wrap = this.$refs.wrap
         if (!wrap) return
@@ -210,18 +201,15 @@
         this.goTo(2)
       },
       onWorksRemeasure() {
-        // A Works filter changes the grid height, so the pause-and-pan length is
-        // stale: reshape the scrub in place, then reset to the top of Works. The
-        // reset matters because a shorter list maps the same scroll pixels to a
-        // higher progress, which would read as forward scroll and jump ahead a
-        // section. Desktop-only; rAF lets the filtered layout settle first.
+        // A filter changes the pan length; reset to Works' top or the same scroll
+        // pixels map to a later section.
         if (this.windowWidth < 768 || !this.scroller) return
         if (this.remeasureRaf) cancelAnimationFrame(this.remeasureRaf)
         this.remeasureRaf = requestAnimationFrame(() => {
           this.remeasureRaf = null
           if (this.deepLinking) return
           this.scroller.remeasure()
-          this.goTo(2, { immediate: true }) // snap to Works arrival (top)
+          this.goTo(2, { immediate: true })
         })
       },
       prev() {
@@ -236,31 +224,26 @@
       onActive(idx) {
         this.activeIndex = idx
         this.slideInView = SECTIONS[idx] || ''
-        // Anything that was settled no longer is; the panel being left has to
-        // see this change to rewind its entrance.
+        // Clearing it lets the panel being left rewind its entrance.
         if (this.settledSlide !== SECTIONS[idx]) this.settledSlide = ''
         const nextHash = this.indexToHash(idx)
         if (this.$route?.hash !== nextHash) {
           this.$router.replace({ path: '/', hash: nextHash }).catch(() => {})
         }
       },
-      // The arrow-key listener is on `window`, so it sees every keystroke in the
-      // document — including ones meant for a text field. Without this, pressing
-      // ArrowLeft to fix a typo in the contact form pages the pager away and
-      // leaves focus in an off-screen textarea. The caret always wins.
+      // The arrow-key listener is on `window`; without this, ArrowLeft in the
+      // contact form pages the pager away.
       isTypingTarget(el) {
         if (!(el instanceof HTMLElement)) return false
         if (el.isContentEditable) return true
         const tag = el.tagName
         if (tag === 'TEXTAREA' || tag === 'SELECT') return true
         if (tag !== 'INPUT') return false
-        // Checkboxes/radios/buttons don't consume arrow keys the way text does,
-        // so let those page the pager.
+        // Non-text inputs don't consume arrow keys.
         return !['checkbox', 'radio', 'button', 'submit', 'reset'].includes(el.type)
       },
       onKeydown(e) {
-        // A modifier means the key belongs to the browser or OS (history nav,
-        // word jump, text selection), not to the pager.
+        // Modified arrows belong to the browser or OS (history, word jump, selection).
         if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
         // IME composition: arrow keys are candidate selection, not navigation.
         if (e.isComposing || e.keyCode === 229) return
@@ -275,8 +258,6 @@
         } else {
           return
         }
-        // Only claim the event once it's ours, so unhandled keys still reach the
-        // browser's own scrolling.
         e.preventDefault()
       },
       updateHeights() {
@@ -292,10 +273,8 @@
           this.resizeRaf = null
           const prevWidth = this.windowWidth
           this.updateHeights()
-          // iOS Safari/Edge fire resize when the address bar shows/hides on
-          // scroll: height changes, width doesn't. refresh() snaps back to the
-          // active panel top, which yanks the user mid-scroll, so only refresh on
-          // a real width change (orientation flip, desktop resize).
+          // iOS fires resize as the address bar toggles; refresh() would yank the
+          // user mid-scroll, so mobile only refreshes on a width change.
           const mobile = window.matchMedia('(max-width: 767px)').matches
           if (mobile && window.innerWidth === prevWidth) return
           this.scroller?.refresh()
@@ -337,8 +316,7 @@
           onActive: this.onActive,
           onSettle: this.onSettle
         })
-        // Start at Home, reveal, then smooth-scroll across to the deep-linked
-        // section rather than jumping to it.
+        // Deep links start at Home and smooth-scroll across rather than jump.
         this.onActive(0)
         const startAtDeepLink = () => {
           if (initialIdx <= 0) return
@@ -347,22 +325,16 @@
           setTimeout(() => { this.deepLinking = false }, 1700)
         }
         requestAnimationFrame(() => {
-          // `ready` un-hides the track early on purpose: the panel paints behind
-          // the boot overlay, so layout, fonts and images are settled by the time
-          // the overlay lifts.
+          // Paint behind the overlay so layout is settled when it lifts.
           this.ready = true
-          // The travel has to wait, though: the overlay locks document scroll and
-          // a scrollTo against a locked document is a no-op, which would strand a
-          // shared #works link on Home.
+          // scrollTo is a no-op while the overlay locks the document, so wait for boot.
           if (this.booted) startAtDeepLink()
           else this.pendingDeepLink = startAtDeepLink
         })
 
-        // Images / fonts settle later and can shift the pan length, so remeasure —
-        // but never while a deep-link scroll is animating, which would yank it.
+        // Late images/fonts shift the pan length; skip while a deep-link scroll runs.
         const remeasure = () => { if (!this.deepLinking) this.scroller?.refresh(this.activeIndex) }
-        // `load` may already have fired, and a listener added after the event
-        // never runs, so check readyState rather than only subscribing.
+        // `load` may already have fired.
         if (document.readyState === 'complete') remeasure()
         else window.addEventListener('load', remeasure, { once: true })
         if (document.fonts?.ready) document.fonts.ready.then(remeasure)

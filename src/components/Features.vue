@@ -2,13 +2,12 @@
   <div
     ref="featuresSection"
     class="relative w-full overflow-hidden app-slide">
-    <!-- Scroll-feed -->
     <div
       data-pan-scroll
       class="relative w-full overflow-y-auto pb-12 md:pb-20 dark:text-light text-dark h-full">
       <header class="px-6 pt-6 md:px-10 md:pt-10 lg:px-14 lg:pt-14">
         <div data-scrub data-scrub-entry data-scrub-y="20" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12">
-          <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">02 — Practice</p>
+          <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">02 / Practice</p>
           <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ portfolioData.portfolio.features.length }} Disciplines</p>
         </div>
       </header>
@@ -18,16 +17,14 @@
         :key="item.id"
         class="grid grid-cols-1 gap-8 px-6 py-12 border-b border-current/10 last:border-b-0 last:pb-6 md:gap-12 md:px-10 md:py-16 md:items-start lg:gap-16 lg:px-14 lg:py-20"
         :class="i % 2 === 1 ? 'md:grid-cols-[7fr_5fr]' : 'md:grid-cols-[5fr_7fr]'">
-        <!-- Visual column: accent block -->
         <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="48" class="scrub-el relative hidden md:flex md:flex-col" :class="{ 'md:order-2': i % 2 === 1 }">
           <div data-accent-surface class="ex-art relative w-full aspect-square max-h-[560px] overflow-hidden flex items-end justify-center sm:aspect-4/5 md:aspect-3/4 md:min-h-[480px] md:max-h-[640px] lg:max-h-[720px] dark:bg-dark-primary bg-light-primary">
             <LazyImage :src="item.img[0]" :alt="item.title + ' illustration'" :eager="i === 0" draggable="false" @dragstart.prevent />
           </div>
         </div>
 
-        <!-- Content column -->
         <div class="flex flex-col gap-4">
-          <p data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="24" class="scrub-el font-Mono text-xs tracking-[0.35em] uppercase opacity-65">— {{ ids[item.id] }}</p>
+          <p data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="24" class="scrub-el font-Mono text-xs tracking-[0.35em] uppercase opacity-65">/ {{ ids[item.id] }}</p>
           <h3 class="text-[clamp(2.5rem,5.5vw,4.5rem)] tracking-[-0.03em] font-Gilroy-extra-bold uppercase leading-[0.9]">
             <span class="reveal-line leading-none"><span data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-fade="0" data-scrub-y="105" data-scrub-start="0.80" data-scrub-end="0.48" class="etl-inner">{{ item.title.split(' ')[0] }}</span></span>
             <span class="reveal-line leading-none"><span data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-fade="0" data-scrub-y="105" data-scrub-start="0.76" data-scrub-end="0.44" class="etl-inner dark:text-dark-primary text-light-primary">{{ item.title.split(' ').slice(1).join(' ') }}</span></span>
@@ -37,15 +34,18 @@
 
           <div data-scrub :data-scrub-entry="i === 0 ? '' : undefined" data-scrub-y="34" data-scrub-start="0.88" data-scrub-end="0.56" class="scrub-el pt-4">
             <p class="font-Mono text-[10px] tracking-[0.35em] uppercase opacity-65 mb-3">Toolkit · {{ featureAsset[item.id]?.length || 0 }}</p>
-            <div class="grid grid-cols-[repeat(auto-fill,minmax(64px,1fr))] gap-3">
-              <div
+            <!-- Visible names, not `title` tooltips, which only reach mouse users. -->
+            <ul class="grid grid-cols-[repeat(auto-fill,minmax(72px,1fr))] gap-x-3 gap-y-4" role="list">
+              <li
                 v-for="(t, j) in featureAsset[item.id]"
                 :key="j"
-                class="tool-pill"
-                :title="t.name">
-                <img :src="t.src" :alt="t.name" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
-              </div>
-            </div>
+                class="flex flex-col items-center gap-2">
+                <span class="tool-pill">
+                  <img :src="t.src" alt="" loading="lazy" class="max-w-[65%] max-h-[65%] w-auto h-auto object-contain" />
+                </span>
+                <span class="font-Mono text-[0.625rem] leading-tight tracking-[0.04em] text-center opacity-80">{{ t.name }}</span>
+              </li>
+            </ul>
           </div>
         </div>
       </article>
@@ -59,7 +59,7 @@
   import LazyImage from './LazyImage.vue'
   import { createScrollScrub } from '../composables/useScrollScrub'
 
-  // FRONTEND
+  // Front-end
   import html from '@/assets/img/features/frontend/html.svg'
   import htmlLight from '@/assets/img/features/frontend/html-light.svg'
   import css from '@/assets/img/features/frontend/css.svg'
@@ -136,9 +136,8 @@
       activeSlide: {
         immediate: true,
         handler(v) {
-          // The first article + header have no scroll travel to scrub against, so
-          // they play a timed entrance on arrival instead. $nextTick so the scrub
-          // instance exists on the initial immediate call.
+          // Header and first article have no scroll travel, so they get a timed entrance.
+          // $nextTick: the scrub instance doesn't exist yet on the immediate call.
           this.$nextTick(() => this._scrub?.setActive(v === 'features'))
         }
       },
@@ -185,7 +184,6 @@
       }
     },
     mounted() {
-      // Scroll-linked, reversible reveals — see useScrollScrub.
       this.$nextTick(() => {
         this._scrub = createScrollScrub(this.$refs.featuresSection)
         this._scrub.start()
@@ -199,36 +197,29 @@
 </script>
 
 <style lang="css" scoped>
-  /* Reveals here are scroll-linked: useScrollScrub writes opacity/transform inline
-     every frame, so there is no CSS transition — one would lag the scrub. The
-     from-states below only prevent a flash before JS engages.
+  /* No CSS transition (it would lag the scrub) and no will-change (force3D already promotes
+     while moving). From-states below only prevent a flash before JS engages. */
 
-     No `will-change` either: GSAP's force3D already puts these on the GPU while
-     they move, and a standing hint would hold a layer per line all session. */
-
-  /* Masked title lines rise from an overflow-hidden parent; JS drives Y only. */
   .reveal-line {
     display: block;
     overflow: hidden;
   }
   .etl-inner {
     display: inline-block;
-    transform: translateY(105%); /* JS overrides once engaged */
+    transform: translateY(105%);
   }
 
-  /* Fading elements: hidden until JS sets opacity/Y. */
   .scrub-el {
     opacity: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    /* useScrollScrub reveals everything statically, so clear the from-states. */
+    /* useScrollScrub reveals statically here, so clear the from-states. */
     .etl-inner { transform: none; }
     .scrub-el { opacity: 1; }
   }
 
-  /* The illustration lives inside the LazyImage child, hence the descendant
-     selector. */
+  /* Descendant selector: the img lives inside the LazyImage child. */
   .ex-art img {
     width: 100%;
     height: 100%;
@@ -240,7 +231,7 @@
     pointer-events: none;
   }
 
-  /* Prose comes from v-html, so the injected markup can't carry utility classes. */
+  /* v-html prose can't carry utility classes. */
   .ex-prose :deep(p) {
     font-family: var(--font-Gilroy);
     font-size: clamp(1rem, 1.05vw, 1.125rem);

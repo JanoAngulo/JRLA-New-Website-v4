@@ -3,9 +3,8 @@
     ref="aboutSection"
     :class="['relative w-full overflow-x-hidden md:overflow-hidden overflow-y-auto app-slide', { 'is-active': activeSlide === 'about' }]">
     <div class="grid grid-cols-1 grid-rows-[420px_auto] min-h-full w-full md:grid-cols-[40fr_60fr] md:grid-rows-1 md:h-full">
-      <!-- LEFT: portrait on accent block -->
+      <!-- Left: portrait on accent block -->
       <section data-accent-surface class="about-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden">
-        <!-- Corner meta labels -->
         <div class="absolute top-0 inset-x-0 z-10 flex items-start justify-between px-5 md:px-8 pt-5 md:pt-8 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.12" data-reveal-y="-8">
           <span class="flex items-center gap-2">
             <span class="live-dot"></span>
@@ -14,7 +13,6 @@
           <span class="opacity-90">JR / Angulo</span>
         </div>
 
-        <!-- Portrait — framed by accent block -->
         <div class="portrait-plate group absolute inset-x-4 inset-y-12 md:inset-x-8 md:inset-y-18 lg:inset-x-10 lg:inset-y-20 overflow-hidden z-2" data-reveal="draw" data-reveal-at="0.06">
           <span class="absolute z-3 pointer-events-none w-5 h-5 md:w-7 md:h-7 top-1.5 left-1.5 md:top-2.5 md:left-2.5 border-t-2 border-l-2 border-current"></span>
           <span class="absolute z-3 pointer-events-none w-5 h-5 md:w-7 md:h-7 top-1.5 right-1.5 md:top-2.5 md:right-2.5 border-t-2 border-r-2 border-current"></span>
@@ -28,39 +26,34 @@
             @dragstart.prevent />
         </div>
 
-        <!-- Bottom caption -->
         <div class="absolute bottom-0 inset-x-0 z-10 flex items-end justify-between px-5 md:px-8 pb-5 md:pb-8 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.16">
-          <span>— Photographed in Bulacan</span>
+          <span>/ Photographed in Bulacan</span>
           <span class="hidden sm:inline opacity-90">FIG. 01</span>
         </div>
       </section>
 
-      <!-- RIGHT: biography -->
+      <!-- Right: biography -->
       <section data-pan-scroll class="about-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto" data-reveal="slide" data-reveal-x="3" data-reveal-at="0.06">
-        <!-- Subtle dot-grid backdrop -->
         <div class="dot-grid bg-size-[22px_22px]" aria-hidden="true"></div>
 
         <div class="relative flex flex-col md:justify-between p-6 md:p-10 lg:p-14 gap-6 md:h-full min-w-0">
-          <!-- Top eyebrow -->
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.06" data-reveal-o="0.7">
-            <span>04 — Biography</span>
+            <span>04 / Biography</span>
             <span class="hidden sm:inline">Issue / 2026</span>
           </div>
 
-          <!-- Headline + body -->
           <div class="space-y-5">
             <h2 class="text-[clamp(1.5rem,8vw,2.25rem)] md:text-[clamp(1.75rem,3.6vw,3.25rem)] tracking-[-0.025em] font-Gilroy-extra-bold uppercase leading-[0.92]">
-              <span class="heading-line"><span class="hl-inner" data-reveal="line" data-reveal-at="0.08">Designing Seamless</span></span>
-              <span class="heading-line"><span class="hl-inner" data-reveal="line" data-reveal-at="0.14">Journeys, <em class="not-italic dark:text-dark-primary text-light-primary">One</em></span></span>
-              <span class="heading-line"><span class="hl-inner" data-reveal="line" data-reveal-at="0.2"><em class="not-italic dark:text-dark-primary text-light-primary">Pixel</em> At A Time.</span></span>
+              <span class="heading-line"><span class="hl-inner" data-reveal="line" data-reveal-at="0.08">Four Crafts,</span></span>
+              <span class="heading-line"><span class="hl-inner" data-reveal="line" data-reveal-at="0.14"><em class="not-italic dark:text-dark-primary text-light-primary">One</em> Pair</span></span>
+              <span class="heading-line"><span class="hl-inner" data-reveal="line" data-reveal-at="0.2">Of <em class="not-italic dark:text-dark-primary text-light-primary">Hands.</em></span></span>
             </h2>
             <div class="hairline rule-draw" data-reveal="draw" data-reveal-at="0.24"></div>
             <p class="font-Gilroy text-[0.95rem] md:text-lg leading-relaxed opacity-90 max-w-2xl text-pretty">
-              <span class="inline-block" data-reveal="fade" data-reveal-at="0.14">I'm Jano — a UI/UX designer and front-end developer from Bulacan </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.18">with <span class="dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">3+ years</span> building interfaces </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.22">that feel <em class="not-italic dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">considered</em>.</span>
+              <span class="inline-block" data-reveal="fade" data-reveal-at="0.14">I'm Jano, a UI/UX designer and front-end developer from Bulacan </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.18">with <span class="dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">4+ years</span> making things for screens </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.22">that feel <em class="not-italic dark:text-dark-primary text-light-primary font-Gilroy-extra-bold">considered</em>.</span>
             </p>
           </div>
 
-          <!-- Stats counter -->
           <div class="grid grid-cols-2 items-start gap-x-5 gap-y-4 max-[380px]:gap-2 border-y border-current/12 py-4 md:flex md:flex-wrap md:items-center md:gap-4 md:border-0">
             <div class="flex flex-col gap-1 min-w-0 md:min-w-[70px]" data-reveal="fade" data-reveal-at="0.1">
               <p class="font-Gilroy-extra-bold text-[1.6rem] md:text-[clamp(1.6rem,2.4vw,2.25rem)] max-[380px]:text-[1.2rem] leading-none tracking-[-0.02em] text-light-primary dark:text-dark-primary">{{ stats.years }}<span class="text-[0.7em] ml-0.5">+</span></p>
@@ -83,7 +76,6 @@
             </div>
           </div>
 
-          <!-- Meta facts grid -->
           <div class="grid grid-cols-2 max-[380px]:grid-cols-1 gap-x-5 gap-y-[0.9rem] md:gap-x-8 md:gap-y-5 lg:grid-cols-[repeat(3,max-content)] lg:justify-start lg:gap-x-12 border-y border-current/12 py-4 md:py-5">
             <div class="flex flex-col gap-[0.35rem]" data-reveal="fade" data-reveal-at="0.12">
               <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-65">Based in</p>
@@ -91,7 +83,7 @@
             </div>
             <div class="flex flex-col gap-[0.35rem]" data-reveal="fade" data-reveal-at="0.16">
               <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-65">Disciplines</p>
-              <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em]">Web · UI/UX · Motion</p>
+              <p class="font-Gilroy text-[0.85rem] md:text-[0.95rem] tracking-[-0.005em]">Web · UI/UX · Video · Vector</p>
             </div>
             <div class="flex flex-col gap-[0.35rem]" data-reveal="fade" data-reveal-at="0.2">
               <p class="font-Mono text-[0.55rem] md:text-[0.625rem] tracking-[0.24em] md:tracking-[0.3em] uppercase opacity-65">Available</p>
@@ -99,7 +91,6 @@
             </div>
           </div>
 
-          <!-- Skill marquee -->
           <div class="marquee" aria-hidden="true">
             <div class="marquee-track">
               <span v-for="n in 2" :key="n" class="marquee-group">
@@ -107,54 +98,36 @@
                 <span class="role">UI/UX Designer</span><span class="dot">●</span>
                 <span class="role">Video Editor</span><span class="dot">●</span>
                 <span class="role">Vector Artist</span><span class="dot">●</span>
-                <span>HTML</span><span class="dot">●</span>
-                <span>CSS</span><span class="dot">●</span>
-                <span>JavaScript</span><span class="dot">●</span>
-                <span>Vue</span><span class="dot">●</span>
-                <span>React</span><span class="dot">●</span>
-                <span>Next.js</span><span class="dot">●</span>
-                <span>Tailwind</span><span class="dot">●</span>
-                <span>GSAP</span><span class="dot">●</span>
-                <span>SASS</span><span class="dot">●</span>
-                <span>Laravel</span><span class="dot">●</span>
-                <span>Git</span><span class="dot">●</span>
-                <span>Docker</span><span class="dot">●</span>
-                <span>Figma</span><span class="dot">●</span>
-                <span>Adobe XD</span><span class="dot">●</span>
-                <span>Illustrator</span><span class="dot">●</span>
-                <span>Photoshop</span><span class="dot">●</span>
-                <span>Premiere Pro</span><span class="dot">●</span>
-                <span>After Effects</span><span class="dot">●</span>
-                <span>Wacom</span><span class="dot">●</span>
+                <template v-for="name in [...technologies, ...tools]" :key="name">
+                  <span>{{ name }}</span><span class="dot">●</span>
+                </template>
               </span>
             </div>
           </div>
 
-          <!-- Powered by + CTAs -->
           <div class="flex flex-col gap-5 pt-2">
             <div class="flex items-center gap-3 flex-wrap" data-reveal="fade" data-reveal-at="0.12">
               <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-65">Powered by</p>
               <div class="flex items-center gap-2">
-                <!-- width/height are each SVG's own viewBox, so the browser can
-                     reserve the right box before the file arrives. `h-5 w-auto`
-                     still drives the rendered size. -->
+                <!-- width/height match each SVG's viewBox to reserve the box; h-5 w-auto sets the size. -->
                 <img class="h-5 w-auto opacity-90" src="@/assets/img/features/frontend/vue.svg" alt="Vue.js" width="50" height="44" loading="lazy" decoding="async" />
                 <img class="h-5 w-auto opacity-90" src="@/assets/img/features/frontend/tailwind.svg" alt="Tailwind CSS" width="70" height="43" loading="lazy" decoding="async" />
-                <!-- GSAP ships two fills, so it swaps with the theme like the Features grid does. -->
+                <!-- GSAP has light and dark fills, swapped by theme. -->
                 <img class="h-5 w-auto opacity-90" :src="gsapSrc" alt="GSAP" width="82" height="30" loading="lazy" decoding="async" />
               </div>
             </div>
 
             <div class="flex flex-col sm:flex-row gap-3">
-              <button
-                @click="downloadResume"
-                class="btn btn-primary group px-[1.1rem] py-3 md:px-6 tracking-[0.2em] md:tracking-[0.25em]">
+              <a
+                :href="Resume"
+                download="Angulo-John-Russel-CV.pdf"
+                class="btn btn-primary group no-underline px-[1.1rem] py-3 min-h-11 md:px-6 tracking-[0.2em] md:tracking-[0.25em]">
                 <span>Download CV</span>
                 <i class="fa-solid fa-arrow-down transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-y-0.5" aria-hidden="true"></i>
-              </button>
+              </a>
               <button
                 @click="$emit('changeSlide')"
-                class="btn btn-ghost group px-[1.1rem] py-3 md:px-6 tracking-[0.2em] md:tracking-[0.25em]">
+                class="btn btn-ghost group px-[1.1rem] py-3 min-h-11 md:px-6 tracking-[0.2em] md:tracking-[0.25em]">
                 <span>View Works</span>
                 <i class="fa-solid fa-arrow-right transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-x-[3px]" aria-hidden="true"></i>
               </button>
@@ -192,11 +165,17 @@
     data() {
       return {
         Resume,
-        stats: { years: 0, technologies: 0, tools: 0, disciplines: 0 },
-        statsTargets: { years: 3, technologies: 14, tools: 10, disciplines: 4 }
+        // Mirrors the Features toolkit grids; the stat counters count these lists.
+        technologies: ['HTML', 'CSS', 'JavaScript', 'Sass', 'Tailwind CSS', 'Bootstrap', 'Vue', 'React', 'Next.js', 'GSAP', 'Laravel', 'WordPress', 'Git', 'Docker'],
+        tools: ['Figma', 'Adobe XD', 'Illustrator', 'Photoshop', 'Premiere Pro', 'After Effects', 'Media Encoder', 'Wacom', 'Claude'],
+        stats: { years: 0, technologies: 0, tools: 0, disciplines: 0 }
       }
     },
     computed: {
+      statsTargets() {
+        // Years count from the first paid work in 2021.
+        return { years: 4, technologies: this.technologies.length, tools: this.tools.length, disciplines: 4 }
+      },
       portraitSrc() {
         return useThemeStore().darkMode ? portraitDark : portraitLight
       },
@@ -218,14 +197,12 @@
     },
     methods: {
       animateStats() {
-        // Counting digits is motion, and it replays on every entry, so reduced
-        // motion gets the final numbers outright.
+        // Reduced motion gets the final numbers outright.
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           this.stats = { ...this.statsTargets }
           return
         }
-        // Re-entering mid-count would otherwise leave two rAF chains writing the
-        // same four values, racing to a flickering result.
+        // Re-entering mid-count would leave two rAF chains racing on the same values.
         if (this._statsRaf) cancelAnimationFrame(this._statsRaf)
 
         const duration = 1400
@@ -243,24 +220,13 @@
           this._statsRaf = t < 1 ? requestAnimationFrame(step) : null
         }
         this._statsRaf = requestAnimationFrame(step)
-      },
-      downloadResume() {
-        const link = document.createElement('a')
-        link.href = this.Resume
-        link.download = 'Angulo-John-Russel-CV.pdf'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
       }
     }
   }
 </script>
 
 <style lang="css" scoped>
-  /* The entrance lives in panelEntrance.js; these two only keep the containment
-     the layout needs. `.about-right` carries `data-reveal="slide"`; the accent
-     half deliberately does not — it is the fixed ground the entrance happens
-     against, present from the first frame. */
+  /* The accent half never slides; it is the fixed ground the entrance plays against. */
   .about-left {
     min-width: 0;
     overflow: hidden;
@@ -270,8 +236,7 @@
     overflow-x: hidden;
   }
 
-  /* Deliberately static: `.status-dot` below is already the panel's one pulsing
-     element, and two loops at different tempos read as a glitch. */
+  /* Static on purpose: a second pulse beside .status-dot reads as a glitch. */
   .live-dot {
     width: 7px;
     height: 7px;
@@ -280,8 +245,7 @@
   }
 
 
-  /* Headline mask. The per-line delays used to live in these nth-child rules;
-     they are `data-reveal-at` on the lines themselves now, next to the words. */
+  /* Headline mask; per-line delays are data-reveal-at in the markup. */
   .heading-line {
     display: block;
     overflow: hidden;
@@ -290,24 +254,18 @@
     display: inline-block;
   }
 
-  /* A standalone rule draws rather than appears — the same gesture as Home's
-     seam. Defaulting the var to 1 leaves it drawn without JS. */
+  /* Default 1 leaves the rule drawn without JS. */
   .rule-draw {
     transform: scaleX(var(--reveal-draw, 1));
     transform-origin: left;
   }
 
-  /* The portrait is a plate being exposed, not a box fading in: it wipes down
-     from its own top edge, corner brackets included, because they sit inside
-     the clip. A fade would have made it one more panel element; this makes it
-     the subject. Clip is bounded to this one element, and `draw` is what lets
-     CSS pick the gesture — GSAP only supplies the 0→1. */
+  /* Portrait wipes down from its top edge, brackets included; GSAP only drives 0→1. */
   .portrait-plate {
     clip-path: inset(0 0 calc((1 - var(--reveal-draw, 1)) * 100%) 0);
   }
 
-  /* Gated on the panel being on screen: an ungated loop animates for the whole
-     session behind other panels. */
+  /* Gated on .is-active so the loop doesn't run behind other panels all session. */
   .is-active .status-dot {
     width: 0.45rem;
     height: 0.45rem;
@@ -323,7 +281,6 @@
     50% { transform: scale(1.4); opacity: 0.5; }
   }
 
-  /* Marquee */
   .marquee {
     position: relative;
     width: 100%;
@@ -376,7 +333,7 @@
     to { transform: translateX(-50%); }
   }
 
-  /* ===== Mobile ===== */
+  /* Mobile */
   @media (max-width: 767px) {
     .about-right {
       overflow: visible !important;

@@ -1,6 +1,5 @@
 <template>
-  <!-- The overlay is decoration, so it's aria-hidden wholesale; the one fact
-       that matters is announced here instead. -->
+  <!-- The overlay is aria-hidden decoration; this is the one announcement. -->
   <p v-if="visible" class="sr-only" role="status">Loading portfolio…</p>
   <transition name="loader-fade">
     <div
@@ -104,20 +103,11 @@
   import { useThemeStore } from '../store'
   import { markBootRevealing } from '../composables/bootState'
 
-  // Tempo knob — change this to speed up or slow down the whole intro.
-  //
-  // Every choreographed duration/delay in the style block is written as
-  // `calc(var(--boot-tempo) * <base>)` and MIN_HOLD is derived from the same
-  // value, so the CSS timing can't drift out of sync with how long the overlay
-  // stays up. Ambient loops (grid pan, shard float, caret blink, ring pulse) are
-  // deliberately not scaled: they have no endpoint, so rescaling them changes
-  // their character rather than the pace of the sequence.
-  //
-  //   1.0 = baseline    1.5 = 50% slower
+  // Intro tempo knob (1.0 = baseline, 1.5 = 50% slower). CSS timings use
+  // calc(var(--boot-tempo) * base) and MIN_HOLD derives from it; ambient loops are deliberately unscaled.
   const BOOT_TEMPO = 1.5
 
-  // Length of the choreography at tempo 1.0. Last to land are the fourth boot
-  // row (0.85 + 0.28) and the progress fill (0.25 + 0.9).
+  // Choreography length at tempo 1.0; the progress fill lands last (0.25 + 0.9).
   const BASE_TIMELINE_MS = 1150
   const MIN_HOLD = Math.round(BASE_TIMELINE_MS * BOOT_TEMPO) + 150
   // Ceiling, so a slow network can't turn the intro into a wait.
@@ -141,40 +131,31 @@
       isDark() {
         return this.themeStore.darkMode
       },
-      // Hands BOOT_TEMPO to the stylesheet, so CSS choreography and the JS hold
-      // run off one constant instead of two kept in sync by hand.
       tempo() {
         return BOOT_TEMPO
       }
     },
     mounted() {
-      // The intro plays on every page load, resolves on `window.load` (capped by
-      // MAX_HOLD) rather than a fixed timer, and is skipped outright under
-      // reduced motion — it is pure decoration.
       const done = () => {
-        // Backstop for the skip paths below, which never call beginExit. The
-        // latch makes the normal path's second call a no-op.
+        // Covers the reduced-motion skip, which never calls beginExit; latched, so safe to repeat.
         markBootRevealing()
         this.visible = false
         document.documentElement.style.overflow = ''
         this.$emit('finished')
       }
 
-      // No once-per-session gate: the intro is meant to be seen on every load,
-      // reload included. Reduced motion is the only thing that skips it.
+      // Plays on every load by design; only reduced motion skips it.
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       if (reduced) return done()
 
       document.documentElement.style.overflow = 'hidden'
 
-      // Hold until the page is ready, but never past MAX_HOLD nor so briefly
-      // that the intro flickers past unread.
+      // Hold until `load`, clamped between MIN_HOLD and MAX_HOLD.
       const startedAt = performance.now()
       const beginExit = () => {
         if (this.exiting) return
         this.exiting = true
-        // Release the panels underneath now, not at `done`. Their entrance is
-        // meant to play through this fade — see bootState.
+        // Release now, not at `done`: panel entrances play through this fade.
         markBootRevealing()
         this.timers.push(setTimeout(done, EXIT_MS))
       }
@@ -209,8 +190,7 @@
     transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
   }
 
-  /* Vignette sinks rather than lifts: centre is the page ground and the edge
-     falls below it. Lightening either stop washes the screen out mid-fade. */
+  /* Vignette darkens outward; lightening either stop washes the screen out mid-fade. */
   .loader-overlay.is-dark {
     background: radial-gradient(ellipse at center, var(--color-dark) 0%, var(--color-dark-deep) 70%);
     --logo-color: var(--color-dark-primary);
@@ -231,22 +211,18 @@
     opacity: 0;
     transform: scale(1.1);
   }
-  /* Grain and glow both brighten what they sit over, so they leave first and let
-     the ground carry the rest of the fade. */
+  /* Grain and glow brighten what's under them, so they leave first. */
   .loader-exit .bg-noise {
     opacity: 0;
   }
-  /* `glowPulse` runs with `both`, so its fill keeps writing opacity and outranks
-     a plain declaration — cancel the animation rather than override it. Its final
-     transform is scale(1), so dropping it snaps nothing. */
+  /* `glowPulse` fill (`both`) outranks a plain opacity, so cancel the animation. */
   .loader-exit .logo-glow {
     animation: none;
     opacity: 0;
     transition: opacity 0.18s var(--ease-out);
   }
 
-  /* ===== Grid =====
-     Dot-grid, matching the backdrop device used on Home / About / Contact. */
+  /* Dot grid, same device as the Home / About / Contact backdrops. */
   .bg-grid {
     position: absolute;
     inset: -10%;
@@ -259,10 +235,7 @@
     pointer-events: none;
   }
 
-  /* ===== Noise/grain =====
-     `overlay` lightens what's behind it, and the app renders underneath this, so
-     once the plate goes transparent the grain hazes live content. Hence the early
-     exit in `.loader-exit .bg-noise` above. */
+  /* `overlay` blend hazes the live app once the plate fades, hence the early exit above. */
   .bg-noise {
     position: absolute;
     inset: 0;
@@ -273,7 +246,6 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* ===== Concentric pulse rings ===== */
   .bg-rings {
     position: absolute;
     inset: 0;
@@ -281,9 +253,7 @@
     place-items: center;
     pointer-events: none;
   }
-  /* Fixed box at the ring's largest size, animated with `scale` — never
-     width/height, which would relayout three elements on every frame of an
-     infinite loop. */
+  /* Fixed box animated with `scale`; width/height would relayout every frame. */
   .pulse-ring {
     position: absolute;
     width: min(900px, 130vmin);
@@ -298,7 +268,6 @@
   .pulse-ring-2 { animation-delay: calc(var(--boot-tempo, 1) * 0.75s); }
   .pulse-ring-3 { animation-delay: calc(var(--boot-tempo, 1) * 1s); }
 
-  /* ===== Floating angular shards ===== */
   .bg-shards {
     position: absolute;
     inset: 0;
@@ -323,7 +292,6 @@
   .shard-7 { bottom: 38%; right: 8%;  animation-delay: calc(var(--boot-tempo, 1) * 0.42s), calc(var(--boot-tempo, 1) * 0.42s); width: 14px; height: 14px; }
   .shard-8 { bottom: 50%; right: 18%; animation-delay: calc(var(--boot-tempo, 1) * 0.58s), calc(var(--boot-tempo, 1) * 0.58s); width: 8px;  height: 8px; }
 
-  /* ===== Corner brackets ===== */
   .corner {
     position: absolute;
     width: 52px;
@@ -338,7 +306,6 @@
   .corner-bl { bottom: 32px; left: 32px;  border-bottom: 3px solid var(--corner-color); border-left: 3px solid var(--corner-color); }
   .corner-br { bottom: 32px; right: 32px; border-bottom: 3px solid var(--corner-color); border-right: 3px solid var(--corner-color); }
 
-  /* ===== HUD labels ===== */
   .hud {
     position: absolute;
     font-family: var(--font-Mono);
@@ -365,7 +332,6 @@
     animation: blink 1.2s ease-in-out infinite;
   }
 
-  /* ===== Boot log ===== */
   .boot {
     position: absolute;
     left: 92px;
@@ -392,8 +358,7 @@
     margin-left: 6px;
     font-weight: 700;
   }
-  /* Ink on Filament Yellow, paper on Signal Red — same as any accent-filled
-     control elsewhere. */
+  /* Ink on Filament Yellow, paper on Signal Red. */
   .loader-overlay.is-dark .boot-ok { color: var(--color-dark); }
   .loader-overlay.is-light .boot-ok { color: var(--color-light); }
   .caret {
@@ -402,7 +367,6 @@
     margin-left: 2px;
   }
 
-  /* ===== Progress bar ===== */
   .progress {
     position: absolute;
     right: 92px;
@@ -423,9 +387,7 @@
     overflow: hidden;
     margin-bottom: 8px;
   }
-  /* Full-width bar scaled from the left, not a width animation (see the rings).
-     `transform-origin` is what makes it read as filling rather than growing from
-     the centre. */
+  /* Scaled from the left rather than animating width. */
   .progress-fill {
     height: 100%;
     width: 100%;
@@ -474,7 +436,6 @@
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
     fill-opacity: 0;
-    /* Draw, then fill, staggered across the four shapes (delays below). */
     animation:
       draw 0.55s cubic-bezier(0.65, 0, 0.35, 1) both,
       fillIn 0.3s var(--ease-out) both;
@@ -582,7 +543,6 @@
     opacity: 0;
   }
 
-  /* ===== Mobile ===== */
   @media (max-width: 640px) {
     .corner {
       width: 32px;
@@ -624,12 +584,9 @@
       background-size: 40px 40px;
     }
 
-    /* Don't override .pulse-ring's size here: its box IS the ring's full extent
-       and `scale` animates it, so a smaller box caps the pulse. */
+    /* Leave .pulse-ring's size alone: a smaller box caps the scaled pulse. */
 
-    /* Half the shards are dropped and the rest re-scattered down the full height,
-       alternating sides and clear of the centred logo stage, boot log and progress
-       bar. Each keeps the side it was authored on, so no offset needs unsetting. */
+    /* Four shards, re-scattered clear of the logo, boot log and progress bar. */
     .shard-1 { top: 18%; left: 9%; }
     .shard-2 { top: 34%; right: 11%; width: 13px; height: 13px; }
     .shard-3 { top: 58%; left: 6%; }
@@ -646,6 +603,5 @@
     .hud-tr { display: none; }
   }
 
-  /* No reduced-motion block: the overlay never mounts under
-     `prefers-reduced-motion: reduce`. See the `reduced` check in mounted(). */
+  /* No reduced-motion block: the overlay never mounts under reduced motion. */
 </style>

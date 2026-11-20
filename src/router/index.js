@@ -3,7 +3,7 @@ import Works from '../components/Works.vue'
 import NotFound from '../components/NotFound.vue'
 
 const SITE = 'JRLA Portfolio'
-const SITE_DESC = 'John Russel Angulo — front-end developer & UI/UX designer building fast, polished websites, mobile apps, and motion-driven brand experiences.'
+const SITE_DESC = 'John Russel Angulo, front-end developer and UI/UX designer from Bulacan, PH. UI/UX case studies, websites, video, and vector work.'
 
 export const VALID_SLIDE_HASHES = ['#home', '#features', '#works', '#about', '#contact']
 
@@ -13,7 +13,7 @@ const routes = [
     name: 'Works',
     component: Works,
     meta: {
-      title: `${SITE} — UI/UX Developer`,
+      title: `${SITE} · UI/UX Developer`,
       description: SITE_DESC,
       robots: 'index, follow, max-image-preview:large'
     },
@@ -23,8 +23,7 @@ const routes = [
       }
     }
   },
-  // Legacy /content/:id route — project detail is rendered as a modal inside Works,
-  // not a standalone page. Redirect any inbound link back to the works index.
+  // Legacy detail route; case studies now open as a modal inside Works.
   {
     path: '/content/:id',
     redirect: '/'

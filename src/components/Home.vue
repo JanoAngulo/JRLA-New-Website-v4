@@ -2,10 +2,9 @@
   <div
     :class="['relative w-full app-slide max-md:overflow-y-auto max-md:overflow-x-hidden md:overflow-hidden', { 'is-active': activeSlide === 'home' }]">
     <div class="w-full h-full grid grid-cols-1 grid-rows-[auto_1fr] min-h-full md:grid-cols-[45fr_55fr] md:grid-rows-1">
-      <!-- LEFT: accent block -->
+      <!-- Left: accent block -->
       <section data-accent-surface class="relative overflow-hidden max-md:overflow-visible text-dark dark:bg-dark-primary bg-light-primary">
-        <!-- The split itself, drawn. Half designer / half developer is the claim;
-             the seam is where the two halves meet, so it gets a hairline. -->
+        <!-- Hairline on the seam between the designer and developer halves. -->
         <div class="seam bg-current/20" aria-hidden="true" data-reveal="draw" data-reveal-at="0.1"></div>
 
         <div class="relative flex flex-col justify-between h-full p-6 md:p-10 lg:p-14 max-md:py-12 max-md:gap-8 max-md:min-h-full">
@@ -23,9 +22,8 @@
             </h1>
             <div class="flex items-baseline gap-2 mt-4 text-base font-Gilroy sm:text-lg md:text-xl" data-reveal="fade" data-reveal-at="0.3">
               <span class="opacity-70" aria-hidden="true">→</span>
-              <!-- The typing effect is decoration — announced, it would read one
-                   letter at a time forever. Assistive tech gets the four roles as
-                   one static string instead. -->
+              <!-- Typing is aria-hidden or screen readers read it a letter at a time;
+                   they get the static sr-only string instead. -->
               <span class="capitalize" aria-hidden="true">{{ typed }}</span><span class="caret inline-block ml-[0.1em]" aria-hidden="true">|</span>
               <span class="sr-only">Front-end developer, UI/UX designer, video editor, and vector artist.</span>
             </div>
@@ -38,19 +36,17 @@
         </div>
       </section>
 
-      <!-- RIGHT: content / wordmark -->
+      <!-- Right: content / wordmark -->
       <section class="relative overflow-hidden max-md:overflow-visible dark:bg-dark bg-light dark:text-light text-dark">
-        <!-- Dot-grid backdrop -->
         <div class="dot-grid bg-size-[24px_24px]" aria-hidden="true"></div>
 
-        <!-- Vertical wordmark -->
         <div class="absolute top-0 right-0 flex items-center h-full pr-3 pointer-events-none select-none md:pr-6" aria-hidden="true">
           <span data-reveal="drift" data-reveal-at="0.34" class="font-Gilroy-extra-bold dark:text-light/5 text-dark/5 text-[clamp(8rem,28vw,22rem)] tracking-[-0.01em] leading-[0.8] [writing-mode:vertical-rl] rotate-180">JRLA</span>
         </div>
 
         <div class="relative flex flex-col justify-between h-full p-6 md:p-10 lg:p-14 max-md:gap-10 max-md:min-h-full">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 text-xs tracking-[0.3em] uppercase font-Mono" data-reveal="fade" data-reveal-at="0.08" data-reveal-o="0.7">
-            <span>01 — Home</span>
+            <span>01 / Home</span>
             <span class="hidden sm:inline">v.04</span>
           </div>
 
@@ -63,24 +59,33 @@
 
             <dl class="grid grid-cols-1 @md:grid-cols-2 border-y border-current/15 font-Mono" data-reveal="fade" data-reveal-at="0.32">
               <div class="flex flex-col gap-[0.45rem] py-[0.8rem] @md:pr-6">
-                <dt class="text-[0.65rem] tracking-[0.3em] uppercase opacity-60">Practice</dt>
+                <dt class="text-[0.65rem] tracking-[0.3em] uppercase opacity-65">Practice</dt>
                 <dd class="text-[0.8125rem] leading-[1.35] tracking-[0.01em] opacity-95">Front-end · UI/UX</dd>
               </div>
               <div class="flex flex-col gap-[0.45rem] py-[0.8rem] border-t border-current/15 @md:border-t-0 @md:border-l @md:pl-6">
-                <dt class="text-[0.65rem] tracking-[0.3em] uppercase opacity-60">Scope</dt>
+                <dt class="text-[0.65rem] tracking-[0.3em] uppercase opacity-65">Scope</dt>
                 <dd class="text-[0.8125rem] leading-[1.35] tracking-[0.01em] opacity-95">Web · Mobile · Motion · Vector</dd>
               </div>
             </dl>
+
+            <!-- Both success actions above the fold, for visitors who never scroll. -->
+            <div class="flex flex-col @md:flex-row gap-3" data-reveal="fade" data-reveal-at="0.35">
+              <a :href="resume" download="Angulo-John-Russel-CV.pdf" class="btn btn-primary group no-underline">
+                <span>Download CV</span>
+                <i class="fa-solid fa-arrow-down transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-y-0.5" aria-hidden="true"></i>
+              </a>
+              <button type="button" @click="$emit('go', 4)" class="btn btn-ghost group">
+                <span>Write to me</span>
+                <i class="fa-solid fa-arrow-right transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-x-[3px]" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
 
           <div class="flex items-end justify-between gap-6">
             <div class="flex flex-col gap-3">
-              <!-- `data-reveal-o` because the label rests at 65%: without it the
-                   tween would land on full opacity and quietly restyle it. -->
+              <!-- data-reveal-o keeps the tween from landing at full opacity over the 65% rest. -->
               <p class="text-xs tracking-[0.3em] uppercase opacity-65 font-Gilroy" data-reveal="fade" data-reveal-at="0.34" data-reveal-o="0.65">Find me</p>
-              <!-- The pills reveal one at a time rather than as a block: three
-                   discrete objects read as a row arriving, and 30ms apart is
-                   close enough that it still lands as one gesture. -->
+              <!-- Pills reveal 30ms apart so the row arrives as one gesture. -->
               <div class="flex gap-3 no-swipe">
                 <a target="_blank" rel="noopener" aria-label="LinkedIn" href="https://www.linkedin.com/in/jrla1219/" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5" data-reveal="fade" data-reveal-at="0.37" data-reveal-y="12">
                   <i class="fa-brands fa-linkedin-in group-hover:text-light dark:group-hover:text-dark"></i>
@@ -93,8 +98,7 @@
                 </a>
               </div>
             </div>
-            <!-- Reveals as one block, not per line: it is a single instruction,
-                 and its lines already carry their own resting opacity. -->
+            <!-- One block, not per line: each line already carries its own resting opacity. -->
             <div class="flex flex-col items-end text-right" data-reveal="fade" data-reveal-at="0.37">
               <p class="text-xs tracking-[0.3em] uppercase opacity-65 font-Gilroy">Navigate <span class="md:hidden">↓</span><span class="hidden md:inline">→</span></p>
               <p class="hidden mt-1 text-xs opacity-65 font-Gilroy md:block">scroll or ← → keys</p>
@@ -112,10 +116,7 @@
 
   export default {
     name: 'Home',
-    // Entrance replays whenever Home is arrived at. `settledSlide` is the cue on
-    // a return; on first load it also has to clear the boot overlay, and 260ms
-    // of the overlay's 700ms fade buys a mostly-clear screen without leaving a
-    // blank one.
+    // First load waits 260ms into the overlay's 700ms fade, so the entrance plays over a mostly-clear screen.
     mixins: [panelEntrance('home', { gateReady: true, readyDelay: 260 })],
     props: {
       activeSlide: String,
@@ -123,12 +124,13 @@
       windowWidth: Number,
       desktopHeight: Number,
       mobileHeight: Number,
-      // Not "the pager is measured" — that happens behind the boot overlay.
-      // This is "the overlay is leaving", i.e. the entrance can be seen.
+      // True once the boot overlay starts leaving, not when the pager is measured.
       ready: { type: Boolean, default: false }
     },
+    emits: ['go'],
     data() {
       return {
+        resume: '/downloads/Angulo-John-Russel-CV.pdf',
         titles: ['front-end developer.', 'UI/UX Designer.', 'video editor.', 'vector artist.'],
         typed: '',
         titleIdx: 0,
@@ -138,8 +140,7 @@
       }
     },
     watch: {
-      // Only type while Home is on screen; otherwise the loop is timer churn for
-      // a panel nobody is looking at.
+      // Only type while Home is on screen; off screen the loop is wasted timer churn.
       activeSlide(val) {
         if (val === 'home') this.start()
         else this.stop()
@@ -197,20 +198,9 @@
 </script>
 
 <style lang="css" scoped>
-  /* The entrance lives in panelEntrance.js — every element's from-state is
-     written by GSAP, so nothing here hides anything. What is left is the
-     structure those tweens need.
+  /* Neither half moves as a block: sliding a half drags the seam across the accent surface. */
 
-     Neither half moves as a block. Both are fixed ground; only their contents
-     carry `data-reveal`. The content half used to slide outward from the seam,
-     but a whole-panel xPercent drags the edge between the two halves across the
-     accent surface, which reads as the accent block sliding — the one thing it
-     is not supposed to do. */
-
-  /* Seam hairline along the split. CSS owns which axis it draws on, because that
-     flips at the breakpoint: stacked layouts meet on a horizontal edge, the
-     45/55 split on a vertical one. GSAP only drives the 0→1. Defaulting to 1
-     means no-JS leaves the seam drawn rather than invisible. */
+  /* CSS picks the draw axis per breakpoint; GSAP only drives 0→1. Default 1 keeps it drawn without JS. */
   .seam {
     position: absolute;
     inset: auto 0 0;
@@ -228,17 +218,13 @@
     }
   }
 
-  /* Line-reveal inners: inline-block so the mask above them has something with a
-     box to translate. The travel itself is GSAP's. */
+  /* inline-block gives GSAP a box to translate inside the mask. */
   .hnl-inner,
   .as-inner {
     display: inline-block;
   }
 
-  /* Status dot pulse. Gated on the panel being on screen — otherwise the loop
-     runs for the whole session behind other panels. Tied to `is-active` rather
-     than to the entrance: whether a loop should run is a question about
-     visibility, not about whether an animation has played. */
+  /* Gated on .is-active so the loop doesn't run behind other panels all session. */
   .is-active .status-dot {
     animation: pulse 2s ease-in-out infinite;
   }
@@ -247,7 +233,7 @@
     50% { transform: scale(1.4); opacity: 0.4; }
   }
 
-  /* Typing caret blink — same gate; the typing loop already stops off screen. */
+  /* Same gate for the caret blink. */
   .is-active .caret {
     animation: caret-blink 1s steps(1) infinite;
   }
@@ -256,9 +242,7 @@
     51%, 100% { opacity: 0; }
   }
 
-  /* Last on purpose: these have to out-order the `.is-active`-gated loops
-     above, which carry the same specificity. Both run forever, so a
-     reduced-motion visitor gets the steady state instead. */
+  /* Must stay last: same specificity as the .is-active loops above, so source order wins. */
   @media (prefers-reduced-motion: reduce) {
     .is-active .status-dot,
     .is-active .caret { animation: none; }

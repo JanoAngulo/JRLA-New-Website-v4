@@ -3,18 +3,16 @@
     ref="contactSection"
     :class="['relative w-full md:overflow-hidden overflow-y-auto app-slide', { 'is-active': activeSlide === 'contact' }]">
     <div class="grid grid-cols-1 grid-rows-[auto_auto] min-h-full w-full md:grid-cols-[40fr_60fr] md:grid-rows-1 md:h-full">
-      <!-- LEFT: accent block w/ pull-quote + contact card -->
+      <!-- Left: accent block with pull-quote and contact card -->
       <section data-accent-surface class="contact-left relative dark:bg-dark-primary bg-light-primary text-dark overflow-hidden min-h-0 h-auto max-md:overflow-visible">
         <div class="relative flex flex-col justify-between p-6 md:p-10 lg:p-14 gap-8 h-full">
-          <!-- Top eyebrow -->
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 font-Mono text-[10px] tracking-[0.3em] uppercase" data-reveal="fade" data-reveal-at="0.06">
-            <span>05 — Contact</span>
+            <span>05 / Contact</span>
             <span class="hidden sm:inline opacity-90">Reach Out</span>
           </div>
 
-          <!-- Pull-quote -->
           <div class="flex flex-col gap-5">
-            <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-90" data-reveal="fade" data-reveal-at="0.08">— Open Brief</p>
+            <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-90" data-reveal="fade" data-reveal-at="0.08">/ Open Brief</p>
             <h2 class="text-[clamp(2.25rem,4.8vw,4.25rem)] tracking-[-0.035em] font-Gilroy-extra-bold uppercase leading-[0.9]">
               <span class="reveal-line leading-none"><span class="ch-inner" data-reveal="line" data-reveal-at="0.1">Let's build</span></span>
               <span class="reveal-line leading-none"><span class="ch-inner" data-reveal="line" data-reveal-at="0.16">something</span></span>
@@ -22,11 +20,10 @@
             </h2>
             <div class="rule-draw h-px w-16 bg-dark/40" data-reveal="draw" data-reveal-at="0.24"></div>
             <p class="font-Gilroy text-base sm:text-lg leading-relaxed max-w-md opacity-90">
-              <span class="inline-block" data-reveal="fade" data-reveal-at="0.12">Got an idea worth chasing? </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.18">Whether it's a fresh design, a website that stands out, or a half-baked concept — </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.2">drop a note and let's turn it into something real.</span>
+              <span class="inline-block" data-reveal="fade" data-reveal-at="0.12">Hiring for a front-end or UI/UX role? </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.18">Have a brief that needs both the design and the code? </span><span class="inline-block" data-reveal="fade" data-reveal-at="0.2">Tell me about it here, or grab the CV first.</span>
             </p>
           </div>
 
-          <!-- Contact card + socials -->
           <div class="flex flex-col gap-4">
             <div class="border-t border-dark/20" data-reveal="fade" data-reveal-y="0" data-reveal-at="0.12">
               <div class="flex justify-between items-baseline py-[0.65rem] border-b border-dark/20 gap-4" data-reveal="fade" data-reveal-at="0.14">
@@ -40,6 +37,10 @@
               <div class="flex justify-between items-baseline py-[0.65rem] border-b border-dark/20 gap-4" data-reveal="fade" data-reveal-at="0.22">
                 <span class="font-Mono text-[0.7rem] tracking-[0.3em] uppercase opacity-90 shrink-0">Status</span>
                 <span class="font-Gilroy text-sm tracking-[-0.005em] text-right break-words flex items-center gap-2"><span class="status-dot w-[0.45rem] h-[0.45rem] rounded-full bg-dark/85"></span> Available 2026</span>
+              </div>
+              <div class="flex justify-between items-baseline py-[0.65rem] border-b border-dark/20 gap-4" data-reveal="fade" data-reveal-at="0.24">
+                <span class="font-Mono text-[0.7rem] tracking-[0.3em] uppercase opacity-90 shrink-0">CV</span>
+                <a href="/downloads/Angulo-John-Russel-CV.pdf" download="Angulo-John-Russel-CV.pdf" class="font-Gilroy text-sm tracking-[-0.005em] text-right underline decoration-1 underline-offset-[3px] transition-[text-decoration-thickness] duration-200 hover:decoration-2">Download PDF</a>
               </div>
             </div>
 
@@ -61,9 +62,8 @@
         </div>
       </section>
 
-      <!-- RIGHT: form -->
+      <!-- Right: form -->
       <section class="contact-right relative dark:bg-dark bg-light dark:text-light text-dark md:overflow-y-auto" data-reveal="slide" data-reveal-x="3" data-reveal-at="0.06">
-        <!-- Subtle dot-grid backdrop -->
         <div class="dot-grid bg-size-[22px_22px]" aria-hidden="true"></div>
 
         <div class="relative flex flex-col p-6 md:p-10 lg:p-14 gap-6 md:h-full">
@@ -73,7 +73,7 @@
           </div>
 
           <div class="space-y-3">
-            <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-65" data-reveal="fade" data-reveal-at="0.14">— Send a Message</p>
+            <p class="font-Mono text-xs tracking-[0.35em] uppercase opacity-65" data-reveal="fade" data-reveal-at="0.14">/ Send a Message</p>
             <h3 class="font-Gilroy-extra-bold uppercase leading-[0.95] text-[clamp(1.5rem,2.4vw,2rem)] tracking-[-0.02em]">
               <span class="reveal-line leading-none"><span class="cfh-inner" data-reveal="line" data-reveal-at="0.18">Tell me <em class="not-italic dark:text-dark-primary text-light-primary">what's</em> on your mind</span></span>
             </h3>
@@ -124,7 +124,6 @@
               </Transition>
             </div>
 
-            <!-- Status messages -->
             <Transition name="slide-fade">
               <div v-if="isSuccess" class="flex items-center gap-3 px-[1.1rem] py-[0.95rem] font-Mono text-xs tracking-[0.18em] uppercase border-l bg-[color-mix(in_oklab,var(--color-success)_12%,transparent)] text-success-text border-l-success dark:bg-[color-mix(in_oklab,var(--color-success-dark)_14%,transparent)] dark:text-success-text-dark dark:border-l-success-dark" role="status">
                 <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
@@ -143,7 +142,7 @@
             <div class="flex items-center justify-between gap-4 pt-2 flex-wrap">
               <div class="flex items-center gap-[0.55rem] font-Mono text-[0.65rem] tracking-[0.22em] uppercase opacity-70">
                 <span class="form-dot w-[7px] h-[7px] rounded-full bg-light-primary dark:bg-dark-primary"></span>
-                <span>Avg. response · 24 hours</span>
+                <span>Replies within a day</span>
               </div>
               <button type="submit" :disabled="loading" :aria-busy="loading" class="btn btn-primary group px-[1.6rem]">
                 <span>{{ loading ? 'Sending' : justSent ? 'Sent' : 'Send Message' }}</span>
@@ -229,19 +228,15 @@
         this.errors = errors
         return !errors.name && !errors.email && !errors.message
       },
-      // Without this, a failed submit leaves focus on the Send button, fields away
-      // from the problem. Moving it to the first offender puts the caret where the
-      // fix happens and makes the screen reader read that field's label, state and
-      // error together (the messages also carry role="alert").
+      // Move focus off the Send button to the first invalid field, so screen
+      // readers announce its label, state and error together.
       focusFirstError() {
         const first = ['Name', 'Email', 'Message'].find((id) => this.errors[id.toLowerCase()])
         if (!first) return
         this.$nextTick(() => {
           const el = document.getElementById(first)
           if (!el) return
-          // preventScroll: the panel owns scroll position on desktop, and letting
-          // the browser scroll a pinned, clipped track sideways breaks the pager.
-          // (Same reason as the dialog-root focus in Dialog.vue.)
+          // preventScroll: a browser scroll of the pinned, clipped track breaks the pager.
           try {
             el.focus({ preventScroll: true })
           } catch {
@@ -284,8 +279,7 @@
 </script>
 
 <style lang="css" scoped>
-  /* Enumerated rather than `all`: this element carries padding, borders and a
-     background that would all animate off the GPU under `all`. */
+  /* Enumerated, not `all`: padding, borders and background would animate off the GPU. */
   .slide-fade-enter-active,
   .slide-fade-leave-active {
     transition: transform var(--dur-base) var(--ease-out),
@@ -297,30 +291,20 @@
     opacity: 0;
   }
 
-  /* The entrance lives in panelEntrance.js — GSAP writes every from-state, so
-     nothing here hides anything. These two only keep the mask the line-reveals
-     translate inside; their delays are `data-reveal-at` in the markup now.
-
-     The accent half does not slide: it is the fixed ground the entrance happens
-     against, and only its contents carry `data-reveal`. */
+  /* inline-block gives GSAP a box to translate inside the line mask. */
   .ch-inner,
   .cfh-inner {
     display: inline-block;
   }
 
-  /* A standalone rule draws rather than appears — the same gesture as Home's
-     seam, and the reason `draw` hands CSS a 0→1 instead of a named property.
-     Defaulting the var to 1 leaves the rule drawn without JS. */
+  /* Default 1 leaves the rule drawn without JS. */
   .rule-draw {
     transform: scaleX(var(--reveal-draw, 1));
     transform-origin: left;
   }
 
-  /* Only `.status-dot` pulses — it's the availability signal. `.form-dot` sits
-     beside static copy, so it stays a plain dot; two heartbeats in one column just
-     read as busy. */
-  /* Gated on the panel being on screen: an ungated loop animates for the whole
-     session behind other panels. */
+  /* Only .status-dot pulses; .form-dot stays static so the column has one heartbeat.
+     Gated on .is-active so the loop doesn't run behind other panels. */
   .is-active .status-dot {
     animation: pulse-dot 2s ease-in-out infinite;
   }
@@ -329,8 +313,7 @@
     50% { transform: scale(1.4); opacity: 0.45; }
   }
 
-  /* Submit success. Sending a message is a once-per-visitor moment, so the
-     overshoot is earned — this is the only bouncy curve in the app. */
+  /* The app's only overshoot curve, kept for the once-per-visitor submit success. */
   .check-pop {
     animation: check-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
