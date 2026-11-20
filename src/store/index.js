@@ -44,7 +44,6 @@ export const useThemeStore = defineStore('theme', {
       else localStorage.setItem(STORAGE_KEY, mode)
     },
     cycleMode() {
-      // system → light → dark → system
       const next = { system: 'light', light: 'dark', dark: 'system' }[this.mode] || 'system'
       this.setMode(next)
     },

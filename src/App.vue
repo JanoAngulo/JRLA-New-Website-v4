@@ -3,12 +3,8 @@
     <Loader v-if="showLoader" @finished="onLoaderFinished" />
     <CustomCursor v-if="!showLoader" />
 
-    <!-- The app mounts behind the boot overlay rather than waiting for it, so
-         markup, images, fonts and layout resolve while the intro plays instead of
-         serialising after it. The overlay is `position: fixed` at the top of the z
-         scale and owns the scroll lock, so it still covers everything; `inert`
-         keeps the app underneath out of focus and assistive-tech reach until the
-         overlay leaves. -->
+    <!-- Mounts behind the boot overlay so assets load during the intro.
+         `inert` keeps it out of focus and AT reach until the overlay leaves. -->
     <div :inert="showLoader">
       <div v-if="$route.name === 'Works'">
         <web-view></web-view>
@@ -44,9 +40,7 @@
     methods: {
       onLoaderFinished() {
         this.showLoader = false
-        // The pager measured itself while the overlay held `overflow: hidden` on
-        // <html>. With the lock off, tell it to re-fit and run any deep-link
-        // scroll it deferred — a programmatic scroll can't move a locked document.
+        // Pager measured under the overlay's scroll lock: re-fit and run the deferred deep-link scroll.
         requestAnimationFrame(() => window.dispatchEvent(new Event('jrla:booted')))
       }
     },
