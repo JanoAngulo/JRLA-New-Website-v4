@@ -44,6 +44,7 @@
           data-scrub-y="28"
           data-scrub-start="0.85"
           data-scrub-end="0.6"
+          data-scrub-min="0.22"
           class="reveal">
         <button
           type="button"
