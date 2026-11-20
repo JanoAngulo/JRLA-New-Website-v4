@@ -24,7 +24,7 @@
               <span class="opacity-70" aria-hidden="true">→</span>
               <!-- Typing is aria-hidden or screen readers read it a letter at a time;
                    they get the static sr-only string instead. -->
-              <span class="capitalize" aria-hidden="true">{{ typed }}</span><span class="caret inline-block ml-[0.1em]" aria-hidden="true">|</span>
+              <span class="capitalize" aria-hidden="true">{{ typed }}</span><span v-if="!done" class="caret inline-block ml-[0.1em]" aria-hidden="true">|</span>
               <span class="sr-only">Front-end developer, UI/UX designer, video editor, and vector artist.</span>
             </div>
           </div>
@@ -88,13 +88,13 @@
               <!-- Pills reveal 30ms apart so the row arrives as one gesture. -->
               <div class="flex gap-3 no-swipe">
                 <a target="_blank" rel="noopener" aria-label="LinkedIn" href="https://www.linkedin.com/in/jrla1219/" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5" data-reveal="fade" data-reveal-at="0.37" data-reveal-y="12">
-                  <i class="fa-brands fa-linkedin-in group-hover:text-light dark:group-hover:text-dark"></i>
+                  <i class="fa-brands fa-linkedin-in group-hover:text-light dark:group-hover:text-dark" aria-hidden="true"></i>
                 </a>
                 <a target="_blank" rel="noopener" aria-label="Facebook" href="https://www.facebook.com/Jano1219" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5" data-reveal="fade" data-reveal-at="0.40" data-reveal-y="12">
-                  <i class="fa-brands fa-facebook-f group-hover:text-light dark:group-hover:text-dark"></i>
+                  <i class="fa-brands fa-facebook-f group-hover:text-light dark:group-hover:text-dark" aria-hidden="true"></i>
                 </a>
                 <a target="_blank" rel="noopener" aria-label="Behance" href="https://www.behance.net/JRLA" class="social-pill group border-current text-inherit hover:bg-current hover-fine:hover:-translate-y-0.5" data-reveal="fade" data-reveal-at="0.43" data-reveal-y="12">
-                  <i class="fa-brands fa-behance group-hover:text-light dark:group-hover:text-dark"></i>
+                  <i class="fa-brands fa-behance group-hover:text-light dark:group-hover:text-dark" aria-hidden="true"></i>
                 </a>
               </div>
             </div>
@@ -131,16 +131,17 @@
     data() {
       return {
         resume: '/downloads/Angulo-John-Russel-CV.pdf',
-        titles: ['front-end developer.', 'UI/UX Designer.', 'video editor.', 'vector artist.'],
+        // Typed once, then still: WCAG 2.2.2 lets motion run unattended only under 5s,
+        // and the sr-only line beside it already names all four disciplines.
+        title: 'front-end developer.',
         typed: '',
-        titleIdx: 0,
         charIdx: 0,
-        phase: 'typing',
+        done: false,
         timer: null
       }
     },
     watch: {
-      // Only type while Home is on screen; off screen the loop is wasted timer churn.
+      // Only type while Home is on screen; leaving mid-word resumes on return.
       activeSlide(val) {
         if (val === 'home') this.start()
         else this.stop()
@@ -154,12 +155,13 @@
     },
     methods: {
       start() {
-        // Reduced motion gets the full first title, no cycling.
+        if (this.done || this.timer) return
+        // Reduced motion gets the full title outright.
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          this.typed = this.titles[0]
+          this.typed = this.title
+          this.done = true
           return
         }
-        if (this.timer) return
         this.tick()
       },
       stop() {
@@ -167,31 +169,14 @@
         this.timer = null
       },
       tick() {
-        const current = this.titles[this.titleIdx]
-        let delay = 80
-
-        if (this.phase === 'typing') {
-          this.charIdx++
-          this.typed = current.slice(0, this.charIdx)
-          if (this.charIdx >= current.length) {
-            this.phase = 'pausing'
-            delay = 2200
-          }
-        } else if (this.phase === 'pausing') {
-          this.phase = 'deleting'
-          delay = 400
-        } else if (this.phase === 'deleting') {
-          this.charIdx--
-          this.typed = current.slice(0, this.charIdx)
-          delay = 40
-          if (this.charIdx <= 0) {
-            this.phase = 'typing'
-            this.titleIdx = (this.titleIdx + 1) % this.titles.length
-            delay = 300
-          }
+        this.charIdx++
+        this.typed = this.title.slice(0, this.charIdx)
+        if (this.charIdx >= this.title.length) {
+          this.done = true
+          this.timer = null
+          return
         }
-
-        this.timer = setTimeout(this.tick, delay)
+        this.timer = setTimeout(this.tick, 80)
       }
     }
   }
@@ -224,9 +209,10 @@
     display: inline-block;
   }
 
-  /* Gated on .is-active so the loop doesn't run behind other panels all session. */
+  /* Two beats on entry, then still (WCAG 2.2.2: unattended motion stays under 5s).
+     Gated on .is-active so it replays when the visitor returns to Home. */
   .is-active .status-dot {
-    animation: pulse 2s ease-in-out infinite;
+    animation: pulse 2s ease-in-out 2;
   }
   @keyframes pulse {
     0%, 100% { transform: scale(1); opacity: 0.9; }

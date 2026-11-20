@@ -24,7 +24,6 @@
           :key="item.idx"
           @click="goTo(item.idx)"
           :aria-current="activeSlide === item.idx ? 'page' : undefined"
-          :aria-label="item.label"
           :class="[
             'group relative flex items-center justify-center gap-1.5 px-2 sm:px-3 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 text-[11px] sm:text-xs tracking-[0.2em] uppercase font-Mono transition-[color,transform,scale] duration-300 cursor-pointer active:scale-95',
             activeSlide === item.idx
@@ -33,6 +32,8 @@
           ]">
           <span class="tabular-nums opacity-85 transition-transform duration-300 hover-fine:group-hover:-translate-y-px">0{{ item.idx + 1 }}</span>
           <span class="hidden sm:inline">{{ item.label }}</span>
+          <!-- Below sm only the number shows; this keeps the accessible name "01 Home", which starts with what is visible. -->
+          <span class="sr-only sm:hidden">{{ item.label }}</span>
           <span
             class="absolute bottom-2 sm:-bottom-0.5 left-2 right-2 sm:left-3 sm:right-3 h-0.5 transition-transform duration-300 origin-left dark:bg-dark-primary bg-light-primary"
             :class="activeSlide === item.idx ? 'scale-x-100' : 'scale-x-0 opacity-60 hover-fine:group-hover:scale-x-100'"></span>
@@ -44,13 +45,13 @@
         @click="cycleTheme"
         :aria-label="themeButtonLabel"
         :title="themeButtonLabel"
-        class="group grid place-content-center min-w-11 min-h-11 sm:min-w-0 sm:min-h-0 sm:w-8 sm:h-8 rounded-full border border-black/40 dark:border-white/40 hover:dark:border-dark-primary hover:border-light-primary transition-[color,border-color,transform,scale] duration-300 cursor-pointer hover-fine:hover:scale-105 active:scale-90">
+        class="group grid place-content-center min-w-11 min-h-11 sm:min-w-0 sm:min-h-0 sm:w-8 sm:h-8 rounded-full border border-black/50 dark:border-white/40 hover:dark:border-dark-primary hover:border-light-primary transition-[color,border-color,transform,scale] duration-300 cursor-pointer hover-fine:hover:scale-105 active:scale-90">
         <span
           class="grid transition-transform duration-250 ease-out"
           :style="{ transform: `rotate(${themeSpin * 360}deg)` }">
-          <i v-if="systemTheme.mode === 'system'" class="fa-solid fa-desktop text-xs dark:text-dark-primary text-light-primary"></i>
-          <i v-else-if="systemTheme.mode === 'light'" class="fa-solid fa-sun text-xs text-light-primary"></i>
-          <i v-else class="fa-solid fa-moon text-xs dark:text-dark-primary"></i>
+          <i v-if="systemTheme.mode === 'system'" class="fa-solid fa-desktop text-xs dark:text-dark-primary text-light-primary" aria-hidden="true"></i>
+          <i v-else-if="systemTheme.mode === 'light'" class="fa-solid fa-sun text-xs text-light-primary" aria-hidden="true"></i>
+          <i v-else class="fa-solid fa-moon text-xs dark:text-dark-primary" aria-hidden="true"></i>
         </span>
       </button>
     </div>

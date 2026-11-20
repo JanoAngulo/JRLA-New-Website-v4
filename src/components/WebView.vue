@@ -1,5 +1,7 @@
 <template>
   <a href="#main-content" class="skip-link">Skip to content</a>
+  <!-- Fixed, so DOM position only sets tab order: the nav is first on screen, so it is first to Tab. -->
+  <navbar :activeSlide="activeIndex" @go="goTo"></navbar>
 
   <div
     class="fixed items-center hidden w-full pointer-events-none lg:grid top-14 start-0 app-slide"
@@ -12,7 +14,7 @@
         class="nav-arrow nav-arrow-prev focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
         :class="{ 'is-hidden': activeIndex === 0 }"
         :disabled="activeIndex === 0">
-        <i class="fa-solid fa-chevron-left"></i>
+        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
       </button>
       <button
         type="button"
@@ -21,7 +23,7 @@
         class="nav-arrow nav-arrow-next focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
         :class="{ 'is-hidden': activeIndex === lastIndex }"
         :disabled="activeIndex === lastIndex">
-        <i class="fa-solid fa-chevron-right"></i>
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
       </button>
     </div>
   </div>
@@ -36,7 +38,7 @@
       class="nav-arrow nav-arrow-up focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
       :class="{ 'is-hidden': activeIndex === 0 }"
         :disabled="activeIndex === 0">
-      <i class="fa-solid fa-chevron-up"></i>
+      <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
     </button>
     <button
       type="button"
@@ -45,7 +47,7 @@
       class="nav-arrow nav-arrow-down focus-visible:[outline:2px_solid_var(--color-light-primary)] dark:focus-visible:[outline:2px_solid_var(--color-dark-primary)] focus-visible:outline-offset-[3px]"
       :class="{ 'is-hidden': activeIndex === lastIndex }"
         :disabled="activeIndex === lastIndex">
-      <i class="fa-solid fa-chevron-down"></i>
+      <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
     </button>
   </div>
 
@@ -116,7 +118,6 @@
       </div>
     </div>
     </main>
-    <navbar :activeSlide="activeIndex" @go="goTo"></navbar>
   </div>
 </template>
 

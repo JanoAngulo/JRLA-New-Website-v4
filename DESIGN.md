@@ -267,7 +267,7 @@ Category badges. Each of the four disciplines gets a light and dark pair, contra
 
 **The Ink-on-Accent Rule.** An accent plate carries `--color-dark` text in *both* themes, and any focus ring inside it inverts to ink — an accent ring on an accent surface is invisible. Mark such plates with `data-accent-surface` and the global rule in [main.css](src/assets/main.css) handles the inversion.
 
-**The Relative Hairline Rule.** Dividers, card borders, and rules use `currentColor` at 6–14% opacity. Never a literal grey, never `border-gray-200`. A hairline belongs to its text, not to the palette.
+**The Relative Hairline Rule.** Dividers, card borders, and rules use `currentColor` at 6–14% opacity. Never a literal grey, never `border-gray-200`. A hairline belongs to its text, not to the palette. The one exception is a line that *is* a control's edge: input underlines, filter-pill outlines, and icon-only round buttons sit at `border-current/50`. That is 3.22:1 light and 4.60:1 dark, the 3:1 non-text floor (WCAG 1.4.11), because that edge is how a low-vision visitor finds the control.
 
 **The Opacity Floor Rule.** Text opacity is not a free dial — it is a contrast budget, and the light theme spends it fastest. Ink on the light ground measures 3.77:1 at `0.55` and 4.40:1 at `0.60`; both fail AA. A Signal Red plate is tighter still, because the plate is only 5.00:1 from ink to begin with: `0.70` gives 3.26:1 and even `0.85` reaches only 4.30:1.
 
@@ -430,7 +430,7 @@ Character: **a ruled line on paper, not a box.** Fields are open, square, and tr
 - **Shell:** Fixed, `3.5rem` tall, page background at 95% with `backdrop-blur-md`, bottom border `black/10` / `white/10`, `z-index: var(--z-nav)`.
 - **Items:** Mono uppercase, each prefixed by a zero-padded chapter number in `tabular-nums`. The number nudges `-1px` on hover; the label hides below `sm` so the numbers alone carry navigation on small screens.
 - **Active:** A `2px` accent underline scaling in from the left (`origin-left`, `scale-x-0 → scale-x-100`, `300ms`). Inactive items pre-render it at `scale-x-0` and reveal on hover at 60% opacity.
-- **Theme toggle:** `2rem` circle at `sm+`, `2.75rem` below it, hairline border at `black/40` / `white/40` that becomes accent on hover. The icon *rotates a full 360°* per press over `--dur-slow` with `--ease-out` — a click counter drives `rotate(n × 360deg)`, so every cycle turns the same way rather than snapping back. `scale(1.05)` hover / `scale(0.90)` press. Cycles system → light → dark, and the whole theme swap rides a View Transition cross-fade (see §Theming).
+- **Theme toggle:** `2rem` circle at `sm+`, `2.75rem` below it, border at `black/50` / `white/40` (3:1 or better, since it is the edge of an icon-only control) that becomes accent on hover. The icon *rotates a full 360°* per press over `--dur-slow` with `--ease-out` — a click counter drives `rotate(n × 360deg)`, so every cycle turns the same way rather than snapping back. `scale(1.05)` hover / `scale(0.90)` press. Cycles system → light → dark, and the whole theme swap rides a View Transition cross-fade (see §Theming).
 - **Pager arrows** (`.nav-arrow`): `2.75rem` circles, `white/70` / `dark-card/70` at `blur(10px)`, hairline border, their own shadow pair (`0 4px 16px -4px` at 15% / 50%). Hover fills with the accent; each arrow also *leans* 3px the way it will send you (`.nav-arrow-prev` → `-3px`, `-next` → `+3px`, `-up` / `-down` vertically), pointer-gated. At either end of the pager the relevant arrow takes `.is-hidden` and fades out rather than disappearing between frames.
 - **Mobile:** Minimum `2.75rem` hit targets; `active:scale-95` on the brand mark. Arrows relocate to a bottom-right vertical stack and swap to up/down glyphs, because the model under `md` is vertical.
 
@@ -558,12 +558,13 @@ Outside these: GSAP timing for scroll and gesture work (`0.5s` sheet settle, `0.
 | Ghost wordmark | `data-reveal="drift"` — `xPercent 4 → 0` + opacity against the panel's own outward travel. The counter direction is what seats it behind the content. Lands last, at `0.34s` |
 | Scroll-scrub reveal | Desktop: opacity/Y interpolated across a band from `0.82` → `0.48` of the scroll viewport, reversible both ways, rects read before any write. Mobile: one-shot IO tween (`0.6s`, `power3.out`, `-25%` root margin) because per-frame scrubbing is too heavy for phones |
 | Triggered entrance | Elements with no scroll travel play a timeline instead: `0.15s` lead, `0.08s` stagger, `0.65s` in, `0.3s` out |
-| Typed text | 80ms/char · 2200ms hold · 400ms turnaround · 40ms delete · 1s caret blink. Runs only while Home is the active panel |
+| Typed text | Types "front-end developer." once at 80ms/char with a 1s caret blink, then stops and drops the caret. Pauses if Home leaves the screen mid-word and resumes on return |
+| Skills ticker | 55s linear loop. Pauses on hover, and a `44px` pause/play button beside it (`aria-pressed`) pauses it for keyboard and touch. The button is hidden under reduced motion, which already stops the loop |
 | Tactile press | `scale(0.95)` in `--dur-press`; work cards use `0.985` — perceived displacement scales with element size, so a large surface needs a smaller ratio to read as equal |
 | Card lift | `translateY(-3px)` + image `scale(1.04)`, `--dur-slow`, `hover-fine` only |
 | Filter swap | Grid dims to `opacity 0.25` for `120ms`, the set changes behind it, then it returns — one substitution rather than a teleport followed by a re-reveal |
-| Status pulse | `scale 1 → 1.4`, `2s` loop. **One pulsing dot per panel, maximum** — two loops at different tempos read as a glitch, not a rhythm |
-| Idle loops | Every infinite loop (status pulse, caret blink) is gated on the panel root's `.is-active` so it stops once the panel is off screen. Tied to visibility, not to the entrance: whether a loop should run is not a question about whether an animation has played |
+| Status pulse | `scale 1 → 1.4`, `2s`, **two beats then still**. **One pulsing dot per panel, maximum** — two loops at different tempos read as a glitch, not a rhythm |
+| Unattended motion | WCAG 2.2.2: anything that moves on its own stops within 5s or has a pause control. The pulse runs 4s, the tagline types in under 2s, and the ticker has its button. Each one is gated on the panel root's `.is-active`, so it replays when the visitor comes back and never runs off screen |
 | Sheet dismiss | Distance (12% of sheet height, floored at 64px) **or** velocity (>0.11 px/ms downward flick). Over-drag upward gets `pow(0.7) × 0.5` resistance; a failed dismiss settles on `back.out(1.1)` |
 | Theme swap | View Transition cross-fade, `--dur-base`, opacity only. Progressive enhancement — no API or reduced motion falls through to the instant swap |
 | Boot screen | Whole choreography scaled by one `BOOT_TEMPO` constant (currently `1.5`) shared between the CSS `calc()`s and the JS hold; plays once per session, resolves on `window.load` capped at `MIN_HOLD + 1000ms`, skipped entirely under reduced motion |
@@ -601,7 +602,11 @@ Tailwind v4 dark variant: `@custom-variant dark (&:is(.dark *))`. A second custo
 
 ## Accessibility
 
-- Focus rings: `2px` solid accent, `3px` offset, `4px` radius, applied via `:where(button, a, input, textarea, select, [role='button'], [tabindex]):focus-visible`. Dialog roots (`tabindex="-1"`) drop the offset to `0`.
+- Focus rings: `2px` solid, `3px` offset, `4px` radius, applied via `:where(button, a, input, textarea, select, [role='button'], [tabindex]):focus-visible`. The ring is Signal Red in light mode and Filament Yellow in dark. Dialog roots (`tabindex="-1"`) drop the offset to `0`. A control that draws its ring as a box-shadow (work cards) also sets `outline-transparent`, so Windows High Contrast, which removes shadows, still shows a ring.
+- Tab order follows screen order: skip link → navbar → pager arrows → the active panel. The navbar is `position: fixed`, so it can sit first in the DOM without moving on screen.
+- Visible label inside the accessible name (WCAG 2.5.3): below `sm` the nav shows only "01"–"05", and the section name is an `sr-only` span rather than an `aria-label`, so the name reads "03 Works".
+- Custom cursor: turns ink over any `data-accent-surface` in both themes, because paper on Filament Yellow is 1.28:1 and the native cursor is hidden.
+- Layout holds at 200% zoom: the Contact accent plate scrolls (`md:overflow-y-auto`) and its headline is height-capped (`min(4.8vw, 8.5vh)`), so the email, CV, and social links stay reachable at 1366×768, 1280×720, and 960×540.
 - Minimum hit target `44px` (`2.75rem`) — nav arrows, social pills, mobile brand mark.
 - `aria-label` required on every icon-only control; `aria-pressed` on filter pills.
 - `prefers-reduced-motion` honoured globally in `@layer base` — movement removed, colour/opacity/border/shadow feedback kept at `150ms` (see §Motion).
@@ -609,17 +614,18 @@ Tailwind v4 dark variant: `@custom-variant dark (&:is(.dark *))`. A second custo
 - **Only the active panel is reachable.** Desktop keeps all five mounted but marks the four off-screen ones `inert`, so focus, pointer and AT never enter a panel the visitor cannot see. Mobile stacks them and marks none.
 - Arrow-key paging ignores editable targets, IME composition, modifier combos and any open dialog — the caret always wins over the pager.
 - Boot screen: the overlay is `aria-hidden` in full and the app behind it is `inert` until it leaves; one `role="status"` line announces the load.
-- Dialogs: focus moves to the dialog root with `preventScroll`, Tab is trapped inside, Esc closes, focus returns to the previously focused element, and the closed sheet carries `inert` + `aria-hidden`.
+- Dialogs: focus moves to the dialog root with `preventScroll`, Tab is trapped inside, Esc closes, focus returns to the previously focused element, and the closed sheet carries `inert` + `aria-hidden`. The sheet has its own labelled close button in the drag header, so every state (skeleton included) can be closed without a drag or a key.
 - Decoration is hidden from AT: the typed tagline is `aria-hidden` with an `sr-only` static string beside it, and the marquee, dot-grids, section dividers and corner brackets are all `aria-hidden`.
-- Forms: `aria-required`, `aria-invalid` and `aria-describedby` on every field; the character counter is wired into the textarea's description; success is `role="status"`, failure is `role="alert"`.
+- Forms: `aria-required`, `aria-invalid` and `aria-describedby` on every field; the character counter is wired into the textarea's description. Send result: one always-mounted `sr-only` `role="status"` line carries both success and failure text, because a live region mounted with its text already inside is often never announced. Send uses `aria-disabled` while sending, not `disabled`, so focus stays on it. On a failed submit, focus moves to the first invalid field. On mobile that field is also scrolled into view, so the keyboard doesn't open over it.
+- Icon glyphs are `aria-hidden`: Font Awesome is CSS-only, and its `::before` private-use characters would otherwise end up in button names.
+- The Works count ("5 / 24 Projects") is `aria-live="polite"`, so a filter change is heard.
 - Keyboard: arrow keys drive panel navigation; Esc closes any dialog.
 - Category badge pairs are contrast-checked against their own backgrounds in both themes.
 
 - Text opacity respects **The Opacity Floor Rule** (see §Colors): 0.65 on page/card, 0.90 on an accent plate.
 
 **Known contrast gaps** (recorded so nobody documents them as intent):
-- The `#00aeb3` and `#018441` case-study grounds carry `text-light` at 2.76:1 and 4.80:1 — the teal fails even at full opacity for any text size, and the green fails for the 10px keys. Fixing that means darkening those two values in `PortfolioData.js` or switching those cards to ink, not adjusting opacity.
-- The accent stat numerals (`text-light-primary` on `--color-light-card`) measure 2.97:1. They are large ExtraBold display figures, so they sit just under the 3:1 large-text threshold. Changing it means changing Signal Red, which the brand owns.
+- **Signal Red on light grounds is an accepted gap (owner decision, audit 002).** `#ff3656` measures 2.97:1 on Newsprint Grey and 3.31:1 on Bright Stock. Small accent text (the active nav label, focused field labels, the counter past 800, the ticker role names, and inline emphasis) falls below 4.5:1. The light-mode focus ring and large accent display type fall below 3:1. A darker text-only shade (`#b7243b`, 5.28:1) was tried and declined to keep the brand red. Revisit if the brand red changes.
 
 ## Information Architecture
 

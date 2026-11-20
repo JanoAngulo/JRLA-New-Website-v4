@@ -137,9 +137,9 @@ export default {
         description: `<p>I build responsive, user-friendly websites using HTML, CSS, Sass, and JavaScript. I work with TailwindCSS, Bootstrap, Vue.js, and Next.js  to create clean, performant interfaces. I use Git for version control and Docker to streamline workflows, always prioritizing speed, accessibility, and cross-browser compatibility.</p>
         <hr class="dark:border-dark-primary border-light-primary">
         <ul class="space-y-3">
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i> Responsive UI/UX design</li>
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i> Cross-browser compatibility</li>
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i> Performance-focused development</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i> Responsive UI/UX design</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i> Cross-browser compatibility</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i> Performance-focused development</li>
         </ul>
         <p>Semantic markup, keyboard support, and a fast first paint come standard, not as a later pass.</p>`,
         img: [frontend]
@@ -151,9 +151,9 @@ export default {
         description: `<p>I specialize in designing intuitive, user-centered interfaces using tools like Figma, Adobe XD, and Adobe Illustrator. I take a screen from wireframe to clickable prototype, then hold it together with a design system so the tenth screen matches the first.</p>
         <hr class="dark:border-dark-primary border-light-primary">
         <ul class="space-y-3">
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Interactive prototyping</li>
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>User-centered design</li>
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Consistent design systems</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i>Interactive prototyping</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i>User-centered design</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i>Consistent design systems</li>
         </ul>
         <p>Because I also write the front-end, every design I hand off is one I know can be built.</p>`,
         img: [uiux]
@@ -165,9 +165,9 @@ export default {
         description: `<p>I edit in Premiere Pro, build motion graphics in After Effects, and deliver through Media Encoder. Commercials, interviews, testimonials, and 2D motion pieces: cut for pacing first, then graded so every shot holds the same tone.</p>
         <hr class="dark:border-dark-primary border-light-primary">
         <ul class="space-y-3">
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Narrative-driven editing</li>
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Visual effects & transitions</li>
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Advanced color grading</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i>Narrative-driven editing</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i>Visual effects & transitions</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i>Advanced color grading</li>
         </ul>
         <p>The same eye for timing carries into the motion on this site.</p>`,
         img: [videoEditor]
@@ -179,9 +179,9 @@ export default {
         description: `<p>I draw in Adobe Illustrator on a Wacom tablet and finish in Photoshop: illustrations, logos, and brand material. Everything stays vector, so one file scales from a favicon to a banner without redrawing.</p>
         <hr class="dark:border-dark-primary border-light-primary">
         <ul class="space-y-3">
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Digital illustration</li>
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Logo & branding design</li>
-        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary"></i>Scalable vector graphics</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i>Digital illustration</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i>Logo & branding design</li>
+        <li><i class="fa-solid fa-circle-check pe-2 dark:text-dark-primary text-light-primary" aria-hidden="true"></i>Scalable vector graphics</li>
         </ul>
         <p>The vector pieces in Works are personal ones, each with a note on why I drew it.</p>`,
         img: [vector]
