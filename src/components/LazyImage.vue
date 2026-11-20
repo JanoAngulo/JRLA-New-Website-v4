@@ -1,5 +1,5 @@
 <template>
-  <div class="lazy-img-wrap" :class="{ 'is-loaded': loaded }" :style="aspectStyle">
+  <div class="lazy-img-wrap" :class="{ 'is-loaded': loaded, 'is-cached': cached }" :style="aspectStyle">
     <div v-if="!loaded" class="lazy-img-skeleton" aria-hidden="true"></div>
     <img
       ref="img"
@@ -31,7 +31,7 @@
       height: { type: [Number, String], default: 0 }
     },
     data() {
-      return { loaded: false }
+      return { loaded: false, cached: false }
     },
     computed: {
       aspectStyle() {
@@ -39,7 +39,12 @@
       }
     },
     mounted() {
-      this.checkComplete()
+      // Already decoded (remount after a Works filter): show it outright, no re-fade.
+      const img = this.$refs.img
+      if (img && img.complete && img.naturalWidth > 0) {
+        this.cached = true
+        this.loaded = true
+      }
     },
     watch: {
       src() {
@@ -96,6 +101,11 @@
   }
   .lazy-img-wrap.is-loaded .lazy-img {
     opacity: 1;
+  }
+  .lazy-img-wrap.is-cached .lazy-img {
+    transition: transform var(--dur-slow) var(--ease-out),
+                scale var(--dur-slow) var(--ease-out),
+                translate var(--dur-slow) var(--ease-out);
   }
   @keyframes lazy-shimmer {
     0% { background-position: 100% 0; }

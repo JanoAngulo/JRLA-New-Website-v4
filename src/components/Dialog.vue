@@ -29,7 +29,7 @@
               aria-label="Close dialog"
               class="absolute z-10 grid w-11 h-11 rounded-full cursor-pointer top-3 right-3 place-content-center bg-light-primary text-dark border border-light-primary dark:bg-dark-primary dark:border-dark-primary transition-[background-color,border-color,transform,scale] duration-200 hover:bg-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:border-[color-mix(in_oklab,var(--color-light-primary)_82%,#000)] hover:text-light dark:hover:bg-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:border-[color-mix(in_oklab,var(--color-dark-primary)_85%,#000)] dark:hover:text-dark hover-fine:hover:scale-105 active:scale-95"
               @click="$emit('close')">
-              <i class="fa-solid fa-xmark"></i>
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
             <slot></slot>
           </div>
@@ -54,9 +54,19 @@
       <div
         class="sticky top-0 z-50 grid justify-center w-full px-6 py-6 md:py-10 lg:px-28 md:px-12 dark:bg-dark bg-light cursor-grab"
         @mousedown="startDrag"
-        @touchstart="startDrag"
-        aria-hidden="true">
-        <div class="w-[50vw] h-2 rounded-full dark:bg-white/50 bg-dark/50"></div>
+        @touchstart="startDrag">
+        <div class="w-[50vw] h-2 rounded-full dark:bg-white/50 bg-dark/50" aria-hidden="true"></div>
+        <!-- Dragging and Esc aren't available to everyone (touch screen readers can't
+             do either), so the sheet carries its own close in every state, skeleton included. -->
+        <button
+          type="button"
+          aria-label="Close project details"
+          class="absolute top-1/2 -translate-y-1/2 right-3 md:right-6 grid w-11 h-11 rounded-full cursor-pointer place-content-center bg-transparent border border-current/50 text-dark dark:text-light transition-[background-color,border-color,color] duration-200 hover:bg-light-primary hover:border-light-primary hover:text-dark dark:hover:bg-dark-primary dark:hover:border-dark-primary dark:hover:text-dark"
+          @mousedown.stop
+          @touchstart.stop
+          @click="$emit('close')">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
       </div>
       <div class="px-6 md:px-10 lg:px-14 xl:px-20 pb-12">
         <slot></slot>

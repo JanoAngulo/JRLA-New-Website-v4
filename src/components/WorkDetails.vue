@@ -6,7 +6,7 @@
           <img v-if="work.imgBackground" class="absolute top-0 left-0 object-cover w-full h-full opacity-50 pointer-events-none mix-blend-soft-light" :src="work.imgBackground" loading="lazy" alt="" aria-hidden="true" role="presentation" />
           <div class="relative space-y-8">
             <button type="button" @click="$emit('close')" class="group inline-flex items-center gap-[0.6rem] py-2 bg-transparent border-0 text-inherit font-Mono text-[0.7rem] tracking-[0.3em] uppercase cursor-pointer transition-[gap] duration-250 hover:gap-[0.85rem] before:content-[''] before:inline-block before:w-6 before:h-px before:bg-current before:opacity-50 before:transition-[width,opacity] before:duration-300 hover:before:w-9 hover:before:opacity-100 focus-visible:[outline:2px_solid_currentColor] focus-visible:outline-offset-4 focus-visible:rounded-sm" aria-label="Back to works">
-              <i class="fa-solid fa-arrow-left transition-transform duration-300 ease-in-out hover-fine:group-hover:-translate-x-[3px]"></i>
+              <i class="fa-solid fa-arrow-left transition-transform duration-300 ease-in-out hover-fine:group-hover:-translate-x-[3px]" aria-hidden="true"></i>
               <span>Back to Works</span>
             </button>
             <h1 class="font-Gilroy-extra-bold uppercase text-[clamp(1.75rem,4vw,3rem)] leading-[0.95] tracking-[-0.025em]">{{ work.title }}</h1>
@@ -42,7 +42,7 @@
               class="btn btn-primary group w-full"
               @click="openLink(work.link)">
               <span>{{ work.btnText }}</span>
-              <i class="fa-solid fa-arrow-up-right-from-square transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-x-0.5 hover-fine:group-hover:-translate-y-0.5"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-x-0.5 hover-fine:group-hover:-translate-y-0.5" aria-hidden="true"></i>
             </button>
           </div>
         </div>

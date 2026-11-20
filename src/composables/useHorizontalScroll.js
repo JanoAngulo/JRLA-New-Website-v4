@@ -304,6 +304,12 @@ export function createHorizontalScroll({ wrap, track, onActive, onSettle }) {
       const y = st.start + (arrivals[clamped] / total) * (st.end - st.start)
       if (immediate || reduced) {
         st.scroll(y)
+        // Driver holds progress normalized to the old `total`; after a remeasure that
+        // maps to an earlier panel and scrub eases back across it. Retarget the scrub
+        // tween in place (start = end) — not kill(): ScrollTrigger reuses it.
+        const p = arrivals[clamped] / total
+        st.getTween()?.resetTo('totalProgress', p, p)
+        tl.progress(p)
       } else {
         // Lock snap to this arrival until a beat after the tween ends.
         navTarget = arrivals[clamped] / total

@@ -5,7 +5,7 @@
     <div class="relative z-5 px-5 pt-5 md:px-8 md:pt-6 lg:px-12 lg:pt-8 bg-light dark:bg-dark md:shrink-0">
       <div class="works-header-meta flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 pb-4 border-b border-current/12" data-reveal="fade" data-reveal-y="-8" data-reveal-at="0.04">
         <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-80">03 / Selected Works</p>
-        <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70">{{ filteredWorks.length }} / {{ works2.length }} Projects</p>
+        <p class="font-Mono text-[10px] tracking-[0.3em] uppercase opacity-70" aria-live="polite">{{ filteredWorks.length }} / {{ works2.length }} Projects</p>
       </div>
 
       <div class="no-swipe relative flex gap-[0.4rem] sm:gap-2 pt-4 pb-5 overflow-x-auto snap-x snap-proximity [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] [mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,#000_0,#000_calc(100%-24px),transparent_100%)] sm:[mask-image:none] sm:[-webkit-mask-image:none]">
@@ -17,7 +17,7 @@
           data-reveal="fade"
           :data-reveal-at="0.1 + i * 0.05"
           class="filter-pill group inline-flex items-center gap-[0.4rem] sm:gap-2 px-3 sm:px-[0.9rem] py-[0.55rem] sm:py-[0.6rem] font-Mono text-[0.65rem] sm:text-[0.7rem] tracking-[0.18em] sm:tracking-[0.22em] uppercase bg-transparent border rounded-full cursor-pointer transition-[background,border-color,color] duration-200 whitespace-nowrap shrink-0 snap-start"
-          :class="activeFilter === f.id ? 'bg-light-primary text-dark border-light-primary dark:bg-dark-primary dark:border-dark-primary' : 'border-current/35 hover:border-current/65'">
+          :class="activeFilter === f.id ? 'bg-light-primary text-dark border-light-primary dark:bg-dark-primary dark:border-dark-primary' : 'border-current/50 hover:border-current/75'">
           <span>{{ f.label }}</span>
           <span class="font-Mono tabular-nums text-[0.7rem] opacity-70 group-aria-pressed:opacity-80">{{ f.count }}</span>
         </button>
@@ -30,7 +30,7 @@
       <div class="works-grid grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7" :class="{ 'is-swapping': swapping }">
         <div
           v-for="(item, i) in filteredWorks"
-          :key="i + item.id + item.title"
+          :key="item.id + item.title"
           data-scrub
           data-scrub-y="28"
           data-scrub-start="0.85"
@@ -39,7 +39,7 @@
           class="reveal">
         <button
           type="button"
-          class="work-card group relative flex flex-col text-left overflow-hidden w-full h-full p-0 [font:inherit] text-inherit cursor-pointer bg-light-card dark:bg-dark-card border border-current/6 transition-[border-color,translate,box-shadow] duration-300 ease-out surface-rest hover-fine:hover:border-light-primary hover-fine:hover:-translate-y-[3px] hover-fine:hover:shadow-(--shadow-lifted) dark:hover-fine:hover:border-dark-primary focus-visible:outline-none focus-visible:border-light-primary focus-visible:-translate-y-[3px] focus-visible:shadow-[0_0_0_2px_var(--color-light-primary),var(--shadow-lifted)] dark:focus-visible:border-dark-primary dark:focus-visible:shadow-[0_0_0_2px_var(--color-dark-primary),var(--shadow-lifted)]"
+          class="work-card group relative flex flex-col text-left overflow-hidden w-full h-full p-0 [font:inherit] text-inherit cursor-pointer bg-light-card dark:bg-dark-card border border-current/6 transition-[border-color,translate,box-shadow] duration-300 ease-out surface-rest hover-fine:hover:border-light-primary hover-fine:hover:-translate-y-[3px] hover-fine:hover:shadow-(--shadow-lifted) dark:hover-fine:hover:border-dark-primary focus-visible:outline-2 focus-visible:outline-transparent focus-visible:border-light-primary focus-visible:-translate-y-[3px] focus-visible:shadow-[0_0_0_2px_var(--color-light-primary),var(--shadow-lifted)] dark:focus-visible:border-dark-primary dark:focus-visible:shadow-[0_0_0_2px_var(--color-dark-primary),var(--shadow-lifted)]"
           :aria-label="`Open ${item.title} project details`"
           @click="openWork(item)">
           <div class="work-card-img relative aspect-[4/3] overflow-hidden bg-current/5" :class="{ 'work-card-img--contain': item.work === 'uiux' }">
@@ -56,7 +56,7 @@
             <div class="flex items-center justify-between gap-3 mb-1">
               <span class="font-Mono text-[0.7rem] tracking-[0.3em] opacity-75">{{ String(i + 1).padStart(2, '0') }}</span>
               <span class="inline-flex items-center gap-[0.4rem] px-[0.6rem] py-[0.3rem] font-Mono text-[0.7rem] tracking-[0.22em] uppercase" :class="tagClasses(item.work)">
-                <i :class="typeIcon(item.work)"></i>
+                <i :class="typeIcon(item.work)" aria-hidden="true"></i>
                 {{ workTypeLabel(item.work) }}
               </span>
             </div>
@@ -137,11 +137,11 @@
         <div v-if="content.link" class="flex flex-col gap-3 pt-3 sm:flex-row">
           <button type="button" class="btn btn-primary group" @click="openLink(content.link)">
             <span>{{ content.btnText || 'Visit Live' }}</span>
-            <i class="fa-solid fa-arrow-up-right-from-square transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-x-[2px] hover-fine:group-hover:-translate-y-[2px]"></i>
+            <i class="fa-solid fa-arrow-up-right-from-square transition-transform duration-250 ease-in-out hover-fine:group-hover:translate-x-[2px] hover-fine:group-hover:-translate-y-[2px]" aria-hidden="true"></i>
           </button>
           <button type="button" class="btn btn-ghost" @click="closeOffCanvas">
             <span>Close</span>
-            <i class="fa-solid fa-xmark"></i>
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
           </button>
         </div>
       </div>
@@ -200,7 +200,7 @@
   import { createScrollScrub } from '../composables/useScrollScrub'
 
   // Must match the .works-grid transition-duration below.
-  const SWAP_FADE_MS = 120
+  const SWAP_FADE_MS = 140
 
   // Same imports as PortfolioData, to map hashed or inlined tool URLs back to names.
   import html from '@/assets/img/features/frontend/html.svg'
@@ -343,8 +343,9 @@
         this.$nextTick(() => {
           this._scrub?.refresh()
           this.$emit('remeasure')
-          // One frame for new cards to take their opening values before the grid fades back.
-          requestAnimationFrame(() => { this.swapping = false })
+          // WebView remeasures on the next frame; fade back the frame after, so the
+          // pin refresh, scroll reset and scrub values all land while the grid is hidden.
+          requestAnimationFrame(() => requestAnimationFrame(() => { this.swapping = false }))
         })
       }
     },
@@ -482,19 +483,23 @@
     opacity: 0;
   }
 
-  /* Duration must match SWAP_FADE_MS in the script. */
+  /* Fade-in (base rule) is slower than fade-out (.is-swapping). The out duration
+     must match SWAP_FADE_MS in the script. Fully hidden so the height change and
+     pin refresh happen out of sight. */
   .works-grid {
-    transition: opacity 120ms var(--ease-out);
+    transition: opacity 260ms var(--ease-out), translate 260ms var(--ease-out);
   }
   .works-grid.is-swapping {
-    /* Not 0, so it reads as a re-filter rather than a page load. */
-    opacity: 0.25;
+    opacity: 0;
+    translate: 0 6px;
+    transition-duration: 140ms;
   }
   @media (prefers-reduced-motion: reduce) {
     .works-grid,
     .works-grid.is-swapping {
       transition: none;
       opacity: 1;
+      translate: none;
     }
   }
 
