@@ -76,6 +76,12 @@ import sideMastersFlyingSchool from '@/assets/img/works/content/masters-flying-s
 import mastersFlyingSchool1 from '@/assets/img/works/content/masters-flying-school-part1.webp'
 import mastersFlyingSchool2 from '@/assets/img/works/content/masters-flying-school-part2.webp'
 
+// BYAHE
+import squareByahe from '@/assets/img/works/squares/square-byahe.webp'
+import sideByahe from '@/assets/img/works/content/byahe-side-img.webp'
+import byahe1 from '@/assets/img/works/content/byahe-part1.webp'
+import byahe2 from '@/assets/img/works/content/byahe-part2.webp'
+
 // Features
 import frontend from '@/assets/img/features/avatars/frontend.png'
 import uiux from '@/assets/img/features/avatars/uiux.png'
@@ -247,6 +253,28 @@ export default {
         imgBackground: '',
         btnText: 'View Website',
         link: 'https://masters-flying-school.vercel.app'
+      },
+
+      {
+        work: 'uiux',
+        id: 'Byahe',
+        category: 'design',
+        color: 'bg-[#13205C]',
+        border: 'border-[#FFC93C]',
+        thumbnail: squareByahe,
+        title: `BYAHE`,
+        role: 'Design & Develop',
+        tools: 'WordPress & Tailwind',
+        year: '2026',
+        type: 'Website',
+        projectType: 'WordPress Theme & Plugin',
+        status: 'Live Demo',
+        imgSide: sideByahe,
+        imgContent1: byahe1,
+        imgContent2: byahe2,
+        imgBackground: '',
+        btnText: 'Open Live Demo',
+        link: 'https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/JanoAngulo/byahe-wordpress/main/blueprint.json'
       },
 
       {
