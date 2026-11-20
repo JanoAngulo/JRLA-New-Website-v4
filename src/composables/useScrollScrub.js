@@ -16,6 +16,8 @@ import { gsap } from 'gsap'
 //   data-scrub-y="42"     — travel distance in px (default 42)
 //   data-scrub-fade="0"   — animate transform only, keep opacity 1 (for masked
 //                           title lines inside an overflow-hidden parent)
+//   data-scrub-min="0.2"  — opacity floor before reveal (default 0); lets
+//                           below-the-fold items peek through as a "more below" cue
 //   data-scrub-start="0.92" / data-scrub-end="0.62"
 //                         — per-element reveal band, overriding BAND_* below.
 const MOBILE = '(max-width: 767px)'
@@ -55,7 +57,8 @@ export function createScrollScrub(root) {
         dist: num(el.dataset.scrubY, 42),
         start: num(el.dataset.scrubStart, BAND_START),
         end: num(el.dataset.scrubEnd, BAND_END),
-        fade: el.dataset.scrubFade !== '0'
+        fade: el.dataset.scrubFade !== '0',
+        min: num(el.dataset.scrubMin, 0)
       }
       if ('scrubEntry' in el.dataset) entryTargets.push(t)
       else scrubTargets.push(t)
@@ -102,7 +105,7 @@ export function createScrollScrub(root) {
       let p = (bandTop - rel) / (bandTop - bandBot)
       p = p < 0 ? 0 : p > 1 ? 1 : p
       const e = easeOut(p)
-      gsap.set(t.el, { opacity: t.fade ? e : 1, y: (1 - e) * t.dist, force3D: true })
+      gsap.set(t.el, { opacity: t.fade ? t.min + (1 - t.min) * e : 1, y: (1 - e) * t.dist, force3D: true })
     }
   }
 
@@ -192,7 +195,7 @@ export function createScrollScrub(root) {
     // and never fires. Observe the un-clipped wrapper, animate the child.
     const watchOf = new Map()
     for (const t of all) {
-      gsap.set(t.el, { opacity: t.fade ? 0 : 1, y: t.dist })
+      gsap.set(t.el, { opacity: t.fade ? t.min : 1, y: t.dist })
       watchOf.set(t.el.closest('.reveal-line') || t.el, t.el)
     }
     io = new IntersectionObserver(
