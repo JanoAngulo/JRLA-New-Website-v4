@@ -86,11 +86,8 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    /* `scale` and `translate` must be named alongside `transform`: Tailwind v4's
-       `scale-*` sets the standalone CSS `scale` property, and this unlayered
-       scoped rule outranks Tailwind's `transition-transform`, so without them the
-       hover would snap. The load-in fade stays slower than the hover transitions —
-       it masks a network event rather than an interaction. */
+    /* Tailwind v4 `scale-*` sets standalone `scale`, and this rule outranks its
+       `transition-transform`; omit `scale`/`translate` and the hover snaps. */
     transition: opacity 0.45s var(--ease-out),
                 transform var(--dur-slow) var(--ease-out),
                 scale var(--dur-slow) var(--ease-out),

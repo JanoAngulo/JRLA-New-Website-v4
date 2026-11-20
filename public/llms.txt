@@ -1,0 +1,62 @@
+# John Russel L. Angulo (JRLA)
+
+> Portfolio of John Russel L. Angulo ("Jano"), a front-end developer and UI/UX designer from Bulacan, Philippines, who also edits video and draws vector art. Open to roles from 2026 onwards.
+
+The site at https://jrla1219.web.app/ is a single-page Vue app with five panels: Home, Features, Works, About, Contact. Its content renders client-side, so this file is a plain-text summary of it.
+
+## About
+
+- Name: John Russel L. Angulo. Goes by Jano. Mark: JRLA.
+- Based in Bulacan, Philippines.
+- Disciplines: front-end development, UI/UX design, video editing, vector art.
+- Experience: UI Engineer at CoreProc, Inc. (2022 to present). Freelance video editor on Upwork (2021 to July 2022).
+- Education: BS Information Technology, Bulacan State University (2018 to 2022).
+
+## Skills
+
+- Front-end: HTML5, CSS3, JavaScript, Sass, Tailwind CSS, Bootstrap, Vue.js, Next.js, React, GSAP, Laravel, WordPress, Git, Docker
+- UI/UX: Figma, Adobe XD, Adobe Illustrator. Wireframes, interactive prototypes, design systems, accessibility.
+- Video: Adobe Premiere Pro, Adobe After Effects, Adobe Media Encoder. Commercials, interviews, testimonials, 2D motion graphics.
+- Vector art: Adobe Illustrator, Adobe Photoshop, Wacom tablet. Illustrations, logos, brand material.
+- AI tools: Claude
+
+## UI/UX work
+
+- [Marlboro](https://marlboro.ph): design and development
+- [Vibeteams AI](https://vibeteams.ai/): design and development
+- [Masters Flying School](https://masters-flying-school.vercel.app): website design
+- [BYAHE](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/JanoAngulo/byahe-wordpress/main/blueprint.json): WordPress site, runs in WordPress Playground
+- [Lydia's Lechon](https://www.figma.com/proto/4o64d5ogXm2sePmgcQUqUY/Lydia-s-Lechon?page-id=3%3A3032&node-id=16-9799&viewport=7484%2C2019%2C0.12&t=wHAZ5eRK895LS4Hl-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=16%3A9761): proposed website design and style guide in Figma
+- [CoreProc, Inc. Brand](https://coreproc.com): brand and Website 2.0 design work
+- [Kappartner App](https://www.figma.com/proto/xWVbyE7m9NXe2y8Gh3CCOL/Kappartner-App-UI---Figma?page-id=0%3A1&node-id=1-7397&viewport=-5106%2C-635%2C0.45&t=1fhlNDJ70yY7q2YF-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=1%3A7397&show-proto-sidebar=1): mobile app UI in Figma
+- [Discord Theme Maker](https://p4i0bit7.echoui.app/discord-theme-maker.html): web and mobile tool
+
+## Website work
+
+- [CoreProc, Inc. redesign](https://coreproc-clone.web.app/): landing page redesign built with Next.js and Tailwind CSS
+- [Boo Cyber Security](https://boo-cybersecurity.vercel.app/): designed in Figma, built with React and Tailwind CSS
+- [Plants](https://codepen.io/Minosuke/full/XWyVvWN): CodePen front-end piece
+- [Soda Cans](https://codepen.io/Minosuke/full/qBQxVgr): CodePen front-end piece
+
+## Video work
+
+- [Rite n' Lite Soda Commercial](https://www.youtube.com/watch?v=4UYqmoFG7n8)
+- [BulSU CICT Graduation](https://www.youtube.com/watch?v=FNDjo-7m0IU)
+- [Service Management Track](https://www.youtube.com/watch?v=Vs1Uf9NXyBQ)
+
+## Vector work
+
+Personal illustrations made in Adobe Illustrator: Underwater, Landscape, Lucifer Fallen Angel, Twice Dahyun, Desert Night Time. Viewable in the Works panel of the site.
+
+## Contact
+
+- Email: Angulo.johnrussel.l.7814@gmail.com
+- [LinkedIn](https://www.linkedin.com/in/jrla1219/)
+- [Behance](https://www.behance.net/JRLA)
+- [Facebook](https://www.facebook.com/Jano1219)
+- [GitHub](https://github.com/JanoAngulo)
+- Contact form: https://jrla1219.web.app/#contact
+
+## Optional
+
+- [CV (PDF)](https://jrla1219.web.app/downloads/Angulo-John-Russel-CV.pdf)

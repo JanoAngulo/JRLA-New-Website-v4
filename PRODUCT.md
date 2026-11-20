@@ -73,7 +73,8 @@ A neighboring portfolio cannot truthfully copy this because the evidence is per-
 - 20 work entries in [src/components/PortfolioData.js](src/components/PortfolioData.js) — 7 `uiux`, 5 `website`, 5 `vector`, 3 `video`. All have thumbnails and external links; UI/UX entries carry case-study imagery.
 - CV at [public/downloads/Angulo-John-Russel-CV.pdf](public/downloads/Angulo-John-Russel-CV.pdf).
 - Portrait photograph (About panel), shot in Bulacan.
-- Self-reported counts surfaced as stats: 3+ years, 13+ technologies, 10+ creative tools, 4 disciplines.
+- Self-reported counts surfaced as stats: 4+ years (first paid work 2021, "Est. 2021" on Home), 14 technologies and 9 creative tools (both counted in code from the About skill lists, which mirror the Features toolkit grids), 4 disciplines.
+- Reply commitment on the contact form: "Replies within a day". A promise, not a measured average.
 - Live production deployment: https://jrla1219.web.app/
 - The site's own engineering is inspectable evidence — GSAP scroll engine, theme system, lazy imaging, security headers.
 

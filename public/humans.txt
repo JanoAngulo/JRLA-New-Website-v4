@@ -1,0 +1,22 @@
+/* TEAM */
+Design and development: John Russel L. Angulo (Jano)
+Location: Bulacan, Philippines
+Contact: Angulo.johnrussel.l.7814 [at] gmail.com
+LinkedIn: linkedin.com/in/jrla1219
+GitHub: github.com/JanoAngulo
+Behance: behance.net/JRLA
+
+/* THANKS */
+Everyone who sent feedback on earlier versions of this site.
+
+/* SITE */
+Last update: 2026/11/20
+Language: English
+Standards: HTML5, CSS3, WCAG
+Components: Vue 3, Vue Router, Pinia, GSAP, Tailwind CSS v4
+Build: Vite
+Hosting: Firebase Hosting
+Forms: Formspark, Botpoison
+Fonts: Gilroy, IBM Plex Mono
+Design: Figma
+Software: VS Code, Adobe Illustrator, Photoshop, Premiere Pro, After Effects

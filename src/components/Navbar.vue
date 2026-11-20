@@ -95,11 +95,7 @@
         this.themeSpin++
         const store = useThemeStore()
 
-        // A View Transition cross-fades the before/after snapshots, since every
-        // surface, accent and text colour inverts in a single frame. Progressive
-        // enhancement: browsers without the API — and reduced motion, where the
-        // CSS cancels the animation — fall through to the instant swap. The store
-        // call is the same either way, so this can't desync it.
+        // Cross-fade the swap; no View Transitions API or reduced motion gets the instant swap.
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         if (!document.startViewTransition || reduced) {
           store.cycleMode()
